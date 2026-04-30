@@ -65,6 +65,16 @@ function getGroup(ts) {
     return new Date(ts).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
+function updateKPIs() {
+    const todayStart = new Date();
+    todayStart.setHours(0,0,0,0);
+    const todayNotifs = notifications.filter(n => n.timestamp >= todayStart.getTime());
+    document.getElementById('kpi-total').textContent    = todayNotifs.length;
+    document.getElementById('kpi-unread').textContent   = notifications.filter(n => n.unread).length;
+    document.getElementById('kpi-critical').textContent = notifications.filter(n => n.type === 'critical').length;
+    document.getElementById('kpi-reminder').textContent = notifications.filter(n => n.type === 'reminder').length;
+}
+
 function renderNotifications() {
     const list = document.getElementById('notif-list');
     const filtered = activeFilter === 'all'
@@ -73,6 +83,8 @@ function renderNotifications() {
 
     document.getElementById('notif-count').textContent =
         `${filtered.length} Notification${filtered.length !== 1 ? 's' : ''}`;
+
+    updateKPIs();
 
     if (filtered.length === 0) {
         list.innerHTML = `
@@ -112,7 +124,7 @@ function renderNotifications() {
             if (e.target.closest('.notif-dismiss')) return;
             const id = parseInt(item.dataset.id);
             const notif = notifications.find(n => n.id === id);
-            if (notif) { notif.unread = false; renderNotifications(); }
+            if (notif) openNotifModal(notif);
         });
     });
 
@@ -128,6 +140,31 @@ function renderNotifications() {
         });
     });
 }
+
+// Notification Modal
+const notifOverlay = document.getElementById('notif-overlay');
+const notifModal   = document.getElementById('notif-modal');
+
+function openNotifModal(n) {
+    document.getElementById('notif-modal-icon').className = `notif-modal-icon ${n.type}`;
+    document.getElementById('notif-modal-icon').innerHTML = `<i class="bi ${n.icon}"></i>`;
+    document.getElementById('notif-modal-title').textContent   = n.title;
+    document.getElementById('notif-modal-message').textContent = n.message;
+    document.getElementById('notif-modal-time').textContent    = timeAgo(n.timestamp);
+    notifOverlay.classList.add('show');
+    notifModal.classList.add('show');
+    // Mark as read
+    n.unread = false;
+    renderNotifications();
+}
+
+function closeNotifModal() {
+    notifOverlay.classList.remove('show');
+    notifModal.classList.remove('show');
+}
+
+notifOverlay.addEventListener('click', closeNotifModal);
+document.getElementById('notif-modal-close').addEventListener('click', closeNotifModal);
 
 // Filter tabs
 document.querySelectorAll('.notif-tab').forEach(tab => {

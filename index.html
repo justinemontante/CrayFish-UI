@@ -495,7 +495,15 @@
             <div class="chart-overlay" id="chart-overlay"></div>
             <div class="chart-modal" id="chart-modal">
               <div class="chart-modal-header">
-                <span class="chart-modal-title" id="chart-modal-title"></span>
+                <div class="chart-modal-header-left">
+                  <span class="chart-modal-title" id="chart-modal-title"></span>
+                  <div class="chart-modal-live-row">
+                    <span class="chart-modal-live-label">Current:</span>
+                    <span class="chart-modal-live-val" id="chart-modal-live-val">--</span>
+                    <span class="chart-modal-live-unit" id="chart-modal-live-unit"></span>
+                  </div>
+                  <span class="chart-modal-status" id="chart-modal-live-badge"></span>
+                </div>
                 <button class="chart-modal-close" id="chart-modal-close"><i class="bi bi-x-lg"></i></button>
               </div>
               <div class="chart-modal-body">
@@ -777,6 +785,26 @@
 
           <section id="notifications" class="nav-section hidden">
 
+            <!-- KPI CARDS -->
+            <div class="notif-kpi-row">
+              <div class="notif-kpi">
+                <span class="notif-kpi-val" id="kpi-total">0</span>
+                <span class="notif-kpi-label">Total Today</span>
+              </div>
+              <div class="notif-kpi">
+                <span class="notif-kpi-val teal" id="kpi-unread">0</span>
+                <span class="notif-kpi-label">Unread</span>
+              </div>
+              <div class="notif-kpi">
+                <span class="notif-kpi-val red" id="kpi-critical">0</span>
+                <span class="notif-kpi-label">Critical</span>
+              </div>
+              <div class="notif-kpi">
+                <span class="notif-kpi-val amber" id="kpi-reminder">0</span>
+                <span class="notif-kpi-label">Reminders</span>
+              </div>
+            </div>
+
             <!-- FILTER TABS -->
             <div class="notif-tabs">
               <button class="notif-tab active" data-filter="all">All</button>
@@ -793,6 +821,17 @@
 
             <!-- NOTIFICATION LIST -->
             <div class="notif-list" id="notif-list"></div>
+
+            <!-- NOTIFICATION MODAL -->
+            <div class="notif-overlay" id="notif-overlay"></div>
+            <div class="notif-modal" id="notif-modal">
+              <div class="legend-handle"></div>
+              <div class="notif-modal-icon" id="notif-modal-icon"></div>
+              <p class="notif-modal-title" id="notif-modal-title"></p>
+              <p class="notif-modal-message" id="notif-modal-message"></p>
+              <p class="notif-modal-time" id="notif-modal-time"></p>
+              <button class="compute-btn" id="notif-modal-close">Close</button>
+            </div>
 
           </section>
         </main>
@@ -828,6 +867,32 @@
         <div class="legend-handle"></div>
         <h3 class="legend-title" id="legend-title">Temperature</h3>
         <div class="legend-list" id="legend-list"></div>
+      </div>
+
+      <!-- GAUGE DETAIL MODAL -->
+      <div class="gauge-modal-overlay" id="gauge-modal-overlay"></div>
+      <div class="gauge-modal" id="gauge-modal">
+        <div class="legend-handle"></div>
+        <div class="gauge-modal-top">
+          <p class="gauge-modal-header-title" id="gauge-modal-header-title"></p>
+          <button class="gauge-modal-view-btn" id="gauge-modal-view-btn">View Graph <i class="bi bi-arrow-right"></i></button>
+        </div>
+        <div class="gauge-modal-header">
+          <div class="gauge-modal-icon-wrap" id="gauge-modal-icon-wrap">
+            <img id="gauge-modal-img" src="" alt="" />
+          </div>
+          <div>
+            <p class="gauge-modal-title" id="gauge-modal-title"></p>
+            <span class="gauge-badge" id="gauge-modal-badge"></span>
+          </div>
+        </div>
+        <div class="gauge-modal-value-row">
+          <span class="gauge-modal-value" id="gauge-modal-value"></span>
+          <span class="gauge-modal-unit" id="gauge-modal-unit"></span>
+        </div>
+        <div class="gauge-modal-ideal" id="gauge-modal-ideal"></div>
+        <div class="gauge-modal-legend" id="gauge-modal-legend"></div>
+        <button class="compute-btn" id="gauge-modal-close">Close</button>
       </div>
 
       <!-- CHATBOT POPUP -->

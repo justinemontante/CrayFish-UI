@@ -341,3 +341,135 @@
     margin-top: 2px;
     line-height: 1.4;
 }
+
+/* GAUGE DETAIL MODAL */
+.gauge-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.gauge-modal-overlay.show { opacity: 1; pointer-events: all; }
+
+.gauge-modal {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 24px 24px 0 0;
+    padding: 12px 20px 36px;
+    z-index: 51;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.gauge-modal.show { transform: translateY(0); }
+
+.gauge-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.gauge-modal-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    background: rgba(31, 165, 165, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.gauge-modal-icon-wrap img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.gauge-modal-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin: 0 0 4px;
+}
+
+.gauge-modal-value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 16px;
+    background: #f7f7f7;
+    border-radius: 16px;
+    justify-content: center;
+}
+
+.gauge-modal-value {
+    font-size: 52px;
+    font-weight: 800;
+    color: var(--dark-text);
+    line-height: 1;
+}
+
+.gauge-modal-unit {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark-text);
+    opacity: 0.4;
+}
+
+.gauge-modal-ideal {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--dark-text);
+    opacity: 0.5;
+    text-align: center;
+}
+
+.gauge-modal-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.gauge-modal-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.gauge-modal-header-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin: 0;
+}
+
+.gauge-modal-view-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    color: var(--primary-teal);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: opacity 0.2s;
+}
+
+.gauge-modal-view-btn:hover { opacity: 0.7; }
+.gauge-modal-view-btn i { font-size: 12px; }

@@ -36,7 +36,9 @@ function getLabels(range) {
     });
 }
 
-function makeChartConfig(label, data, labels, color) {
+const UNITS = { temp: '°C', ph: '', do: ' mg/L', turb: ' NTU' };
+
+function makeChartConfig(label, data, labels, color, unit) {
     return {
         type: 'line',
         data: {
@@ -104,7 +106,12 @@ function makeChartConfig(label, data, labels, color) {
                     grid: { display: false }
                 },
                 y: {
-                    ticks: { font: { family: 'Poppins', size: 8 }, color: '#0B3C4988', maxTicksLimit: 4 },
+                    ticks: {
+                        font: { family: 'Poppins', size: 8 },
+                        color: '#0B3C4988',
+                        maxTicksLimit: 4,
+                        callback: val => `${val}${unit}`
+                    },
                     grid: { color: 'rgba(0,0,0,0.05)' }
                 }
             }
@@ -126,10 +133,10 @@ function buildCharts(range) {
     };
 
     const configs = {
-        temp: makeChartConfig('Temperature', datasets.temp, labels, CHART_COLORS.temp),
-        ph:   makeChartConfig('pH Level',    datasets.ph,   labels, CHART_COLORS.ph),
-        do:   makeChartConfig('Dissolved O₂',datasets.do,   labels, CHART_COLORS.do),
-        turb: makeChartConfig('Turbidity',   datasets.turb, labels, CHART_COLORS.turb)
+        temp: makeChartConfig('Temperature', datasets.temp, labels, CHART_COLORS.temp, UNITS.temp),
+        ph:   makeChartConfig('pH Level',    datasets.ph,   labels, CHART_COLORS.ph,   UNITS.ph),
+        do:   makeChartConfig('Dissolved O₂',datasets.do,   labels, CHART_COLORS.do,   UNITS.do),
+        turb: makeChartConfig('Turbidity',   datasets.turb, labels, CHART_COLORS.turb, UNITS.turb)
     };
 
     Object.keys(configs).forEach(key => {
@@ -223,17 +230,42 @@ const CHART_KEYS = {
     turb: { label: 'Turbidity',   unit: 'NTU' }
 };
 
+const SENSOR_IDS = { temp: 'val-temp', ph: 'val-ph', do: 'val-do', turb: 'val-turb' };
+let liveValInterval = null;
+
 function openChartModal(key) {
     const src = charts[key];
     if (!src) return;
     const { label } = CHART_KEYS[key];
     chartModalTitle.textContent = CHART_TITLES[key];
+
+    // Set live value
+    const unit = UNITS[key];
+    document.getElementById('chart-modal-live-unit').textContent = unit;
+    const updateLive = () => {
+        const el = document.getElementById(SENSOR_IDS[key]);
+        if (!el) return;
+        const val = parseFloat(el.textContent);
+        document.getElementById('chart-modal-live-val').textContent = el.textContent;
+        // Get state from dashboard SENSORS if available
+        const sensorState = window.SENSORS?.[key]?.getState(val);
+        if (sensorState) {
+            const badge = document.getElementById('chart-modal-live-badge');
+            badge.className = 'chart-modal-status';
+            badge.textContent = `Status: ${sensorState.label}`;
+        }
+    };
+    updateLive();
+    if (liveValInterval) clearInterval(liveValInterval);
+    liveValInterval = setInterval(updateLive, 1000);
+
     if (modalChart) modalChart.destroy();
     const config = makeChartConfig(
         label,
         src.data.datasets[0].data,
         src.data.labels,
-        CHART_COLORS[key]
+        CHART_COLORS[key],
+        UNITS[key]
     );
     config.options.scales.x.ticks.font.size = 9;
     config.options.scales.y.ticks.font.size = 9;
@@ -245,6 +277,7 @@ function openChartModal(key) {
 function closeChartModal() {
     chartOverlay.classList.remove('show');
     chartModal.classList.remove('show');
+    if (liveValInterval) { clearInterval(liveValInterval); liveValInterval = null; }
 }
 
 document.querySelectorAll('.chart-card').forEach(card => {
