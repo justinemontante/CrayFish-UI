@@ -1,0 +1,10 @@
+/* CONTROLS SECTION */
+#controls {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+#controls.hidden {
+    display: none;
+}

@@ -1,0 +1,10 @@
+/* TANKS SECTION */
+#tanks {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+#tanks.hidden {
+    display: none;
+}

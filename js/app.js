@@ -41,31 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sectionTitle) sectionTitle.textContent = titles[sectionId] || 'Dashboard';
     }
 
-    // Greeting
-    function updateGreeting() {
-        const h = new Date().getHours();
-        const greetEl = document.getElementById('greeting-text');
-        const dateEl = document.getElementById('greeting-date');
-        if (!greetEl) return;
-        greetEl.textContent = (h < 12 ? 'Good Morning' : h < 18 ? 'Good Afternoon' : 'Good Evening') + ', Justine!';
-        const now = new Date();
-        dateEl.textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    }
-    updateGreeting();
-
-    // Live Status Bar Time
-    function updateTime() {
-        const el = document.getElementById('status-time');
-        if (!el) return;
-        const now = new Date();
-        let h = now.getHours(), m = now.getMinutes();
-        const ampm = h >= 12 ? 'PM' : 'AM';
-        h = h % 12 || 12;
-        el.textContent = `${h}:${String(m).padStart(2, '0')} ${ampm}`;
-    }
-    updateTime();
-    setInterval(updateTime, 1000);
-
     setTimeout(() => {
         showScreen('login');
     }, 3000);

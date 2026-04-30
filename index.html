@@ -4,7 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CrayCare Splash Screen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="style.css" />
+    <!-- Main App Styles -->
+    <link rel="stylesheet" href="css/bottom-nav.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/analytics.css" />
+    <link rel="stylesheet" href="css/tanks.css" />
+    <link rel="stylesheet" href="css/controls.css" />
+    <link rel="stylesheet" href="css/notifications.css" />
+    <link rel="stylesheet" href="css/chatbot.css" />
+    <link rel="stylesheet" href="css/settings.css" />
   </head>
   <body>
     <div class="iphone-frame">
@@ -104,7 +118,7 @@
             <a href="#" class="forgot-link">Forgot password?</a>
           </div>
 
-          <button class="login-btn">
+          <button type="button" class="login-btn" id="login-submit">
             <span>Sign In</span>
           </button>
 
@@ -114,7 +128,7 @@
             <div class="line"></div>
           </div>
 
-          <button class="google-btn">
+          <button type="button" class="google-btn" id="google-login">
             <svg viewBox="0 0 48 48" width="20" height="20">
               <path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
               <path fill="#34A853" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
@@ -202,7 +216,7 @@
             </div>
           </div>
 
-          <button class="login-btn" id="signup-submit">
+          <button type="button" class="login-btn" id="signup-submit">
             <span>Sign Up</span>
           </button>
 
@@ -212,7 +226,7 @@
             <div class="line"></div>
           </div>
 
-          <button class="google-btn" id="google-signup">
+          <button type="button" class="google-btn" id="google-signup">
             <svg viewBox="0 0 48 48" width="20" height="20">
               <path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
               <path fill="#34A853" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
@@ -251,8 +265,8 @@
             <input type="text" class="otp-input" maxlength="1" inputmode="numeric" />
             <input type="text" class="otp-input" maxlength="1" inputmode="numeric" />
           </div>
-          
-          <button class="login-btn" id="verify-submit">
+           
+          <button type="button" class="login-btn" id="verify-submit">
             <span>Verify</span>
           </button>
 
@@ -263,7 +277,233 @@
           <a href="#" class="back-link" id="back-to-signup">Back to Sign Up</a>
         </div>
       </section>
+
+      <!-- MAIN APP SECTION -->
+      <section class="main-app hidden" id="main-app">
+        <div class="status-bar">
+          <span class="status-time" id="status-time">9:41</span>
+          <div class="status-icons">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M1.5 8.5a13 13 0 0 1 21 0M5 12a10 10 0 0 1 14 0M8.5 15.5a6 6 0 0 1 7 0M12 19h.01"/>
+            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+              <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+              <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+              <circle cx="12" cy="20" r="1" fill="currentColor"/>
+            </svg>
+            <div class="battery-icon">
+              <div class="battery-body">
+                <div class="battery-fill"></div>
+              </div>
+              <div class="battery-tip"></div>
+            </div>
+          </div>
+        </div>
+        <header class="main-header">
+          <div class="header-left">
+            <div class="header-brand">
+              <img src="resources/images/logo.png" alt="CrayCare Logo" class="header-logo" />
+              <span class="header-brand-name">
+                <span class="text-cray">Cray</span><span class="text-care">Care</span>
+              </span>
+            </div>
+          </div>
+          <div class="header-right">
+            <div class="profile-avatar" id="profile-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+              </svg>
+            </div>
+          </div>
+        </header>
+
+        <main class="main-content">
+          <section id="dashboard" class="nav-section">
+            <div class="dashboard-greeting">
+              <p class="greeting-text" id="greeting-text">Good Morning</p>
+              <p class="greeting-date" id="greeting-date">Monday, July 14, 2025</p>
+            </div>
+            <div class="dashboard-header">
+              <span class="dashboard-label">Water Quality Overview</span>
+              <span class="dashboard-live"><span class="live-dot"></span>Live Data</span>
+            </div>
+            <div class="dashboard-grid">
+
+              <div class="gauge-card" id="gauge-temp">
+                <div class="gauge-header">
+                  <span class="gauge-title">Temperature</span>
+                  <span class="gauge-icon">
+                    <img src="resources/images/temperature.png" alt="Temperature" />
+                  </span>
+                </div>
+                <div class="gauge-body">
+                  <span class="gauge-value" id="val-temp">--</span>
+                  <span class="gauge-unit">°C</span>
+                </div>
+                <span class="gauge-badge" id="status-temp"><span class="gauge-dot" id="dot-temp"></span>Loading</span>
+                <span class="gauge-ideal">Ideal: 24.0 – 30.0°C</span>
+                <div class="gauge-wave">
+                  <svg viewBox="0 0 200 40" preserveAspectRatio="none">
+                    <path class="wave-path" d="M0,20 C30,5 70,35 100,20 C130,5 170,35 200,20 L200,40 L0,40 Z"/>
+                    <path class="wave-line" d="M0,20 C30,5 70,35 100,20 C130,5 170,35 200,20"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="gauge-card" id="gauge-ph">
+                <div class="gauge-header">
+                  <span class="gauge-title">pH Level</span>
+                  <span class="gauge-icon">
+                    <img src="resources/images/pH.png" alt="pH" />
+                  </span>
+                </div>
+                <div class="gauge-body">
+                  <span class="gauge-value" id="val-ph">--</span>
+                  <span class="gauge-unit">pH</span>
+                </div>
+                <span class="gauge-badge" id="status-ph"><span class="gauge-dot" id="dot-ph"></span>Loading</span>
+                <span class="gauge-ideal">Ideal: 7.0 – 8.5</span>
+                <div class="gauge-wave">
+                  <svg viewBox="0 0 200 40" preserveAspectRatio="none">
+                    <path class="wave-path" d="M0,20 C30,5 70,35 100,20 C130,5 170,35 200,20 L200,40 L0,40 Z"/>
+                    <path class="wave-line" d="M0,20 C30,5 70,35 100,20 C130,5 170,35 200,20"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="gauge-card" id="gauge-do">
+                <div class="gauge-header">
+                  <span class="gauge-title">Dissolved O₂</span>
+                  <span class="gauge-icon">
+                    <img src="resources/images/DO.png" alt="Dissolved O2" />
+                  </span>
+                </div>
+                <div class="gauge-body">
+                  <span class="gauge-value" id="val-do">--</span>
+                  <span class="gauge-unit">mg/L</span>
+                </div>
+                <span class="gauge-badge" id="status-do"><span class="gauge-dot" id="dot-do"></span>Loading</span>
+                <span class="gauge-ideal">Ideal: &gt;5.0 mg/L</span>
+                <div class="gauge-wave">
+                  <svg viewBox="0 0 200 40" preserveAspectRatio="none">
+                    <path class="wave-path" d="M0,20 C30,5 70,35 100,20 C130,5 170,35 200,20 L200,40 L0,40 Z"/>
+                    <path class="wave-line" d="M0,20 C30,5 70,35 100,20 C130,5 170,35 200,20"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="gauge-card" id="gauge-turb">
+                <div class="gauge-header">
+                  <span class="gauge-title">Turbidity</span>
+                  <span class="gauge-icon">
+                    <img src="resources/images/Turbidity.png" alt="Turbidity" />
+                  </span>
+                </div>
+                <div class="gauge-body">
+                  <span class="gauge-value" id="val-turb">--</span>
+                  <span class="gauge-unit">NTU</span>
+                </div>
+                <span class="gauge-badge" id="status-turb"><span class="gauge-dot" id="dot-turb"></span>Loading</span>
+                <span class="gauge-ideal">Ideal: 0 – 25 NTU</span>
+                <div class="gauge-wave">
+                  <svg viewBox="0 0 200 40" preserveAspectRatio="none">
+                    <path class="wave-path" d="M0,20 C30,5 70,35 100,20 C130,5 170,35 200,20 L200,40 L0,40 Z"/>
+                    <path class="wave-line" d="M0,20 C30,5 70,35 100,20 C130,5 170,35 200,20"/>
+                  </svg>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <section id="analytics" class="nav-section hidden">
+            <div class="placeholder-content">
+              <h2>THIS IS ANALYTICS</h2>
+              <p>Historical data graphs will appear here</p>
+            </div>
+          </section>
+
+          <section id="tanks" class="nav-section hidden">
+            <div class="placeholder-content">
+              <h2>THIS IS TANKS</h2>
+              <p>Tank lifecycle management will appear here</p>
+            </div>
+          </section>
+
+          <section id="controls" class="nav-section hidden">
+            <div class="placeholder-content">
+              <h2>THIS IS CONTROLS</h2>
+              <p>Hardware control center will appear here</p>
+            </div>
+          </section>
+
+          <section id="notifications" class="nav-section hidden">
+            <div class="placeholder-content">
+              <h2>THIS IS NOTIFICATIONS</h2>
+              <p>Alert logs and reminders will appear here</p>
+            </div>
+          </section>
+        </main>
+
+        <!-- BOTTOM NAVIGATION -->
+        <nav class="bottom-nav">
+          <button type="button" class="nav-btn active" data-target="dashboard">
+            <span class="nav-icon"><i class="bi bi-grid-fill"></i></span>
+            <span class="nav-label">Dashboard</span>
+          </button>
+          <button type="button" class="nav-btn" data-target="analytics">
+            <span class="nav-icon"><i class="bi bi-bar-chart-fill"></i></span>
+            <span class="nav-label">Analytics</span>
+          </button>
+          <button type="button" class="nav-btn" data-target="controls">
+            <span class="nav-icon"><i class="bi bi-cpu-fill"></i></span>
+            <span class="nav-label">Controls</span>
+          </button>
+          <button type="button" class="nav-btn" data-target="tanks">
+            <span class="nav-icon"><i class="bi bi-box-seam-fill"></i></span>
+            <span class="nav-label">Tanks</span>
+          </button>
+          <button type="button" class="nav-btn" data-target="notifications">
+            <span class="nav-icon"><i class="bi bi-bell-fill"></i></span>
+            <span class="nav-label">Notifications</span>
+          </button>
+        </nav>
+      </section>
+
+      <!-- STATUS LEGEND BOTTOM SHEET -->
+      <div class="legend-overlay" id="legend-overlay"></div>
+      <div class="legend-sheet" id="legend-sheet">
+        <div class="legend-handle"></div>
+        <h3 class="legend-title" id="legend-title">Temperature</h3>
+        <div class="legend-list" id="legend-list"></div>
+      </div>
+
+      <!-- CHATBOT POPUP -->
+      <section class="chatbot-popup hidden" id="chatbot-popup">
+        <div class="chatbot-header">
+          <h3>Chatbot Assistant</h3>
+          <button type="button" class="close-btn" id="close-chatbot">✕</button>
+        </div>
+        <div class="chatbot-body">
+          <p>This is Chatbot</p>
+        </div>
+      </section>
+
+      <!-- SETTINGS POPUP -->
+      <section class="settings-popup hidden" id="settings-popup">
+        <div class="settings-header">
+          <h3>Settings</h3>
+          <button type="button" class="close-btn" id="close-settings">✕</button>
+        </div>
+        <div class="settings-body">
+          <p>This is Settings</p>
+        </div>
+      </section>
     </div>
     <script src="app.js"></script>
+    <script src="js/main-app.js"></script>
+    <script src="js/dashboard.js"></script>
   </body>
 </html>

@@ -1,0 +1,10 @@
+/* ANALYTICS SECTION */
+#analytics {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+#analytics.hidden {
+    display: none;
+}

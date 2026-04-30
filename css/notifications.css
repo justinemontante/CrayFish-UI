@@ -1,0 +1,10 @@
+/* NOTIFICATIONS SECTION */
+#notifications {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+#notifications.hidden {
+    display: none;
+}
