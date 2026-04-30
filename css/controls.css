@@ -2,9 +2,339 @@
 #controls {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    background: #ffffff;
+    min-height: 100%;
+    padding: 12px;
+    gap: 10px;
 }
 
 #controls.hidden {
     display: none;
+}
+
+.controls-section-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary-teal);
+    padding: 4px 2px 0;
+}
+
+/* FEEDER CARD */
+.feeder-card {
+    background: #fff;
+    border: 1.5px solid rgba(11, 60, 73, 0.1);
+    border-radius: 20px;
+    padding: 14px;
+    box-shadow: 0 2px 12px rgba(11, 60, 73, 0.07);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.feeder-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.feeder-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: rgba(31, 165, 165, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.feeder-icon-wrap i {
+    font-size: 20px;
+    color: var(--primary-teal);
+}
+
+.feeder-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.feeder-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dark-text);
+}
+
+.feeder-ration {
+    font-size: 9px;
+    color: var(--dark-text);
+    opacity: 0.55;
+    line-height: 1.4;
+}
+
+.toggle-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.toggle-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--primary-teal);
+}
+
+/* TOGGLE SWITCH */
+.toggle-switch {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: rgba(11, 60, 73, 0.15);
+    border-radius: 22px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: var(--primary-teal);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(18px);
+}
+
+/* FEED NOW BUTTON */
+.feed-now-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, var(--dark-text), var(--primary-teal));
+    border: none;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.feed-now-btn:active {
+    transform: scale(0.97);
+    opacity: 0.9;
+}
+
+/* SCHEDULE */
+.schedule-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dark-text);
+    opacity: 0.6;
+    margin-bottom: 8px;
+}
+
+.schedule-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.schedule-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f7f7f7;
+    border-radius: 10px;
+    padding: 8px 12px;
+}
+
+.schedule-item i {
+    font-size: 12px;
+    color: var(--primary-teal);
+}
+
+.schedule-item span {
+    flex: 1;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+.schedule-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--dark-text);
+    opacity: 0.3;
+    font-size: 13px;
+    padding: 0;
+    transition: opacity 0.2s;
+}
+
+.schedule-remove:hover { opacity: 0.7; }
+
+.schedule-add-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.schedule-time-input {
+    flex: 1;
+    padding: 7px 10px;
+    font-size: 11px;
+    font-family: 'Poppins', sans-serif;
+    border: 1.5px solid rgba(11, 60, 73, 0.15);
+    border-radius: 10px;
+    color: var(--dark-text);
+    outline: none;
+}
+
+.schedule-add-btn {
+    padding: 7px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    background: var(--primary-teal);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* HARDWARE GRID */
+.hardware-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+
+.hardware-card {
+    background: #fff;
+    border: 1.5px solid rgba(11, 60, 73, 0.1);
+    border-radius: 18px;
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 10px rgba(11, 60, 73, 0.06);
+    transition: border-color 0.3s;
+}
+
+.hardware-card.on {
+    border-color: rgba(31, 165, 165, 0.4);
+}
+
+.hw-icon-wrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(11, 60, 73, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+
+.hardware-card.on .hw-icon-wrap {
+    background: rgba(31, 165, 165, 0.12);
+}
+
+.hw-icon-wrap i {
+    font-size: 18px;
+    color: var(--dark-text);
+    opacity: 0.4;
+    transition: color 0.3s, opacity 0.3s;
+}
+
+.hardware-card.on .hw-icon-wrap i {
+    color: var(--primary-teal);
+    opacity: 1;
+}
+
+.hw-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--dark-text);
+    text-align: center;
+}
+
+.hw-subtitle {
+    font-size: 8px;
+    color: var(--dark-text);
+    opacity: 0.4;
+    text-align: center;
+}
+
+.hw-status {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--dark-text);
+    opacity: 0.3;
+    transition: color 0.3s, opacity 0.3s;
+}
+
+.hardware-card.on .hw-status {
+    color: var(--primary-teal);
+    opacity: 1;
+}
+
+.schedule-edit,
+.schedule-save,
+.schedule-cancel {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 2px;
+    font-size: 12px;
+    transition: opacity 0.2s;
+}
+
+.schedule-edit { color: var(--primary-teal); opacity: 0.7; }
+.schedule-edit:hover { opacity: 1; }
+
+.schedule-save { color: #52c283; }
+.schedule-cancel { color: #E63946; }
+
+.edit-input {
+    flex: 1;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-family: 'Poppins', sans-serif;
+    border: 1.5px solid var(--primary-teal);
+    border-radius: 8px;
+    color: var(--dark-text);
+    outline: none;
 }

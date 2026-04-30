@@ -120,6 +120,11 @@
     flex: 1;
     overflow-y: auto;
     background: #ffffff;
+    scrollbar-width: none;
+}
+
+.main-content::-webkit-scrollbar {
+    display: none;
 }
 
 /* BOTTOM NAV */

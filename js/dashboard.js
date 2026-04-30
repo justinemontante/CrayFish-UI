@@ -56,6 +56,18 @@ function updateGauge(key, value) {
     s.badgeEl.childNodes[1]?.remove();
     s.badgeEl.appendChild(document.createTextNode(label));
     s.cardEl.className = `gauge-card ${state}`;
+
+    // Auto-push critical notifications
+    if (state === 'critical' && window.pushNotification) {
+        const NOTIF_MAP = {
+            temp: { icon: 'bi-thermometer-high', title: 'High Temperature Alert', msg: `Temperature is at ${value}°C — Lethal range detected.` },
+            ph:   { icon: 'bi-exclamation-triangle-fill', title: 'pH Critical Alert', msg: `pH level is at ${value} — Chemical danger detected.` },
+            do:   { icon: 'bi-droplet-fill', title: 'Low DO Alert', msg: `Dissolved Oxygen dropped to ${value} mg/L — Aerator triggered.` },
+            turb: { icon: 'bi-eye-slash-fill', title: 'Turbidity Alert', msg: `Turbidity is at ${value} NTU — Fouled water detected.` }
+        };
+        const n = NOTIF_MAP[key];
+        if (n) window.pushNotification('critical', n.icon, n.title, n.msg);
+    }
 }
 
 function simulateSensors() {

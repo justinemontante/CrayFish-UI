@@ -7,8 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css" />
     <!-- Main App Styles -->
     <link rel="stylesheet" href="css/bottom-nav.css" />
@@ -419,31 +420,372 @@
           </section>
 
           <section id="analytics" class="nav-section hidden">
-            <div class="placeholder-content">
-              <h2>THIS IS ANALYTICS</h2>
-              <p>Historical data graphs will appear here</p>
+
+            <!-- INSIGHTS CARD -->
+            <div class="analytics-insight" id="analytics-insight">
+              <i class="bi bi-lightbulb-fill"></i>
+              <span id="insight-text">Loading insights...</span>
+            </div>
+
+            <!-- TIMEFRAME FILTERS -->
+            <div class="analytics-filters">
+              <button class="filter-btn active" data-range="24h">24H</button>
+              <button class="filter-btn" data-range="7d">7 Days</button>
+              <button class="filter-btn" data-range="30d">30 Days</button>
+              <button class="filter-btn" data-range="custom">Custom</button>
+              <button class="export-btn" id="export-btn">
+                <i class="bi bi-download"></i>
+              </button>
+            </div>
+
+            <!-- CUSTOM DATE ROW -->
+            <div class="analytics-custom hidden" id="custom-range">
+              <input type="date" class="date-input" id="date-from" />
+              <span class="date-sep">to</span>
+              <input type="date" class="date-input" id="date-to" />
+              <button class="apply-btn" id="apply-custom">Apply</button>
+            </div>
+
+            <!-- CHARTS -->
+            <div class="analytics-charts">
+
+              <div class="chart-card" data-chart="temp">
+                <div class="chart-card-header">
+                  <span class="chart-card-title">Temperature</span>
+                  <span class="chart-card-unit">°C</span>
+                </div>
+                <canvas id="chart-temp"></canvas>
+              </div>
+
+              <div class="chart-card" data-chart="ph">
+                <div class="chart-card-header">
+                  <span class="chart-card-title">pH Level</span>
+                  <span class="chart-card-unit">pH</span>
+                </div>
+                <canvas id="chart-ph"></canvas>
+              </div>
+
+              <div class="chart-card" data-chart="do">
+                <div class="chart-card-header">
+                  <span class="chart-card-title">Dissolved O₂</span>
+                  <span class="chart-card-unit">mg/L</span>
+                </div>
+                <canvas id="chart-do"></canvas>
+              </div>
+
+              <div class="chart-card" data-chart="turb">
+                <div class="chart-card-header">
+                  <span class="chart-card-title">Turbidity</span>
+                  <span class="chart-card-unit">NTU</span>
+                </div>
+                <canvas id="chart-turb"></canvas>
+              </div>
+
+            </div>
+
+            <!-- CHART FULLSCREEN MODAL -->
+            <div class="chart-overlay" id="chart-overlay"></div>
+            <div class="chart-modal" id="chart-modal">
+              <div class="chart-modal-header">
+                <span class="chart-modal-title" id="chart-modal-title"></span>
+                <button class="chart-modal-close" id="chart-modal-close"><i class="bi bi-x-lg"></i></button>
+              </div>
+              <div class="chart-modal-body">
+                <canvas id="chart-modal-canvas"></canvas>
+              </div>
             </div>
           </section>
 
           <section id="tanks" class="nav-section hidden">
-            <div class="placeholder-content">
-              <h2>THIS IS TANKS</h2>
-              <p>Tank lifecycle management will appear here</p>
+
+            <!-- TANK SELECTOR TABS -->
+            <div class="tank-tabs">
+              <button class="tank-tab active" data-tank="1">Tank 1</button>
+              <button class="tank-tab" data-tank="2">Tank 2</button>
+              <button class="tank-tab" data-tank="3">Tank 3</button>
             </div>
+
+            <!-- TANK 1 -->
+            <div class="tank-panel active" id="tank-panel-1">
+              <div class="tank-panel-header teal">
+                <div class="tank-panel-icon"><i class="bi bi-heart-fill"></i></div>
+                <div>
+                  <p class="tank-panel-title">Breeding & Maternity</p>
+                  <p class="tank-panel-sub">Mating pairs & egg isolation</p>
+                </div>
+              </div>
+
+              <div class="tank-block">
+                <p class="tank-block-label">Active Mating Pairs</p>
+                <div class="tank-counter">
+                  <button class="counter-btn" data-target="pairs" data-action="dec"><i class="bi bi-dash"></i></button>
+                  <span class="counter-val" id="pairs-count">2</span>
+                  <button class="counter-btn" data-target="pairs" data-action="inc"><i class="bi bi-plus"></i></button>
+                </div>
+              </div>
+
+              <div class="tank-block">
+                <p class="tank-block-label">Berried Female Spotted</p>
+                <input type="date" class="tank-date-input" id="berried-date" />
+              </div>
+
+              <div class="tank-block">
+                <div class="tank-progress-label">
+                  <span>Hatching Countdown</span>
+                  <span id="hatch-days" class="tank-progress-value">-- days left</span>
+                </div>
+                <div class="tank-progress-bar"><div class="tank-progress-fill teal" id="hatch-fill"></div></div>
+                <p class="tank-progress-sub" id="hatch-sub">Set a date to start countdown</p>
+              </div>
+            </div>
+
+            <!-- TANK 2 -->
+            <div class="tank-panel" id="tank-panel-2">
+              <div class="tank-panel-header green">
+                <div class="tank-panel-icon green"><i class="bi bi-stars"></i></div>
+                <div>
+                  <p class="tank-panel-title">Nursery Tank</p>
+                  <p class="tank-panel-sub">Juvenile lifecycle tracker</p>
+                </div>
+              </div>
+
+              <div class="tank-block">
+                <p class="tank-block-label">Transfer Date from Tank 1</p>
+                <input type="date" class="tank-date-input" id="nursery-date" />
+              </div>
+
+              <div class="tank-stat-row">
+                <div class="tank-stat teal">
+                  <span class="tank-stat-val" id="nursery-age">--</span>
+                  <span class="tank-stat-label">Days Old</span>
+                </div>
+                <div class="tank-stat green">
+                  <span class="tank-stat-val">200-300</span>
+                  <span class="tank-stat-label">Est. Fries</span>
+                </div>
+                <div class="tank-stat amber">
+                  <span class="tank-stat-val" id="nursery-days-left">--</span>
+                  <span class="tank-stat-label">Days Left</span>
+                </div>
+              </div>
+
+              <div class="tank-block">
+                <div class="tank-progress-label">
+                  <span>Nursery Duration (30 days)</span>
+                  <span id="nursery-pct" class="tank-progress-value">0%</span>
+                </div>
+                <div class="tank-progress-bar"><div class="tank-progress-fill green" id="nursery-fill"></div></div>
+              </div>
+
+              <div class="tank-block">
+                <p class="tank-block-label">Visual Length Log (cm)</p>
+                <div class="tank-counter">
+                  <button class="counter-btn" data-target="length" data-action="dec"><i class="bi bi-dash"></i></button>
+                  <span class="counter-val" id="length-val">0.0</span>
+                  <button class="counter-btn" data-target="length" data-action="inc"><i class="bi bi-plus"></i></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- TANK 3 -->
+            <div class="tank-panel" id="tank-panel-3">
+              <div class="tank-panel-header amber">
+                <div class="tank-panel-icon amber"><i class="bi bi-graph-up-arrow"></i></div>
+                <div>
+                  <p class="tank-panel-title">Grow-out Tank</p>
+                  <p class="tank-panel-sub">Research & data collection hub</p>
+                </div>
+              </div>
+
+              <div class="tank-block">
+                <p class="tank-block-label">Initial Stock</p>
+                <div class="tank-counter">
+                  <button class="counter-btn" data-target="stock" data-action="dec"><i class="bi bi-dash"></i></button>
+                  <span class="counter-val" id="stock-count">100</span>
+                  <button class="counter-btn" data-target="stock" data-action="inc"><i class="bi bi-plus"></i></button>
+                </div>
+              </div>
+
+              <div class="tank-stat-row">
+                <div class="tank-stat green">
+                  <span class="tank-stat-val" id="live-count">100</span>
+                  <span class="tank-stat-label">Live Count</span>
+                </div>
+                <div class="tank-stat red">
+                  <span class="tank-stat-val" id="mortality-count">0</span>
+                  <span class="tank-stat-label">Mortality</span>
+                </div>
+                <div class="tank-stat teal">
+                  <span class="tank-stat-val" id="biomass-val">--</span>
+                  <span class="tank-stat-label">Biomass (g)</span>
+                </div>
+              </div>
+
+              <button class="log-mortality-btn" id="log-mortality-btn">
+                <i class="bi bi-dash-circle-fill"></i> Log Mortality
+              </button>
+
+              <div class="tank-divider"></div>
+
+              <div class="tank-block">
+                <div class="tank-progress-label">
+                  <span>Next Bi-weekly Sampling</span>
+                  <span id="sampling-days" class="tank-progress-value">7 days left</span>
+                </div>
+                <div class="tank-progress-bar"><div class="tank-progress-fill amber" id="sampling-fill"></div></div>
+              </div>
+
+              <div class="sampling-box">
+                <p class="sampling-prompt">Catch <strong id="sample-size">10</strong> random samples (10% of live count)</p>
+                <div class="tank-block">
+                  <p class="tank-block-label">Total Weight of Samples (g)</p>
+                  <input type="number" class="tank-number-input" id="sample-weight" placeholder="e.g. 85" />
+                </div>
+                <button class="compute-btn" id="compute-btn">Compute ABW & Biomass</button>
+                <div class="abw-result hidden" id="abw-result">
+                  <div class="tank-stat-row">
+                    <div class="tank-stat teal">
+                      <span class="tank-stat-val" id="abw-val">--</span>
+                      <span class="tank-stat-label">ABW (g)</span>
+                    </div>
+                    <div class="tank-stat green">
+                      <span class="tank-stat-val" id="feed-ration-val">--</span>
+                      <span class="tank-stat-label">Daily Feed (g)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- MORTALITY MODAL -->
+            <div class="mortality-overlay" id="mortality-overlay"></div>
+            <div class="mortality-modal" id="mortality-modal">
+              <div class="legend-handle"></div>
+              <p class="mortality-title">Log Mortality</p>
+              <p class="mortality-sub">How many crayfish died?</p>
+              <div class="tank-counter" style="justify-content:center; margin: 12px 0">
+                <button class="counter-btn" id="mort-dec"><i class="bi bi-dash"></i></button>
+                <span class="counter-val" id="mort-input-val">1</span>
+                <button class="counter-btn" id="mort-inc"><i class="bi bi-plus"></i></button>
+              </div>
+              <button class="compute-btn" id="mort-confirm">Confirm</button>
+              <button class="mortality-cancel" id="mort-cancel">Cancel</button>
+            </div>
+
           </section>
 
           <section id="controls" class="nav-section hidden">
-            <div class="placeholder-content">
-              <h2>THIS IS CONTROLS</h2>
-              <p>Hardware control center will appear here</p>
+
+            <!-- AUTO FEEDER -->
+            <div class="controls-section-label">Auto Feeder</div>
+            <div class="feeder-card">
+              <div class="feeder-top">
+                <div class="feeder-icon-wrap">
+                  <i class="bi bi-funnel-fill"></i>
+                </div>
+                <div class="feeder-info">
+                  <span class="feeder-title">Auto Feeder</span>
+                  <span class="feeder-ration" id="feeder-ration">System will dispense 44.1g today</span>
+                </div>
+                <div class="toggle-wrap">
+                  <span class="toggle-label" id="feeder-mode-label">Auto</span>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="feeder-toggle" checked />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <button class="feed-now-btn" id="feed-now-btn">
+                <i class="bi bi-play-fill"></i> Feed Now
+              </button>
+
+              <div class="schedule-list">
+                <div class="schedule-label">Feeding Schedule</div>
+                <div class="schedule-items" id="schedule-items">
+                  <div class="schedule-item">
+                    <i class="bi bi-clock-fill"></i>
+                    <span>8:00 AM</span>
+                    <button class="schedule-remove" data-time="8:00 AM"><i class="bi bi-x"></i></button>
+                  </div>
+                  <div class="schedule-item">
+                    <i class="bi bi-clock-fill"></i>
+                    <span>5:00 PM</span>
+                    <button class="schedule-remove" data-time="5:00 PM"><i class="bi bi-x"></i></button>
+                  </div>
+                </div>
+                <div class="schedule-add-row">
+                  <input type="time" class="schedule-time-input" id="schedule-time-input" />
+                  <button class="schedule-add-btn" id="schedule-add-btn">Add</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- HARDWARE CONTROLS -->
+            <div class="controls-section-label">Hardware Controls</div>
+            <div class="hardware-grid">
+
+              <div class="hardware-card" id="hw-aerator">
+                <div class="hw-icon-wrap">
+                  <i class="bi bi-wind"></i>
+                </div>
+                <span class="hw-title">Aerator</span>
+                <span class="hw-subtitle">Air Pump</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" class="hw-toggle" data-device="aerator" />
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="hw-status" id="status-aerator">OFF</span>
+              </div>
+
+              <div class="hardware-card" id="hw-pump">
+                <div class="hw-icon-wrap">
+                  <i class="bi bi-droplet-half"></i>
+                </div>
+                <span class="hw-title">Filtration</span>
+                <span class="hw-subtitle">Water Pump</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" class="hw-toggle" data-device="pump" />
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="hw-status" id="status-pump">OFF</span>
+              </div>
+
+              <div class="hardware-card" id="hw-fan">
+                <div class="hw-icon-wrap">
+                  <i class="bi bi-fan"></i>
+                </div>
+                <span class="hw-title">Temperature</span>
+                <span class="hw-subtitle">Cooling Fans</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" class="hw-toggle" data-device="fan" />
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="hw-status" id="status-fan">OFF</span>
+              </div>
+
             </div>
           </section>
 
           <section id="notifications" class="nav-section hidden">
-            <div class="placeholder-content">
-              <h2>THIS IS NOTIFICATIONS</h2>
-              <p>Alert logs and reminders will appear here</p>
+
+            <!-- FILTER TABS -->
+            <div class="notif-tabs">
+              <button class="notif-tab active" data-filter="all">All</button>
+              <button class="notif-tab" data-filter="critical">Critical</button>
+              <button class="notif-tab" data-filter="operational">Operational</button>
+              <button class="notif-tab" data-filter="reminder">Reminders</button>
             </div>
+
+            <!-- CLEAR ALL -->
+            <div class="notif-header-row">
+              <span class="notif-count" id="notif-count">6 Notifications</span>
+              <button class="notif-clear-btn" id="notif-clear-btn">Clear All</button>
+            </div>
+
+            <!-- NOTIFICATION LIST -->
+            <div class="notif-list" id="notif-list"></div>
+
           </section>
         </main>
 
@@ -505,5 +847,9 @@
     <script src="app.js"></script>
     <script src="js/main-app.js"></script>
     <script src="js/dashboard.js"></script>
+    <script src="js/analytics.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/tanks.js"></script>
+    <script src="js/notifications.js"></script>
   </body>
 </html>
