@@ -906,16 +906,78 @@
         </div>
       </section>
 
-      <!-- SETTINGS POPUP -->
-      <section class="settings-popup hidden" id="settings-popup">
-        <div class="settings-header">
-          <h3>Settings</h3>
-          <button type="button" class="close-btn" id="close-settings">✕</button>
+      <!-- SETTINGS PANEL -->
+      <div class="settings-overlay" id="settings-overlay"></div>
+      <div class="settings-panel" id="settings-panel">
+
+        <div class="settings-panel-header">
+          <button class="settings-back" id="settings-back"><i class="bi bi-arrow-left"></i></button>
+          <span class="settings-panel-title">Profile & Settings</span>
         </div>
-        <div class="settings-body">
-          <p>This is Settings</p>
+
+        <!-- PROFILE CARD -->
+        <div class="settings-profile-card">
+          <div class="settings-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+          </div>
+          <div class="settings-profile-info">
+            <p class="settings-profile-name" id="profile-display-name">Justine</p>
+            <p class="settings-profile-email" id="profile-display-email">justine@craycare.com</p>
+          </div>
         </div>
-      </section>
+
+        <div class="settings-menu">
+          <p class="settings-menu-label">Account</p>
+          <div class="settings-menu-item" id="menu-edit-profile">
+            <div class="settings-menu-icon teal"><i class="bi bi-person-fill"></i></div>
+            <span>Edit Profile</span>
+            <i class="bi bi-chevron-right settings-chevron"></i>
+          </div>
+          <div class="settings-menu-item" id="menu-change-password">
+            <div class="settings-menu-icon teal"><i class="bi bi-lock-fill"></i></div>
+            <span>Change Password</span>
+            <i class="bi bi-chevron-right settings-chevron"></i>
+          </div>
+          <p class="settings-menu-label">Preferences</p>
+          <div class="settings-menu-item" id="menu-notifications">
+            <div class="settings-menu-icon amber"><i class="bi bi-bell-fill"></i></div>
+            <span>Notifications</span>
+            <i class="bi bi-chevron-right settings-chevron"></i>
+          </div>
+          <div class="settings-menu-item" id="menu-sound">
+            <div class="settings-menu-icon amber"><i class="bi bi-volume-up-fill"></i></div>
+            <span>Sound & Vibration</span>
+            <i class="bi bi-chevron-right settings-chevron"></i>
+          </div>
+          <p class="settings-menu-label">Support</p>
+          <div class="settings-menu-item" id="menu-help">
+            <div class="settings-menu-icon green"><i class="bi bi-question-circle-fill"></i></div>
+            <span>Help & Manual</span>
+            <i class="bi bi-chevron-right settings-chevron"></i>
+          </div>
+          <div class="settings-menu-item" id="menu-about">
+            <div class="settings-menu-icon green"><i class="bi bi-info-circle-fill"></i></div>
+            <span>About CrayCare</span>
+            <i class="bi bi-chevron-right settings-chevron"></i>
+          </div>
+          <div class="settings-menu-item logout" id="logout-btn">
+            <div class="settings-menu-icon red"><i class="bi bi-box-arrow-right"></i></div>
+            <span>Logout</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB PANEL -->
+      <div class="settings-sub-panel" id="settings-sub-panel">
+        <div class="settings-panel-header">
+          <button class="settings-back" id="sub-panel-back"><i class="bi bi-arrow-left"></i></button>
+          <span class="settings-panel-title" id="sub-panel-title"></span>
+        </div>
+        <div class="settings-sub-content" id="sub-panel-content"></div>
+      </div>
     </div>
     <script src="app.js"></script>
     <script src="js/main-app.js"></script>

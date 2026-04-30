@@ -203,19 +203,236 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Settings Toggle
-    const profileBtn = document.getElementById('profile-btn');
-    const settingsPopup = document.getElementById('settings-popup');
-    const closeSettings = document.getElementById('close-settings');
-    
-    if (profileBtn && settingsPopup) {
-        profileBtn.addEventListener('click', () => {
-            settingsPopup.classList.toggle('hidden');
-        });
+    // Settings Panel
+    const profileBtn      = document.getElementById('profile-btn');
+    const settingsPanel   = document.getElementById('settings-panel');
+    const settingsOverlay = document.getElementById('settings-overlay');
+    const settingsBack    = document.getElementById('settings-back');
+    const subPanel        = document.getElementById('settings-sub-panel');
+    const subPanelBack    = document.getElementById('sub-panel-back');
+    const subPanelTitle   = document.getElementById('sub-panel-title');
+    const subPanelContent = document.getElementById('sub-panel-content');
+
+    // Profile data (frontend only)
+    const profile = { name: 'Justine', email: 'justine@craycare.com', farm: 'CrayCare Farm' };
+
+    function openSettings() {
+        const statusBar = document.querySelector('.status-bar');
+        const h = statusBar ? statusBar.offsetHeight : 28;
+        document.documentElement.style.setProperty('--status-bar-height', h + 'px');
+        settingsPanel.classList.add('show');
+        settingsOverlay.classList.add('show');
     }
-    if (closeSettings && settingsPopup) {
-        closeSettings.addEventListener('click', () => {
-            settingsPopup.classList.add('hidden');
+
+    function closeSettings() {
+        settingsPanel.classList.remove('show');
+        settingsOverlay.classList.remove('show');
+        subPanel.classList.remove('show');
+    }
+
+    function openSubPanel(title, html) {
+        subPanelTitle.textContent = title;
+        subPanelContent.innerHTML = html;
+        subPanel.classList.add('show');
+    }
+
+    if (profileBtn)      profileBtn.addEventListener('click', openSettings);
+    if (settingsBack)    settingsBack.addEventListener('click', closeSettings);
+    if (settingsOverlay) settingsOverlay.addEventListener('click', closeSettings);
+    if (subPanelBack)    subPanelBack.addEventListener('click', () => subPanel.classList.remove('show'));
+
+    // Edit Profile
+    document.getElementById('menu-edit-profile').addEventListener('click', () => {
+        openSubPanel('Edit Profile', `
+            <div class="settings-form-card">
+                <div class="settings-field">
+                    <label>Full Name</label>
+                    <input type="text" id="edit-name" value="${profile.name}" />
+                </div>
+                <div class="settings-field">
+                    <label>Farm Name</label>
+                    <input type="text" id="edit-farm" value="${profile.farm}" />
+                </div>
+                <div class="settings-field">
+                    <label>Email</label>
+                    <input type="email" id="edit-email" value="${profile.email}" />
+                </div>
+                <button class="settings-save-btn" id="save-profile-btn">Save Changes</button>
+            </div>
+        `);
+        document.getElementById('save-profile-btn').addEventListener('click', () => {
+            profile.name  = document.getElementById('edit-name').value || profile.name;
+            profile.farm  = document.getElementById('edit-farm').value || profile.farm;
+            profile.email = document.getElementById('edit-email').value || profile.email;
+            document.getElementById('profile-display-name').textContent  = profile.name;
+            document.getElementById('profile-display-email').textContent = profile.email;
+            subPanel.classList.remove('show');
+        });
+    });
+
+    // Change Password
+    document.getElementById('menu-change-password').addEventListener('click', () => {
+        openSubPanel('Change Password', `
+            <div class="settings-form-card">
+                <div class="settings-field">
+                    <label>Current Password</label>
+                    <input type="password" placeholder="Enter current password" />
+                </div>
+                <div class="settings-field">
+                    <label>New Password</label>
+                    <input type="password" id="new-pass" placeholder="Enter new password" />
+                </div>
+                <div class="settings-field">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="confirm-pass" placeholder="Confirm new password" />
+                </div>
+                <button class="settings-save-btn" id="save-pass-btn">Update Password</button>
+            </div>
+        `);
+        document.getElementById('save-pass-btn').addEventListener('click', () => {
+            const np = document.getElementById('new-pass').value;
+            const cp = document.getElementById('confirm-pass').value;
+            if (np && np === cp) subPanel.classList.remove('show');
+        });
+    });
+
+    // Notifications
+    document.getElementById('menu-notifications').addEventListener('click', () => {
+        openSubPanel('Notifications', `
+            <p class="settings-section-label">Alert Settings</p>
+            <div class="settings-toggle-row">
+                <div class="settings-toggle-info">
+                    <span class="settings-toggle-title">Allow Notifications</span>
+                    <span class="settings-toggle-sub">Master toggle for all alerts</span>
+                </div>
+                <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+            </div>
+            <div class="settings-toggle-row">
+                <div class="settings-toggle-info">
+                    <span class="settings-toggle-title">Critical Water Warnings</span>
+                    <span class="settings-toggle-sub">pH, Temp, DO, Turbidity alerts</span>
+                </div>
+                <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+            </div>
+            <div class="settings-toggle-row">
+                <div class="settings-toggle-info">
+                    <span class="settings-toggle-title">Feeding Confirmations</span>
+                    <span class="settings-toggle-sub">Notify when feeder dispenses</span>
+                </div>
+                <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+            </div>
+            <div class="settings-toggle-row">
+                <div class="settings-toggle-info">
+                    <span class="settings-toggle-title">Sampling Reminders</span>
+                    <span class="settings-toggle-sub">Bi-weekly Tank 3 reminders</span>
+                </div>
+                <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+            </div>
+        `);
+    });
+
+    // Sound & Vibration
+    document.getElementById('menu-sound').addEventListener('click', () => {
+        openSubPanel('Sound & Vibration', `
+            <p class="settings-section-label">Audio</p>
+            <div class="settings-toggle-row">
+                <div class="settings-toggle-info">
+                    <span class="settings-toggle-title">Play Alert Sound</span>
+                    <span class="settings-toggle-sub">Loud alarm for critical alerts</span>
+                </div>
+                <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+            </div>
+            <div class="settings-toggle-row">
+                <div class="settings-toggle-info">
+                    <span class="settings-toggle-title">Notification Sound</span>
+                    <span class="settings-toggle-sub">Sound for all notifications</span>
+                </div>
+                <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+            </div>
+            <p class="settings-section-label">Haptics</p>
+            <div class="settings-toggle-row">
+                <div class="settings-toggle-info">
+                    <span class="settings-toggle-title">Vibrate on Alert</span>
+                    <span class="settings-toggle-sub">Feel alerts in noisy environments</span>
+                </div>
+                <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
+            </div>
+        `);
+    });
+
+    // Help & Manual
+    document.getElementById('menu-help').addEventListener('click', () => {
+        openSubPanel('Help & Manual', `
+            <div class="settings-help-item">
+                <i class="bi bi-book-fill"></i>
+                <div class="settings-help-item-info">
+                    <span class="settings-help-item-title">User Manual</span>
+                    <span class="settings-help-item-sub">How to use CrayCare step by step</span>
+                </div>
+                <i class="bi bi-chevron-right settings-chevron"></i>
+            </div>
+            <div class="settings-help-item">
+                <i class="bi bi-wifi"></i>
+                <div class="settings-help-item-info">
+                    <span class="settings-help-item-title">Sensor Setup Guide</span>
+                    <span class="settings-help-item-sub">Connect and calibrate your IoT sensors</span>
+                </div>
+                <i class="bi bi-chevron-right settings-chevron"></i>
+            </div>
+            <div class="settings-help-item">
+                <i class="bi bi-chat-dots-fill"></i>
+                <div class="settings-help-item-info">
+                    <span class="settings-help-item-title">Contact Support</span>
+                    <span class="settings-help-item-sub">support@craycare.com</span>
+                </div>
+                <i class="bi bi-chevron-right settings-chevron"></i>
+            </div>
+            <div class="settings-help-item">
+                <i class="bi bi-youtube"></i>
+                <div class="settings-help-item-info">
+                    <span class="settings-help-item-title">Video Tutorials</span>
+                    <span class="settings-help-item-sub">Watch setup and usage guides</span>
+                </div>
+                <i class="bi bi-chevron-right settings-chevron"></i>
+            </div>
+        `);
+    });
+
+    // About
+    document.getElementById('menu-about').addEventListener('click', () => {
+        openSubPanel('About CrayCare', `
+            <div class="settings-about-card">
+                <img src="resources/images/logo.png" class="settings-about-logo" />
+                <p class="settings-about-name"><span class="text-cray">Cray</span><span class="text-care">Care</span></p>
+                <p class="settings-about-version">Version 1.0.0</p>
+                <p class="settings-about-desc">An integrated IoT-based monitoring and automated management system for sustainable crayfish aquaculture.</p>
+            </div>
+            <div class="settings-help-item">
+                <i class="bi bi-shield-check-fill"></i>
+                <div class="settings-help-item-info">
+                    <span class="settings-help-item-title">Privacy Policy</span>
+                    <span class="settings-help-item-sub">How we handle your data</span>
+                </div>
+                <i class="bi bi-chevron-right settings-chevron"></i>
+            </div>
+            <div class="settings-help-item">
+                <i class="bi bi-file-text-fill"></i>
+                <div class="settings-help-item-info">
+                    <span class="settings-help-item-title">Terms of Service</span>
+                    <span class="settings-help-item-sub">Usage terms and conditions</span>
+                </div>
+                <i class="bi bi-chevron-right settings-chevron"></i>
+            </div>
+        `);
+    });
+
+    // Logout
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            closeSettings();
+            mainApp.classList.add('hidden');
+            showScreen('login');
         });
     }
 });
