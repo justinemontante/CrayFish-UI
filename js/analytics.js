@@ -137,6 +137,12 @@ function buildCharts(range) {
         charts[key] = new Chart(document.getElementById(`chart-${key}`), configs[key]);
     });
 
+    const avg = arr => (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1);
+    document.getElementById('avg-temp').textContent = `Avg: ${avg(datasets.temp)}°C`;
+    document.getElementById('avg-ph').textContent   = `Avg: ${avg(datasets.ph)}`;
+    document.getElementById('avg-do').textContent   = `Avg: ${avg(datasets.do)} mg/L`;
+    document.getElementById('avg-turb').textContent = `Avg: ${avg(datasets.turb)} NTU`;
+
     // System Insights
     const peakTemp = Math.max(...datasets.temp);
     const peakTurb = Math.max(...datasets.turb);

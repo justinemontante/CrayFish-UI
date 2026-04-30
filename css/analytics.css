@@ -157,6 +157,18 @@
     color: var(--dark-text);
 }
 
+.chart-card-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.chart-avg {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--primary-teal);
+}
+
 .chart-card-unit {
     font-size: 10px;
     font-weight: 600;

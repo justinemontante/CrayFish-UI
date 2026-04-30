@@ -5,49 +5,64 @@ const NOTIFS = [
         id: 1, type: 'critical', icon: 'bi-thermometer-high',
         title: 'High Temperature Alert',
         message: 'Temperature reached 32.4°C — Cooling fans triggered automatically.',
-        time: '2 mins ago', unread: true
+        timestamp: Date.now() - 2 * 60000, unread: true
     },
     {
         id: 2, type: 'critical', icon: 'bi-droplet-fill',
         title: 'Low DO Alert',
         message: 'Dissolved Oxygen dropped to 2.8 mg/L — Aerator activated automatically.',
-        time: '15 mins ago', unread: true
+        timestamp: Date.now() - 15 * 60000, unread: true
     },
     {
         id: 3, type: 'operational', icon: 'bi-check-circle-fill',
         title: 'Feeding Schedule Completed',
         message: 'Auto Feeder dispensed 44.1g at 8:00 AM successfully.',
-        time: '2 hrs ago', unread: false
+        timestamp: Date.now() - 2 * 3600000, unread: false
     },
     {
         id: 4, type: 'reminder', icon: 'bi-calendar-check-fill',
         title: 'Bi-weekly Sampling Due',
         message: 'Tank 3 Grow-out is ready for sampling. Catch 10 random samples.',
-        time: '3 hrs ago', unread: true
+        timestamp: Date.now() - 3 * 3600000, unread: true
     },
     {
         id: 5, type: 'operational', icon: 'bi-funnel-fill',
         title: 'Filtration Running',
         message: 'Water pump has been running for 6 hours. System is circulating normally.',
-        time: '6 hrs ago', unread: false
+        timestamp: Date.now() - 86400000 - 3600000, unread: false
     },
     {
         id: 6, type: 'reminder', icon: 'bi-stars',
         title: 'Nursery Transfer Ready',
         message: 'Batch 01 is 30 days old. Ready for counting and transfer to Tank 3.',
-        time: 'Yesterday', unread: false
+        timestamp: Date.now() - 86400000 - 7200000, unread: false
+    },
+    {
+        id: 7, type: 'critical', icon: 'bi-exclamation-triangle-fill',
+        title: 'pH Critical Alert',
+        message: 'pH dropped to 6.2 — Chemical danger detected.',
+        timestamp: Date.now() - 2 * 86400000, unread: false
     }
 ];
 
 let notifications = [...NOTIFS];
 let activeFilter = 'all';
 
-function timeAgo(date) {
-    const diff = Math.floor((Date.now() - date) / 1000);
+function timeAgo(ts) {
+    const diff = Math.floor((Date.now() - ts) / 1000);
     if (diff < 60) return 'Just now';
     if (diff < 3600) return `${Math.floor(diff / 60)} mins ago`;
     if (diff < 86400) return `${Math.floor(diff / 3600)} hrs ago`;
-    return 'Yesterday';
+    return new Date(ts).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
+function getGroup(ts) {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    const yesterdayStart = todayStart - 86400000;
+    if (ts >= todayStart) return 'Today';
+    if (ts >= yesterdayStart) return 'Yesterday';
+    return new Date(ts).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
 function renderNotifications() {
@@ -68,22 +83,30 @@ function renderNotifications() {
         return;
     }
 
-    list.innerHTML = filtered.map(n => `
-        <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" data-id="${n.id}">
-            <div class="notif-icon ${n.type}">
-                <i class="bi ${n.icon}"></i>
+    // Group by date
+    const groups = {};
+    filtered.forEach(n => {
+        const g = getGroup(n.timestamp);
+        if (!groups[g]) groups[g] = [];
+        groups[g].push(n);
+    });
+
+    list.innerHTML = Object.entries(groups).map(([group, items]) => `
+        <div class="notif-group-label">${group}</div>
+        ${items.map(n => `
+            <div class="notif-item ${n.type} ${n.unread ? 'unread' : ''}" data-id="${n.id}">
+                <div class="notif-icon ${n.type}"><i class="bi ${n.icon}"></i></div>
+                <div class="notif-content">
+                    <span class="notif-title">${n.title}</span>
+                    <span class="notif-message">${n.message}</span>
+                    <span class="notif-time">${timeAgo(n.timestamp)}</span>
+                </div>
+                <div class="notif-unread-dot"></div>
+                <button class="notif-dismiss" data-id="${n.id}"><i class="bi bi-x"></i></button>
             </div>
-            <div class="notif-content">
-                <span class="notif-title">${n.title}</span>
-                <span class="notif-message">${n.message}</span>
-                <span class="notif-time">${n.time}</span>
-            </div>
-            <div class="notif-unread-dot"></div>
-            <button class="notif-dismiss" data-id="${n.id}"><i class="bi bi-x"></i></button>
-        </div>
+        `).join('')}
     `).join('');
 
-    // Mark as read on click
     list.querySelectorAll('.notif-item').forEach(item => {
         item.addEventListener('click', (e) => {
             if (e.target.closest('.notif-dismiss')) return;
@@ -93,7 +116,6 @@ function renderNotifications() {
         });
     });
 
-    // Dismiss
     list.querySelectorAll('.notif-dismiss').forEach(btn => {
         btn.addEventListener('click', () => {
             const id = parseInt(btn.dataset.id);
@@ -119,21 +141,18 @@ document.querySelectorAll('.notif-tab').forEach(tab => {
 
 // Clear all
 document.getElementById('notif-clear-btn').addEventListener('click', () => {
-    const filtered = activeFilter === 'all'
+    notifications = activeFilter === 'all'
         ? []
         : notifications.filter(n => n.type !== activeFilter);
-    notifications = filtered;
     renderNotifications();
 });
 
-// Auto-push notification from dashboard sensor alerts
+// Auto-push from dashboard
 function pushNotification(type, icon, title, message) {
-    const id = Date.now();
-    notifications.unshift({ id, type, icon, title, message, time: 'Just now', unread: true });
+    notifications.unshift({ id: Date.now(), type, icon, title, message, timestamp: Date.now(), unread: true });
     renderNotifications();
 }
 
-// Expose globally so dashboard.js can call it
 window.pushNotification = pushNotification;
 
 renderNotifications();

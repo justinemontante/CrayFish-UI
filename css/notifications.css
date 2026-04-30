@@ -183,3 +183,13 @@
 
 .notif-empty i { font-size: 36px; color: var(--dark-text); }
 .notif-empty p { font-size: 12px; font-weight: 600; color: var(--dark-text); margin: 0; }
+
+/* GROUP LABEL */
+.notif-group-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 4px 2px 2px;
+}
