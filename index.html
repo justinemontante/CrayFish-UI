@@ -453,7 +453,9 @@
                 <div class="chart-card-header">
                   <span class="chart-card-title">Temperature</span>
                   <div class="chart-card-right">
-                    <span class="chart-avg" id="avg-temp">Avg: --</span>
+                    <span class="chart-stat" id="min-temp">Min: --</span>
+                    <span class="chart-stat" id="avg-temp">Avg: --</span>
+                    <span class="chart-stat" id="max-temp">Max: --</span>
                   </div>
                 </div>
                 <canvas id="chart-temp"></canvas>
@@ -463,7 +465,9 @@
                 <div class="chart-card-header">
                   <span class="chart-card-title">pH Level</span>
                   <div class="chart-card-right">
-                    <span class="chart-avg" id="avg-ph">Avg: --</span>
+                    <span class="chart-stat" id="min-ph">Min: --</span>
+                    <span class="chart-stat" id="avg-ph">Avg: --</span>
+                    <span class="chart-stat" id="max-ph">Max: --</span>
                   </div>
                 </div>
                 <canvas id="chart-ph"></canvas>
@@ -473,7 +477,9 @@
                 <div class="chart-card-header">
                   <span class="chart-card-title">Dissolved O₂</span>
                   <div class="chart-card-right">
-                    <span class="chart-avg" id="avg-do">Avg: --</span>
+                    <span class="chart-stat" id="min-do">Min: --</span>
+                    <span class="chart-stat" id="avg-do">Avg: --</span>
+                    <span class="chart-stat" id="max-do">Max: --</span>
                   </div>
                 </div>
                 <canvas id="chart-do"></canvas>
@@ -483,7 +489,9 @@
                 <div class="chart-card-header">
                   <span class="chart-card-title">Turbidity</span>
                   <div class="chart-card-right">
-                    <span class="chart-avg" id="avg-turb">Avg: --</span>
+                    <span class="chart-stat" id="min-turb">Min: --</span>
+                    <span class="chart-stat" id="avg-turb">Avg: --</span>
+                    <span class="chart-stat" id="max-turb">Max: --</span>
                   </div>
                 </div>
                 <canvas id="chart-turb"></canvas>
@@ -895,7 +903,15 @@
         <button class="compute-btn" id="gauge-modal-close">Close</button>
       </div>
 
-      <!-- CHATBOT POPUP -->
+      <!-- LOGOUT CONFIRM MODAL -->
+      <div class="logout-overlay" id="logout-overlay"></div>
+      <div class="logout-modal" id="logout-modal">
+        <div class="legend-handle"></div>
+        <p class="logout-title">Logout</p>
+        <p class="logout-sub">Are you sure you want to logout?</p>
+        <button class="compute-btn" id="logout-confirm">Yes, Logout</button>
+        <button class="mortality-cancel" id="logout-cancel">Cancel</button>
+      </div>
       <section class="chatbot-popup hidden" id="chatbot-popup">
         <div class="chatbot-header">
           <h3>Chatbot Assistant</h3>
@@ -986,5 +1002,6 @@
     <script src="js/controls.js"></script>
     <script src="js/tanks.js"></script>
     <script src="js/notifications.js"></script>
+
   </body>
 </html>

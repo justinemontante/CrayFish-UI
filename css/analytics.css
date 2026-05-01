@@ -163,8 +163,8 @@
     gap: 6px;
 }
 
-.chart-avg {
-    font-size: 10px;
+.chart-avg, .chart-stat {
+    font-size: 9px;
     font-weight: 700;
     color: var(--primary-teal);
 }

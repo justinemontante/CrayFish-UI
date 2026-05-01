@@ -145,10 +145,24 @@ function buildCharts(range) {
     });
 
     const avg = arr => (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(1);
-    document.getElementById('avg-temp').textContent = `Avg: ${avg(datasets.temp)}°C`;
-    document.getElementById('avg-ph').textContent   = `Avg: ${avg(datasets.ph)}`;
-    document.getElementById('avg-do').textContent   = `Avg: ${avg(datasets.do)} mg/L`;
-    document.getElementById('avg-turb').textContent = `Avg: ${avg(datasets.turb)} NTU`;
+    const min = arr => Math.min(...arr).toFixed(1);
+    const max = arr => Math.max(...arr).toFixed(1);
+
+    document.getElementById('avg-temp').textContent  = `Avg: ${avg(datasets.temp)}`;
+    document.getElementById('min-temp').textContent  = `Min: ${min(datasets.temp)}`;
+    document.getElementById('max-temp').textContent  = `Max: ${max(datasets.temp)}`;
+
+    document.getElementById('avg-ph').textContent    = `Avg: ${avg(datasets.ph)}`;
+    document.getElementById('min-ph').textContent    = `Min: ${min(datasets.ph)}`;
+    document.getElementById('max-ph').textContent    = `Max: ${max(datasets.ph)}`;
+
+    document.getElementById('avg-do').textContent    = `Avg: ${avg(datasets.do)}`;
+    document.getElementById('min-do').textContent    = `Min: ${min(datasets.do)}`;
+    document.getElementById('max-do').textContent    = `Max: ${max(datasets.do)}`;
+
+    document.getElementById('avg-turb').textContent  = `Avg: ${avg(datasets.turb)}`;
+    document.getElementById('min-turb').textContent  = `Min: ${min(datasets.turb)}`;
+    document.getElementById('max-turb').textContent  = `Max: ${max(datasets.turb)}`;
 
     // System Insights
     const peakTemp = Math.max(...datasets.temp);

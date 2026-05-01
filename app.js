@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Actions
     document.getElementById('google-signup').addEventListener('click', (e) => {
         e.preventDefault();
-        showScreen('verify');
+        showMainApp();
     });
 
     document.getElementById('signup-submit').addEventListener('click', (e) => {
@@ -132,7 +132,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Bottom Nav Click Handlers
+    // Google Login
+    document.getElementById('google-login').addEventListener('click', (e) => {
+        e.preventDefault();
+        showMainApp();
+    });
     navBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             const target = btn.getAttribute('data-target');
@@ -245,24 +249,47 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('menu-edit-profile').addEventListener('click', () => {
         openSubPanel('Edit Profile', `
             <div class="settings-form-card">
+                <div class="profile-upload-wrap">
+                    <div class="profile-upload-avatar" id="upload-avatar-preview">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                        </svg>
+                    </div>
+                    <label class="profile-upload-btn" for="avatar-upload">
+                        <i class="bi bi-camera-fill"></i> Change Photo
+                    </label>
+                    <input type="file" id="avatar-upload" accept="image/*" style="display:none" />
+                </div>
                 <div class="settings-field">
                     <label>Full Name</label>
                     <input type="text" id="edit-name" value="${profile.name}" />
                 </div>
                 <div class="settings-field">
-                    <label>Farm Name</label>
-                    <input type="text" id="edit-farm" value="${profile.farm}" />
-                </div>
-                <div class="settings-field">
                     <label>Email</label>
-                    <input type="email" id="edit-email" value="${profile.email}" />
+                    <input type="email" id="edit-email" value="${profile.email}" disabled style="opacity:0.5;cursor:not-allowed" />
                 </div>
                 <button class="settings-save-btn" id="save-profile-btn">Save Changes</button>
             </div>
         `);
+
+        // Avatar upload preview
+        document.getElementById('avatar-upload').addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                const preview = document.getElementById('upload-avatar-preview');
+                preview.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" />`;
+                // Update main profile avatar too
+                document.querySelector('.settings-avatar').innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" />`;
+                document.querySelector('.profile-avatar').innerHTML = `<img src="${e.target.result}" style="width:34px;height:34px;object-fit:cover;border-radius:50%" />`;
+            };
+            reader.readAsDataURL(file);
+        });
+
         document.getElementById('save-profile-btn').addEventListener('click', () => {
             profile.name  = document.getElementById('edit-name').value || profile.name;
-            profile.farm  = document.getElementById('edit-farm').value || profile.farm;
             profile.email = document.getElementById('edit-email').value || profile.email;
             document.getElementById('profile-display-name').textContent  = profile.name;
             document.getElementById('profile-display-email').textContent = profile.email;
@@ -387,14 +414,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <i class="bi bi-chevron-right settings-chevron"></i>
             </div>
-            <div class="settings-help-item">
-                <i class="bi bi-youtube"></i>
-                <div class="settings-help-item-info">
-                    <span class="settings-help-item-title">Video Tutorials</span>
-                    <span class="settings-help-item-sub">Watch setup and usage guides</span>
-                </div>
-                <i class="bi bi-chevron-right settings-chevron"></i>
-            </div>
         `);
     });
 
@@ -427,12 +446,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Logout
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-            closeSettings();
-            mainApp.classList.add('hidden');
-            showScreen('login');
-        });
+    const logoutBtn     = document.getElementById('logout-btn');
+    const logoutOverlay = document.getElementById('logout-overlay');
+    const logoutModal   = document.getElementById('logout-modal');
+
+    function openLogoutModal() {
+        logoutOverlay.classList.add('show');
+        logoutModal.classList.add('show');
     }
+
+    function closeLogoutModal() {
+        logoutOverlay.classList.remove('show');
+        logoutModal.classList.remove('show');
+    }
+
+    if (logoutBtn) logoutBtn.addEventListener('click', openLogoutModal);
+    logoutOverlay.addEventListener('click', closeLogoutModal);
+    document.getElementById('logout-cancel').addEventListener('click', closeLogoutModal);
+    document.getElementById('logout-confirm').addEventListener('click', () => {
+        closeLogoutModal();
+        closeSettings();
+        mainApp.classList.add('hidden');
+        showScreen('login');
+    });
 });

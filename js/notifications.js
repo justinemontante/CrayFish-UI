@@ -79,6 +79,8 @@ function renderNotifications() {
     const list = document.getElementById('notif-list');
     const filtered = activeFilter === 'all'
         ? notifications
+        : activeFilter === 'critical'
+        ? notifications.filter(n => n.type === 'critical' && getGroup(n.timestamp) === 'Today')
         : notifications.filter(n => n.type === activeFilter);
 
     document.getElementById('notif-count').textContent =
