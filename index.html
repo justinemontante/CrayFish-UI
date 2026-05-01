@@ -539,28 +539,181 @@
                 </div>
               </div>
 
-              <div class="tank-block">
-                <p class="tank-block-label">Active Mating Pairs</p>
-                <div class="tank-counter">
-                  <button class="counter-btn" data-target="pairs" data-action="dec"><i class="bi bi-dash"></i></button>
-                  <span class="counter-val" id="pairs-count">2</span>
-                  <button class="counter-btn" data-target="pairs" data-action="inc"><i class="bi bi-plus"></i></button>
+              <!-- INNER TABS -->
+              <div class="breed-tabs">
+                <button class="breed-tab active" data-breed="groups">🦞 Groups</button>
+                <button class="breed-tab" data-breed="isolation">📦 Isolation</button>
+                <button class="breed-tab" data-breed="hatching">🐣 Hatching</button>
+                <button class="breed-tab" data-breed="ai">🤖 AI</button>
+                <button class="breed-tab" data-breed="score">📊 Score</button>
+              </div>
+
+              <!-- ── 3. BREEDING GROUPS ── -->
+              <div class="breed-panel active" id="breed-groups">
+                <div class="breed-section-header">
+                  <span class="breed-section-title">Breeding Groups</span>
+                  <button class="breed-add-btn" id="add-group-btn"><i class="bi bi-plus"></i> Add Group</button>
+                </div>
+
+                <div class="breed-group-list" id="breed-group-list">
+
+                  <!-- GROUP A -->
+                  <div class="breed-group-card">
+                    <div class="breed-group-photo">
+                      <div class="breed-group-photo-placeholder"><i class="bi bi-camera"></i></div>
+                    </div>
+                    <div class="breed-group-info">
+                      <div class="breed-group-top">
+                        <span class="breed-group-name">Group A</span>
+                        <div class="breed-group-actions">
+                          <button class="breed-icon-btn edit"><i class="bi bi-pencil-fill"></i></button>
+                          <button class="breed-icon-btn delete"><i class="bi bi-trash-fill"></i></button>
+                        </div>
+                      </div>
+                      <div class="breed-group-members">
+                        <span class="breed-member-tag male">♂ 1 Male</span>
+                        <span class="breed-member-tag female">♀ 4 Females</span>
+                      </div>
+                      <div class="breed-female-tags">
+                        <span class="breed-female-tag">F1</span>
+                        <span class="breed-female-tag">F2</span>
+                        <span class="breed-female-tag">F3</span>
+                        <span class="breed-female-tag berried">F4 🫐 Berried</span>
+                      </div>
+                      <div class="breed-group-meta">
+                        <i class="bi bi-calendar3"></i>
+                        <span>Created: June 20, 2025</span>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
 
-              <div class="tank-block">
-                <p class="tank-block-label">Berried Female Spotted</p>
-                <input type="date" class="tank-date-input" id="berried-date" />
+              <!-- ── 4. ISOLATION BOXES ── -->
+              <div class="breed-panel" id="breed-isolation">
+                <div class="breed-section-header">
+                  <span class="breed-section-title">Isolation Boxes</span>
+                  <button class="breed-add-btn" id="add-box-btn"><i class="bi bi-plus"></i> Add Box</button>
+                </div>
+                <div class="iso-box-grid" id="iso-box-grid"></div>
               </div>
 
-              <div class="tank-block">
-                <div class="tank-progress-label">
-                  <span>Hatching Countdown</span>
-                  <span id="hatch-days" class="tank-progress-value">-- days left</span>
+              <!-- ── 5. HATCHING MONITOR ── -->
+              <div class="breed-panel" id="breed-hatching">
+                <div class="breed-section-header">
+                  <span class="breed-section-title">Hatching Monitor</span>
+                  <span class="hatch-note">Typical: 18–25 days</span>
                 </div>
-                <div class="tank-progress-bar"><div class="tank-progress-fill teal" id="hatch-fill"></div></div>
-                <p class="tank-progress-sub" id="hatch-sub">Set a date to start countdown</p>
+                <div id="hatch-card-list"></div>
+                <div class="hatch-transfer-banner" id="hatch-transfer-banner" style="display:none">
+                  <div class="hatch-transfer-info">
+                    <i class="bi bi-arrow-right-circle-fill"></i>
+                    <div>
+                      <p class="hatch-transfer-title">Ready to Transfer</p>
+                      <p class="hatch-transfer-sub">Day 18+ reached — move babies to Nursery</p>
+                    </div>
+                  </div>
+                  <button class="hatch-transfer-btn">Transfer to Nursery</button>
+                </div>
               </div>
+
+              <!-- ── 6. AI BREEDING ASSISTANT ── -->
+              <div class="breed-panel" id="breed-ai">
+                <div class="breed-section-header">
+                  <span class="breed-section-title">AI Breeding Assistant</span>
+                </div>
+
+                <div class="ai-status-grid">
+                  <div class="ai-param-card ideal">
+                    <span class="ai-param-label">DO</span>
+                    <span class="ai-param-val">6.8 mg/L</span>
+                    <span class="ai-param-badge ideal">Ideal</span>
+                  </div>
+                  <div class="ai-param-card ideal">
+                    <span class="ai-param-label">Temperature</span>
+                    <span class="ai-param-val">26.5°C</span>
+                    <span class="ai-param-badge ideal">Ideal</span>
+                  </div>
+                  <div class="ai-param-card balanced">
+                    <span class="ai-param-label">pH</span>
+                    <span class="ai-param-val">7.4</span>
+                    <span class="ai-param-badge balanced">Balanced</span>
+                  </div>
+                </div>
+
+                <div class="ai-message-card">
+                  <div class="ai-message-icon"><i class="bi bi-robot"></i></div>
+                  <p class="ai-message-text">"All conditions are optimal for breeding and egg development."</p>
+                </div>
+
+                <button class="compute-btn ai-analysis-btn">View Full Analysis <i class="bi bi-arrow-right"></i></button>
+              </div>
+
+              <!-- ── 7. BREEDING SUCCESS SCORE ── -->
+              <div class="breed-panel" id="breed-score">
+                <div class="breed-section-header">
+                  <span class="breed-section-title">Breeding Success Score</span>
+                </div>
+
+                <div class="score-main-card">
+                  <div class="score-circle-wrap">
+                    <svg class="score-ring" viewBox="0 0 80 80">
+                      <circle class="score-ring-bg" cx="40" cy="40" r="34" />
+                      <circle class="score-ring-fill" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="38.4" />
+                    </svg>
+                    <div class="score-center">
+                      <span class="score-pct">82%</span>
+                    </div>
+                  </div>
+                  <div class="score-info">
+                    <p class="score-likelihood">High Likelihood</p>
+                    <div class="score-stars">
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-fill"></i>
+                      <i class="bi bi-star-half"></i>
+                    </div>
+                    <p class="score-interp">Your setup is well-optimized for successful breeding.</p>
+                  </div>
+                </div>
+
+                <div class="score-breakdown">
+                  <p class="score-breakdown-title">Breakdown</p>
+
+                  <div class="score-item">
+                    <div class="score-item-label">
+                      <span>Water Quality</span>
+                      <span class="score-item-val teal">85%</span>
+                    </div>
+                    <div class="tank-progress-bar">
+                      <div class="tank-progress-fill teal" style="width:85%"></div>
+                    </div>
+                  </div>
+
+                  <div class="score-item">
+                    <div class="score-item-label">
+                      <span>Isolation Compliance</span>
+                      <span class="score-item-val green">90%</span>
+                    </div>
+                    <div class="tank-progress-bar">
+                      <div class="tank-progress-fill green" style="width:90%"></div>
+                    </div>
+                  </div>
+
+                  <div class="score-item">
+                    <div class="score-item-label">
+                      <span>History Success</span>
+                      <span class="score-item-val amber">72%</span>
+                    </div>
+                    <div class="tank-progress-bar">
+                      <div class="tank-progress-fill amber" style="width:72%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
 
             <!-- TANK 2 -->
@@ -679,6 +832,124 @@
                   </div>
                 </div>
               </div>
+            </div>
+
+            <!-- BERRIED ASSIGN MODAL -->
+            <div class="breed-modal-overlay" id="berried-overlay"></div>
+            <div class="breed-modal" id="berried-modal">
+              <div class="legend-handle"></div>
+              <p class="breed-modal-title" id="berried-modal-title">🫐 Mark as Berried</p>
+              <p class="mortality-sub" id="berried-modal-sub">Select an available isolation box for this female.</p>
+              <div class="berried-box-list" id="berried-box-list"></div>
+              <button class="mortality-cancel" id="berried-cancel-btn" style="margin-top:10px">Cancel</button>
+            </div>
+
+            <!-- ISOLATION BOX DETAIL MODAL -->
+            <div class="breed-modal-overlay" id="iso-detail-overlay"></div>
+            <div class="breed-modal" id="iso-detail-modal">
+              <div class="legend-handle"></div>
+              <p class="breed-modal-title" id="iso-detail-name">Box A</p>
+              <div class="iso-detail-body">
+                <div class="iso-detail-row">
+                  <span class="iso-detail-label">Status</span>
+                  <span class="iso-detail-val" id="iso-detail-status"></span>
+                </div>
+                <div class="iso-detail-row">
+                  <span class="iso-detail-label">Occupant</span>
+                  <span class="iso-detail-val" id="iso-detail-occupant"></span>
+                </div>
+                <div class="iso-detail-row">
+                  <span class="iso-detail-label">Date Placed</span>
+                  <span class="iso-detail-val" id="iso-detail-date"></span>
+                </div>
+              </div>
+              <button class="mortality-cancel" id="iso-detail-close">Close</button>
+            </div>
+
+            <!-- ISOLATION ADD/EDIT MODAL -->
+            <div class="breed-modal-overlay" id="iso-modal-overlay"></div>
+            <div class="breed-modal" id="iso-modal">
+              <div class="legend-handle"></div>
+              <p class="breed-modal-title" id="iso-modal-title">Add Box</p>
+              <div class="breed-modal-body">
+                <div class="input-group">
+                  <label class="input-label">Box Name</label>
+                  <input type="text" class="login-input" id="iso-name" placeholder="e.g. Box A" />
+                </div>
+              </div>
+              <input type="hidden" id="iso-edit-index" value="" />
+              <button class="compute-btn" id="iso-save-btn">Save Box</button>
+              <button class="mortality-cancel" id="iso-cancel-btn">Cancel</button>
+            </div>
+
+            <!-- ISOLATION UNLOCK CONFIRM MODAL -->
+            <div class="breed-delete-overlay" id="iso-unlock-overlay"></div>
+            <div class="breed-delete-modal" id="iso-unlock-modal">
+              <div class="legend-handle"></div>
+              <p class="mortality-title">Release Female</p>
+              <p class="mortality-sub" id="iso-unlock-sub">Release occupant from this box?</p>
+              <input type="hidden" id="iso-unlock-index" value="" />
+              <button class="compute-btn" id="iso-unlock-confirm">Yes, Release</button>
+              <button class="mortality-cancel" id="iso-unlock-cancel">Cancel</button>
+            </div>
+
+            <!-- BREEDING GROUP MODAL -->
+            <div class="breed-modal-overlay" id="breed-modal-overlay"></div>
+            <div class="breed-modal" id="breed-modal">
+              <div class="legend-handle"></div>
+              <p class="breed-modal-title" id="breed-modal-title">Add Group</p>
+              <div class="breed-modal-body">
+                <!-- PHOTO PICKER -->
+                <div class="bm-photo-picker" id="bm-photo-picker">
+                  <div class="bm-photo-preview" id="bm-photo-preview">
+                    <i class="bi bi-camera" id="bm-photo-icon"></i>
+                    <img id="bm-photo-img" src="" alt="" style="display:none" />
+                  </div>
+                  <div class="bm-photo-actions">
+                    <p class="bm-photo-label">Group Photo</p>
+                    <p class="bm-photo-hint">Tap to upload an image</p>
+                    <button type="button" class="bm-photo-btn" id="bm-photo-btn"><i class="bi bi-upload"></i> Choose Photo</button>
+                    <button type="button" class="bm-photo-remove" id="bm-photo-remove" style="display:none"><i class="bi bi-x"></i> Remove</button>
+                  </div>
+                  <input type="file" id="bm-photo-input" accept="image/*" style="display:none" />
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Group Name</label>
+                  <input type="text" class="login-input" id="bm-name" placeholder="e.g. Group A" />
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Male Tag</label>
+                  <input type="text" class="login-input" id="bm-male-tag" placeholder="e.g. M1" />
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Female Tags</label>
+                  <div class="tag-input-wrap" id="bm-tag-wrap">
+                    <div class="tag-chips" id="bm-tag-chips"></div>
+                    <div class="tag-input-row">
+                      <input type="text" class="tag-input-field" id="bm-tag-field" placeholder="e.g. F1" />
+                      <button type="button" class="tag-add-btn" id="bm-tag-add"><i class="bi bi-plus"></i></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Mating Date</label>
+                  <input type="date" class="login-input" id="bm-date" />
+                </div>
+              </div>
+              <input type="hidden" id="bm-edit-index" value="" />
+              <button class="compute-btn" id="bm-save-btn">Save Group</button>
+              <button class="mortality-cancel" id="bm-cancel-btn">Cancel</button>
+            </div>
+
+            <!-- DELETE CONFIRM MODAL -->
+            <div class="breed-delete-overlay" id="breed-delete-overlay"></div>
+            <div class="breed-delete-modal" id="breed-delete-modal">
+              <div class="legend-handle"></div>
+              <p class="mortality-title">Delete Group</p>
+              <p class="mortality-sub">Are you sure you want to delete this group?</p>
+              <input type="hidden" id="bd-index" value="" />
+              <button class="compute-btn" id="bd-confirm-btn">Yes, Delete</button>
+              <button class="mortality-cancel" id="bd-cancel-btn">Cancel</button>
             </div>
 
             <!-- MORTALITY MODAL -->

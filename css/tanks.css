@@ -376,3 +376,833 @@
     margin-top: 8px;
     opacity: 0.6;
 }
+
+/* ═══════════════════════════════════════════
+   TANK 1 — BREEDING & MATERNITY INNER TABS
+═══════════════════════════════════════════ */
+.breed-tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+}
+.breed-tabs::-webkit-scrollbar { display: none; }
+
+.breed-tab {
+    flex-shrink: 0;
+    padding: 6px 11px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    border: 1.5px solid rgba(11,60,73,0.1);
+    border-radius: 20px;
+    background: #f4f4f4;
+    color: var(--dark-text);
+    opacity: 0.5;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.breed-tab.active {
+    background: var(--primary-teal);
+    border-color: var(--primary-teal);
+    color: #fff;
+    opacity: 1;
+}
+
+.breed-panel { display: none; flex-direction: column; gap: 12px; }
+.breed-panel.active { display: flex; }
+
+/* SECTION HEADER */
+.breed-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.breed-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dark-text);
+}
+.breed-add-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    background: var(--primary-teal);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+/* ── BREEDING GROUP CARD ── */
+.breed-group-list { display: flex; flex-direction: column; gap: 10px; }
+
+.breed-group-card {
+    display: flex;
+    gap: 12px;
+    background: #fff;
+    border: 1.5px solid rgba(11,60,73,0.08);
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow: 0 1px 6px rgba(11,60,73,0.04);
+}
+
+.breed-group-photo {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: rgba(31,165,165,0.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.breed-group-photo-placeholder i {
+    font-size: 22px;
+    color: var(--primary-teal);
+    opacity: 0.4;
+}
+.breed-group-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+.breed-group-info { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+
+.breed-group-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.breed-group-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dark-text);
+}
+.breed-group-actions { display: flex; gap: 6px; }
+.breed-icon-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+}
+.breed-icon-btn.edit { background: rgba(31,165,165,0.1); color: var(--primary-teal); }
+.breed-icon-btn.delete { background: rgba(230,57,70,0.08); color: #E63946; }
+
+.breed-group-members { display: flex; gap: 6px; }
+.breed-member-tag {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+}
+.breed-member-tag.male { background: rgba(59,130,246,0.1); color: #3b82f6; }
+.breed-member-tag.female { background: rgba(236,72,153,0.1); color: #ec4899; }
+
+.breed-female-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.breed-female-tag {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: rgba(11,60,73,0.06);
+    color: var(--dark-text);
+}
+.breed-female-tag.berried {
+    background: rgba(245,158,11,0.12);
+    color: #c97d08;
+    border: 1px solid rgba(245,158,11,0.3);
+}
+
+.breed-group-meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 9px;
+    color: var(--dark-text);
+    opacity: 0.45;
+}
+
+/* ── ISOLATION BOXES ── */
+.iso-box-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.iso-box {
+    border-radius: 14px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border: 1.5px solid transparent;
+}
+.iso-box.occupied {
+    background: rgba(245,158,11,0.06);
+    border-color: rgba(245,158,11,0.2);
+}
+.iso-box.available {
+    background: rgba(82,194,131,0.06);
+    border-color: rgba(82,194,131,0.2);
+}
+
+.iso-box-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.iso-box-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--dark-text);
+}
+.iso-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 8px;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 2px 7px;
+}
+.iso-status.occupied { background: rgba(245,158,11,0.15); color: #c97d08; }
+.iso-status.available { background: rgba(82,194,131,0.15); color: #2d9e5f; }
+
+.iso-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+.iso-status.occupied .iso-dot { background: #f59e0b; }
+.iso-status.available .iso-dot { background: #52c283; }
+
+.iso-occupant {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin: 0;
+}
+.iso-occupant.empty { opacity: 0.3; font-weight: 500; }
+
+.iso-date {
+    font-size: 9px;
+    color: var(--dark-text);
+    opacity: 0.45;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 14px;
+}
+
+.iso-actions { margin-top: 2px; }
+.iso-btn {
+    width: 100%;
+    padding: 6px;
+    font-size: 9px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+.iso-btn.unlock { background: rgba(245,158,11,0.15); color: #c97d08; }
+.iso-btn.assign { background: rgba(82,194,131,0.15); color: #2d9e5f; }
+
+/* ── HATCHING MONITOR ── */
+.hatch-note {
+    font-size: 9px;
+    color: var(--dark-text);
+    opacity: 0.4;
+    font-weight: 600;
+}
+
+.hatch-card {
+    background: #fff;
+    border: 1.5px solid rgba(11,60,73,0.08);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 1px 6px rgba(11,60,73,0.04);
+}
+
+.hatch-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+.hatch-female {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin: 0 0 4px;
+}
+.hatch-label {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+}
+.hatch-label.incubating { background: rgba(31,165,165,0.12); color: var(--primary-teal); }
+
+.hatch-day-badge {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--primary-teal);
+    background: rgba(31,165,165,0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.hatch-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.hatch-progress-wrap .tank-progress-bar { flex: 1; }
+.hatch-pct {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--primary-teal);
+    min-width: 30px;
+    text-align: right;
+}
+
+.hatch-eta {
+    font-size: 9px;
+    color: var(--dark-text);
+    opacity: 0.5;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.hatch-mini-chart { width: 100%; }
+
+/* TRANSFER BANNER */
+.hatch-transfer-banner {
+    background: linear-gradient(135deg, rgba(31,165,165,0.08), rgba(82,194,131,0.08));
+    border: 1.5px solid rgba(31,165,165,0.2);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.hatch-transfer-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+.hatch-transfer-info > i {
+    font-size: 20px;
+    color: var(--primary-teal);
+    margin-top: 2px;
+}
+.hatch-transfer-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin: 0 0 2px;
+}
+.hatch-transfer-sub {
+    font-size: 9px;
+    color: var(--dark-text);
+    opacity: 0.5;
+    margin: 0;
+}
+.hatch-transfer-btn {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(135deg, var(--dark-text), var(--primary-teal));
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+}
+
+/* ── AI BREEDING ASSISTANT ── */
+.ai-status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+}
+.ai-param-card {
+    border-radius: 14px;
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    border: 1.5px solid transparent;
+}
+.ai-param-card.ideal { background: rgba(31,165,165,0.07); border-color: rgba(31,165,165,0.15); }
+.ai-param-card.balanced { background: rgba(82,194,131,0.07); border-color: rgba(82,194,131,0.15); }
+
+.ai-param-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--dark-text);
+    opacity: 0.5;
+}
+.ai-param-val {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--dark-text);
+}
+.ai-param-badge {
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+}
+.ai-param-badge.ideal { background: rgba(31,165,165,0.15); color: var(--primary-teal); }
+.ai-param-badge.balanced { background: rgba(82,194,131,0.15); color: #2d9e5f; }
+
+.ai-message-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(31,165,165,0.05);
+    border: 1.5px solid rgba(31,165,165,0.12);
+    border-radius: 14px;
+    padding: 14px;
+}
+.ai-message-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(31,165,165,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.ai-message-icon i { font-size: 18px; color: var(--primary-teal); }
+.ai-message-text {
+    font-size: 11px;
+    color: var(--dark-text);
+    opacity: 0.75;
+    line-height: 1.5;
+    margin: 0;
+    font-style: italic;
+}
+.ai-analysis-btn { margin-top: 2px; }
+
+/* ── BREEDING SUCCESS SCORE ── */
+.score-main-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #fff;
+    border: 1.5px solid rgba(11,60,73,0.08);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 1px 6px rgba(11,60,73,0.04);
+}
+
+.score-circle-wrap {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+.score-ring { width: 80px; height: 80px; transform: rotate(-90deg); }
+.score-ring-bg { fill: none; stroke: rgba(11,60,73,0.07); stroke-width: 7; }
+.score-ring-fill {
+    fill: none;
+    stroke: var(--primary-teal);
+    stroke-width: 7;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.8s ease;
+}
+.score-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.score-pct {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--dark-text);
+}
+
+.score-info { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.score-likelihood {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary-teal);
+    margin: 0;
+}
+.score-stars { display: flex; gap: 2px; }
+.score-stars i { font-size: 13px; color: #f59e0b; }
+.score-interp {
+    font-size: 9px;
+    color: var(--dark-text);
+    opacity: 0.5;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.score-breakdown {
+    background: #fff;
+    border: 1.5px solid rgba(11,60,73,0.08);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 1px 6px rgba(11,60,73,0.04);
+}
+.score-breakdown-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dark-text);
+    opacity: 0.6;
+    margin: 0;
+}
+.score-item { display: flex; flex-direction: column; gap: 5px; }
+.score-item-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--dark-text);
+    opacity: 0.7;
+}
+.score-item-val { opacity: 1; font-weight: 800; }
+.score-item-val.teal  { color: var(--primary-teal); }
+.score-item-val.green { color: #2d9e5f; }
+.score-item-val.amber { color: #c97d08; }
+
+/* ── BREEDING GROUP MODAL ── */
+.breed-modal-overlay,
+.breed-delete-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+.breed-modal-overlay.show,
+.breed-delete-overlay.show { opacity: 1; pointer-events: all; }
+
+.breed-modal,
+.breed-delete-modal {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 24px 24px 0 0;
+    padding: 12px 20px 36px;
+    z-index: 51;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.1);
+}
+.breed-modal.show,
+.breed-delete-modal.show { transform: translateY(0); }
+
+.breed-modal-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin: 8px 0 14px;
+    text-align: center;
+}
+.breed-modal-body { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.breed-modal-row { display: flex; gap: 10px; }
+
+/* ── BREED MODAL PHOTO PICKER ── */
+.bm-photo-picker {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(31,165,165,0.05);
+    border: 1.5px dashed rgba(31,165,165,0.3);
+    border-radius: 14px;
+    padding: 12px;
+}
+
+.bm-photo-preview {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    background: rgba(31,165,165,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+.bm-photo-preview i { font-size: 26px; color: var(--primary-teal); opacity: 0.4; }
+.bm-photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+.bm-photo-actions { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.bm-photo-label { font-size: 11px; font-weight: 700; color: var(--dark-text); margin: 0; }
+.bm-photo-hint  { font-size: 9px; color: var(--dark-text); opacity: 0.4; margin: 0; }
+
+.bm-photo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    background: var(--primary-teal);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    width: fit-content;
+    margin-top: 2px;
+}
+
+.bm-photo-remove {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    background: rgba(230,57,70,0.08);
+    color: #E63946;
+    border: 1px solid rgba(230,57,70,0.2);
+    border-radius: 20px;
+    cursor: pointer;
+    width: fit-content;
+}
+
+/* ── MATING STATUS BADGE ── */
+.breed-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    width: fit-content;
+}
+.breed-status-badge.active { background: rgba(82,194,131,0.15); color: #2d9e5f; }
+.breed-status-badge.done   { background: rgba(11,60,73,0.08);   color: var(--dark-text); opacity: 0.6; }
+
+/* select input same style as login-input */
+select.login-input { appearance: none; cursor: pointer; }
+
+/* ── TAG INPUT (Female Tags) ── */
+.tag-input-wrap {
+    border: 1.5px solid rgba(11,60,73,0.12);
+    border-radius: 12px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #fff;
+    transition: border-color 0.2s;
+}
+.tag-input-wrap:focus-within { border-color: var(--primary-teal); }
+
+.tag-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(31,165,165,0.12);
+    color: var(--primary-teal);
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+.tag-chip-remove {
+    background: none;
+    border: none;
+    color: var(--primary-teal);
+    cursor: pointer;
+    font-size: 11px;
+    padding: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    opacity: 0.7;
+}
+.tag-chip-remove:hover { opacity: 1; }
+
+.tag-input-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+.tag-input-field {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 11px;
+    font-family: 'Poppins', sans-serif;
+    color: var(--dark-text);
+    background: transparent;
+}
+.tag-add-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    border: none;
+    background: var(--primary-teal);
+    color: #fff;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* ── BERRIED ASSIGN MODAL ── */
+.berried-box-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 12px 0 4px;
+}
+.berried-box-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: rgba(82,194,131,0.07);
+    border: 1.5px solid rgba(82,194,131,0.25);
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    color: #2d9e5f;
+    cursor: pointer;
+    text-align: left;
+}
+.berried-box-btn:active { background: rgba(82,194,131,0.18); }
+.berried-box-btn span { font-size: 10px; font-weight: 500; opacity: 0.6; color: var(--dark-text); }
+.berried-no-boxes {
+    text-align: center;
+    font-size: 11px;
+    color: var(--dark-text);
+    opacity: 0.4;
+    padding: 16px 0;
+}
+
+/* tappable female tag on card */
+.breed-female-tag.tappable { cursor: pointer; }
+.breed-female-tag.tappable:active { opacity: 0.7; }
+.breed-female-tag.berried {
+    background: rgba(245,158,11,0.12);
+    color: #c97d08;
+    border: 1px solid rgba(245,158,11,0.3);
+}
+
+/* ── FEMALE TAG ROW ── */
+.breed-female-tags {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.breed-female-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.breed-female-row .breed-female-tag {
+    flex: 1;
+    background: rgba(11,60,73,0.06);
+    color: var(--dark-text);
+    border: none;
+}
+.berried-tag-btn {
+    flex-shrink: 0;
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 20px;
+    color: #c97d08;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.berried-tag-btn:active { background: rgba(245,158,11,0.2); }
+
+/* ── FEMALE LIST LABEL ── */
+.breed-female-list-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--dark-text);
+    opacity: 0.4;
+    margin: 0 0 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ── ISO BOX DETAIL MODAL ── */
+.iso-detail-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 4px 0 16px;
+    border: 1.5px solid rgba(11,60,73,0.08);
+    border-radius: 14px;
+    overflow: hidden;
+}
+.iso-detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(11,60,73,0.06);
+}
+.iso-detail-row:last-child { border-bottom: none; }
+.iso-detail-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--dark-text);
+    opacity: 0.5;
+}
+.iso-detail-val {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dark-text);
+    text-align: right;
+}
