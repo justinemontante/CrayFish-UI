@@ -212,6 +212,31 @@ Object.keys(SENSORS).forEach(key => {
     });
 });
 
+// QUICK ACTIONS
+document.querySelectorAll('.quick-action-btn[data-target]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const target = btn.dataset.target;
+        if (target && window.showNavSection) {
+            window.showNavSection(target);
+        }
+    });
+});
+
+document.getElementById('quick-feed-now')?.addEventListener('click', () => {
+    if (window.addFeederLog) {
+        window.addFeederLog('Manual feed triggered (Quick Action)', 'manual');
+    }
+    const feedBtn = document.getElementById('feed-now-btn');
+    if (feedBtn) feedBtn.click();
+});
+
+document.getElementById('quick-check-water')?.addEventListener('click', () => {
+    simulateSensors();
+    const insightText = document.getElementById('insight-text');
+    if (insightText) {
+        insightText.textContent = 'Water quality data refreshed successfully.';
+    }
+});
 
 simulateSensors();
 setInterval(simulateSensors, 5000);
