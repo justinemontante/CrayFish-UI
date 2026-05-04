@@ -1,4 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Dynamic Greeting
+    const greetingText = document.getElementById('greeting-text');
+    const greetingDate = document.getElementById('greeting-date');
+    
+    if (greetingText && greetingDate) {
+        const hour = new Date().getHours();
+        let greeting = 'Good Morning';
+        if (hour >= 12 && hour < 18) greeting = 'Good Afternoon';
+        else if (hour >= 18) greeting = 'Good Evening';
+        
+        greetingText.textContent = `${greeting}, Justine!`;
+        
+        const date = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        greetingDate.textContent = date.toLocaleDateString('en-US', options);
+    }
+    
     const screens = {
         splash: document.getElementById('splash-screen'),
         login: document.getElementById('login-screen'),

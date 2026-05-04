@@ -1,20 +1,40 @@
 /* GREETING */
 .dashboard-greeting {
-    padding: 14px 14px 4px;
+    display: flex;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin: 12px 12px 8px;
+    box-shadow: 0 2px 12px rgba(11, 60, 73, 0.08);
+}
+
+.greeting-accent-bar {
+    width: 3px;
+    height: 45px;
+    background: #1FA5A5;
+    border-radius: 2px;
+    margin-left: 2px;
+    align-self: center;
+    flex-shrink: 0;
+}
+
+.greeting-content {
+    margin-left: 16px;
 }
 
 .greeting-text {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 700;
-    color: var(--dark-text);
+    color: #1e293b;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0 0 3px 0;
 }
 
 .greeting-date {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 400;
-    color: var(--dark-text);
-    opacity: 0.5;
-    margin-top: 2px;
+    color: #94a3b8;
+    margin: 0;
 }
 
 
@@ -104,13 +124,65 @@
     padding-right: 14px;
 }
 
+/* BIG VALUE ROW */
+.gauge-body {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 3px;
+    padding-top: 6px;
+    padding-bottom: 2px;
+}
+
+/* STATUS BADGE */
+.gauge-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: fit-content;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    color: #52c283;
+    background: rgba(82, 194, 131, 0.15);
+    margin: 8px auto 4px;
+    transition: background 0.4s, color 0.4s;
+}
+
+/* IDEAL RANGE */
+.gauge-ideal {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--dark-text);
+    opacity: 0.7;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
 /* HEADER ROW */
 .gauge-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 14px;
-    padding-bottom: 4px;
+    padding: 8px 14px;
+    background: rgba(31, 165, 165, 0.15);
+    transition: background 0.4s;
+}
+
+.gauge-card.optimal .gauge-header {
+    background: rgba(31, 165, 165, 0.18);
+}
+
+.gauge-card.warning .gauge-header {
+    background: rgba(245, 158, 11, 0.18);
+}
+
+.gauge-card.critical .gauge-header {
+    background: rgba(249, 115, 22, 0.18);
 }
 
 .gauge-title {
@@ -126,7 +198,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(31, 165, 165, 0.12);
+    background: rgba(255, 255, 255, 0.8);
     border-radius: 10px;
     flex-shrink: 0;
 }
@@ -141,6 +213,7 @@
 .gauge-body {
     display: flex;
     align-items: baseline;
+    justify-content: center;
     gap: 3px;
     padding-top: 6px;
     padding-bottom: 2px;
@@ -176,27 +249,37 @@
 
 /* STATUS BADGE */
 .gauge-badge {
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    justify-content: center;
     gap: 5px;
     width: fit-content;
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    padding: 3px 10px;
+    padding: 4px 12px;
     border-radius: 20px;
     color: #52c283;
     background: rgba(82, 194, 131, 0.15);
-    margin-top: 6px;
-    margin-bottom: 4px;
-    margin-left: 14px;
+    margin: 8px auto 4px;
     transition: background 0.4s, color 0.4s;
 }
 
-.gauge-badge.optimal { background: rgba(82, 194, 131, 0.15); color: #2d9e5f; }
-.gauge-badge.warning { background: rgba(245, 158, 11, 0.15); color: #c97d08; }
-.gauge-badge.critical { background: rgba(230, 57, 70, 0.15); color: #c0202c; }
+.gauge-badge.optimal {
+    background: rgba(82, 194, 131, 0.18);
+    color: #16a34a;
+}
+
+.gauge-badge.warning {
+    background: rgba(245, 158, 11, 0.18);
+    color: #d97706;
+}
+
+.gauge-badge.critical {
+    background: rgba(249, 115, 22, 0.15);
+    color: #ea580c;
+}
 
 /* IDEAL RANGE */
 .gauge-ideal {
@@ -205,41 +288,36 @@
     color: var(--dark-text);
     opacity: 0.7;
     padding-bottom: 10px;
+    text-align: center;
 }
 
-/* WAVE GRAPHIC */
-.gauge-wave {
-    width: 100%;
-    height: 40px;
-    margin-top: auto;
-    line-height: 0;
+/* TURBIDITY CRITICAL CARD STYLING */
+#gauge-turb.critical .gauge-header {
+    background: rgba(230, 57, 70, 0.18);
 }
 
-.gauge-wave svg {
-    width: 100%;
-    height: 100%;
+#gauge-turb.critical .gauge-badge {
+    background: rgba(230, 57, 70, 0.15);
+    color: #dc2626;
 }
 
-.wave-path {
-    fill: rgba(31, 165, 165, 0.2);
-    transition: fill 0.4s;
+#gauge-turb.critical .gauge-value {
+    color: #dc2626;
 }
 
-.wave-line {
-    fill: none;
-    stroke: var(--primary-teal);
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    transition: stroke 0.4s;
+/* TURBIDITY CRITICAL CARD STYLING */
+#gauge-turb.critical .gauge-header {
+    background: rgba(230, 57, 70, 0.18);
 }
 
-.gauge-card.optimal .wave-path { fill: rgba(34, 197, 94, 0.2); }
-.gauge-card.warning .wave-path { fill: rgba(245, 158, 11, 0.2); }
-.gauge-card.critical .wave-path { fill: rgba(230, 57, 70, 0.2); }
+#gauge-turb.critical .gauge-badge {
+    background: rgba(230, 57, 70, 0.15);
+    color: #dc2626;
+}
 
-.gauge-card.optimal .wave-line { stroke: #52c283; }
-.gauge-card.warning .wave-line { stroke: #f59e0b; }
-.gauge-card.critical .wave-line { stroke: #E63946; }
+#gauge-turb.critical .gauge-value {
+    color: #dc2626;
+}
 
 /* LEGEND BOTTOM SHEET */
 .legend-overlay {

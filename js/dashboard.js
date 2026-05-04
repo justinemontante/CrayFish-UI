@@ -58,23 +58,23 @@ function updateGauge(key, value) {
     s.cardEl.className = `gauge-card ${state}`;
 
     // Auto-push critical notifications
-    if (state === 'critical' && window.pushNotification) {
+    if ((state === 'critical' || state === 'warning') && window.pushNotification) {
         const NOTIF_MAP = {
-            temp: { icon: 'bi-thermometer-high', title: 'High Temperature Alert', msg: `Temperature is at ${value}°C — Lethal range detected.` },
-            ph:   { icon: 'bi-exclamation-triangle-fill', title: 'pH Critical Alert', msg: `pH level is at ${value} — Chemical danger detected.` },
-            do:   { icon: 'bi-droplet-fill', title: 'Low DO Alert', msg: `Dissolved Oxygen dropped to ${value} mg/L — Aerator triggered.` },
-            turb: { icon: 'bi-eye-slash-fill', title: 'Turbidity Alert', msg: `Turbidity is at ${value} NTU — Fouled water detected.` }
+            temp: { icon: 'bi-thermometer-high', title: 'High Temperature Alert', msg: `Temperature is at ${value}°C — Lethal range detected.`, type: 'critical' },
+            ph:   { icon: 'bi-exclamation-triangle-fill', title: 'pH Critical Alert', msg: `pH level is at ${value} — Chemical danger detected.`, type: 'critical' },
+            do:   { icon: 'bi-droplet-fill', title: 'Low DO Alert', msg: `Dissolved Oxygen dropped to ${value} mg/L — Aerator triggered.`, type: 'warning' },
+            turb: { icon: 'bi-eye-slash-fill', title: 'Turbidity Alert', msg: `Turbidity is at ${value} NTU — Fouled water detected.`, type: 'warning' }
         };
         const n = NOTIF_MAP[key];
-        if (n) window.pushNotification('critical', n.icon, n.title, n.msg);
+        if (n) window.pushNotification(n.type, n.icon, n.title, n.msg);
     }
 }
 
 function simulateSensors() {
-    updateGauge('temp', +(24 + Math.random() * 8).toFixed(1));
-    updateGauge('ph',   +(6.8 + Math.random() * 2).toFixed(1));
-    updateGauge('do',   +(3 + Math.random() * 4).toFixed(1));
-    updateGauge('turb', Math.floor(Math.random() * 65));
+    updateGauge('temp', (27.5).toFixed(1));
+    updateGauge('ph',   (7.8).toFixed(1));
+    updateGauge('do',   (4.2).toFixed(1));
+    updateGauge('turb', 60);
 }
 
 const LEGENDS = {
