@@ -950,6 +950,7 @@
               <div class="hw-temp-group">
                 <div class="hw-temp-header">
                   <span class="hw-temp-label"><i class="bi bi-wind"></i> Aeration</span>
+                  <button class="hw-log-btn" data-device="aerator"><i class="bi bi-journal-text"></i> Log</button>
                 </div>
                 <div class="hardware-card" id="hw-aerator" style="margin-top:8px" data-device="aerator">
                   <div class="hw-card-left">
@@ -960,7 +961,6 @@
                     </div>
                   </div>
                   <div class="hw-card-right">
-                    <button class="hw-detail-btn" data-device="aerator"><i class="bi bi-chevron-right"></i></button>
                     <div class="hw-mode-group" data-device="aerator">
                       <button class="hw-mode-btn" data-mode="off">OFF</button>
                       <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
@@ -974,6 +974,7 @@
               <div class="hw-temp-group">
                 <div class="hw-temp-header">
                   <span class="hw-temp-label"><i class="bi bi-droplet-half"></i> Filtration</span>
+                  <button class="hw-log-btn" data-device="pump"><i class="bi bi-journal-text"></i> Log</button>
                 </div>
                 <div class="hardware-card" id="hw-pump" style="margin-top:8px" data-device="pump">
                   <div class="hw-card-left">
@@ -984,7 +985,6 @@
                     </div>
                   </div>
                   <div class="hw-card-right">
-                    <button class="hw-detail-btn" data-device="pump"><i class="bi bi-chevron-right"></i></button>
                     <div class="hw-mode-group" data-device="pump">
                       <button class="hw-mode-btn" data-mode="off">OFF</button>
                       <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
@@ -1000,6 +1000,7 @@
                   <span class="hw-temp-label"><i class="bi bi-thermometer-half"></i> Temperature Control</span>
                   <div style="display:flex;align-items:center;gap:8px">
                     <span class="hw-temp-reading">Current: <strong id="hw-temp-val">--°C</strong></span>
+                    <button class="hw-log-btn" data-device="fan" style="margin-left:4px"><i class="bi bi-journal-text"></i> Log</button>
                   </div>
                 </div>
                 <div class="hw-temp-range">Ideal: 24.0 – 30.0°C</div>
@@ -1009,11 +1010,10 @@
                     <div class="hw-icon-wrap"><i class="bi bi-fan"></i></div>
                     <div>
                       <span class="hw-title">Cooling Fan</span>
-                      <span class="hw-subtitle">Activates if temp &gt; 30°C</span>
+                      <span class="hw-subtitle">Activates if temp 30°C</span>
                     </div>
                   </div>
                   <div class="hw-card-right">
-                    <button class="hw-detail-btn" data-device="fan"><i class="bi bi-chevron-right"></i></button>
                     <div class="hw-mode-group" data-device="fan">
                       <button class="hw-mode-btn" data-mode="off">OFF</button>
                       <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
@@ -1027,11 +1027,10 @@
                     <div class="hw-icon-wrap"><i class="bi bi-fire"></i></div>
                     <div>
                       <span class="hw-title">Heater</span>
-                      <span class="hw-subtitle">Activates if temp &lt; 24°C</span>
+                      <span class="hw-subtitle">Activates if temp 24°C</span>
                     </div>
                   </div>
                   <div class="hw-card-right">
-                    <button class="hw-detail-btn" data-device="heater"><i class="bi bi-chevron-right"></i></button>
                     <div class="hw-mode-group" data-device="heater">
                       <button class="hw-mode-btn" data-mode="off">OFF</button>
                       <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
@@ -1043,40 +1042,41 @@
 
             </div>
 
-            <!-- FEEDER LOG MODAL -->
-            <div class="breed-modal-overlay" id="feeder-log-overlay"></div>
-            <div class="breed-modal" id="feeder-log-modal" style="max-height:75%;overflow-y:auto">
+            <!-- HW LOG BOTTOM SHEET -->
+            <div class="legend-overlay" id="hw-log-overlay"></div>
+            <div class="legend-sheet" id="hw-log-modal">
+              <div class="legend-handle"></div>
+              <div class="hw-detail-header">
+                <div class="hw-detail-icon-wrap" id="hw-log-icon-wrap"></div>
+                <div>
+                  <p class="hw-detail-title" id="hw-log-title"></p>
+                  <p class="hw-detail-subtitle" id="hw-log-subtitle"></p>
+                </div>
+              </div>
+              <div class="hw-detail-status-row">
+                <div class="hw-detail-status-badge" id="hw-log-status-badge"></div>
+                <span class="hw-detail-last" id="hw-log-last"></span>
+              </div>
+              <div class="hw-detail-sensor" id="hw-log-sensor"></div>
+              <p class="hw-detail-section-title">Mode Control</p>
+              <div class="hw-detail-mode-group" id="hw-log-mode-group"></div>
+              <p class="hw-detail-section-title" style="margin-top:16px">Activity Log</p>
+              <div class="hw-detail-log-list" id="hw-log-list"></div>
+              <button class="mortality-cancel" id="hw-log-close" style="margin-top:14px">Close</button>
+            </div>
+
+            <!-- FEEDER LOG BOTTOM SHEET -->
+            <div class="legend-overlay" id="feeder-log-overlay"></div>
+            <div class="legend-sheet" id="feeder-log-modal">
               <div class="legend-handle"></div>
               <div class="hw-log-modal-header">
                 <p class="breed-modal-title" style="margin:0;text-align:left"><i class="bi bi-journal-text" style="color:var(--primary-teal)"></i> Feeder Activity Log</p>
-                <button class="hw-log-clear-btn" id="feeder-log-clear"><i class="bi bi-trash3"></i> Clear</button>
               </div>
               <div id="feeder-log-list" class="hw-detail-log-list" style="margin-top:12px"></div>
               <button class="mortality-cancel" id="feeder-log-close" style="margin-top:14px">Close</button>
             </div>
 
-            <!-- HARDWARE DETAIL MODAL -->
-            <div class="breed-modal-overlay" id="hw-detail-overlay"></div>
-            <div class="breed-modal" id="hw-detail-modal">
-              <div class="legend-handle"></div>
-              <div class="hw-detail-header">
-                <div class="hw-detail-icon-wrap" id="hw-detail-icon-wrap"></div>
-                <div>
-                  <p class="hw-detail-title" id="hw-detail-title"></p>
-                  <p class="hw-detail-subtitle" id="hw-detail-subtitle"></p>
-                </div>
-              </div>
-              <div class="hw-detail-status-row">
-                <div class="hw-detail-status-badge" id="hw-detail-status-badge"></div>
-                <span class="hw-detail-last" id="hw-detail-last"></span>
-              </div>
-              <div class="hw-detail-sensor" id="hw-detail-sensor"></div>
-              <p class="hw-detail-section-title">Mode Control</p>
-              <div class="hw-detail-mode-group" id="hw-detail-mode-group"></div>
-              <p class="hw-detail-section-title" style="margin-top:16px">Activity Log</p>
-              <div class="hw-detail-log-list" id="hw-detail-log-list"></div>
-              <button class="mortality-cancel" id="hw-detail-close" style="margin-top:14px">Close</button>
-            </div>
+
 
           </section>
 
@@ -1172,7 +1172,7 @@
         <div class="legend-handle"></div>
         <div class="gauge-modal-top">
           <p class="gauge-modal-header-title" id="gauge-modal-header-title"></p>
-          <button class="gauge-modal-view-btn" id="gauge-modal-view-btn">View Graph <i class="bi bi-arrow-right"></i></button>
+          <button class="gauge-modal-view-btn" id="gauge-modal-view-btn">View Graph</button>
         </div>
         <div class="gauge-modal-header">
           <div class="gauge-modal-icon-wrap" id="gauge-modal-icon-wrap">

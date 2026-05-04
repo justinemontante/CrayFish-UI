@@ -1,7 +1,13 @@
 // CONTROLS — Hardware Control Center
 
 // ─── FEEDER ACTIVITY LOG ─────────────────────────────────────
-const feederLogs = [];
+const feederLogs = [
+    { action: 'Dispensed 44.1g feed (Scheduled)', type: 'auto', time: '8:00 AM', date: 'Today' },
+    { action: 'Manual feed triggered', type: 'manual', time: '7:45 AM', date: 'Today' },
+    { action: 'Feeding schedule added: 6:00 PM', type: 'schedule', time: '7:30 AM', date: 'Today' },
+    { action: 'Mode changed to Auto', type: 'mode', time: '7:00 AM', date: 'Today' },
+    { action: 'Dispensed 44.1g feed (Scheduled)', type: 'auto', time: '6:00 AM', date: 'Today' }
+];
 
 function getTs() {
     return {
@@ -154,8 +160,35 @@ setInterval(() => {
 }, 60000);
 
 // ─── HARDWARE ACTIVITY LOGS ───────────────────────────────────
-const hwActivityLogs = { aerator: [], pump: [], fan: [], heater: [] };
-const hwLastActivity  = { aerator: null, pump: null, fan: null, heater: null };
+const hwActivityLogs = {
+    aerator: [
+        { mode: 'auto', action: 'Set to AUTO', time: '8:05 AM', date: 'Today' },
+        { mode: 'on',   action: 'Switched ON',  time: '7:50 AM', date: 'Today' },
+        { mode: 'off',  action: 'Switched OFF', time: '7:30 AM', date: 'Today' },
+        { mode: 'auto', action: 'Set to AUTO', time: '6:00 AM', date: 'Today' },
+    ],
+    pump: [
+        { mode: 'auto', action: 'Set to AUTO', time: '8:10 AM', date: 'Today' },
+        { mode: 'on',   action: 'Switched ON',  time: '7:55 AM', date: 'Today' },
+        { mode: 'off',  action: 'Switched OFF', time: '7:20 AM', date: 'Today' },
+        { mode: 'auto', action: 'Set to AUTO', time: '6:00 AM', date: 'Today' },
+    ],
+    fan: [
+        { mode: 'auto', action: 'Set to AUTO', time: '8:00 AM', date: 'Today' },
+        { mode: 'on',   action: 'Auto-triggered: Temp reached 31°C', time: '7:45 AM', date: 'Today' },
+        { mode: 'auto', action: 'Auto off: Temp back to 29°C', time: '7:30 AM', date: 'Today' },
+        { mode: 'on',   action: 'Auto-triggered: Temp reached 32°C', time: '7:15 AM', date: 'Today' },
+        { mode: 'auto', action: 'Set to AUTO', time: '6:00 AM', date: 'Today' },
+    ],
+    heater: [
+        { mode: 'auto', action: 'Set to AUTO', time: '8:00 AM', date: 'Today' },
+        { mode: 'on',   action: 'Auto-triggered: Temp dropped to 23°C', time: '7:40 AM', date: 'Today' },
+        { mode: 'auto', action: 'Auto off: Temp back to 25°C', time: '7:25 AM', date: 'Today' },
+        { mode: 'on',   action: 'Auto-triggered: Temp dropped to 22°C', time: '7:10 AM', date: 'Today' },
+        { mode: 'auto', action: 'Set to AUTO', time: '6:00 AM', date: 'Today' },
+    ],
+};
+const hwLastActivity  = { aerator: '8:05 AM', pump: '8:10 AM', fan: '8:00 AM', heater: '8:00 AM' };
 
 function addHwLog(device, mode) {
     const { time, date } = getTs();
@@ -165,96 +198,13 @@ function addHwLog(device, mode) {
     hwLastActivity[device] = time;
 }
 
-// ─── HARDWARE DETAIL MODAL ───────────────────────────────────
-const hwDetailOverlay = document.getElementById('hw-detail-overlay');
-const hwDetailModal   = document.getElementById('hw-detail-modal');
-
+// ─── HARDWARE DEVICE INFO ────────────────────────────────────
 const hwDeviceInfo = {
-    aerator: { title: 'Aerator',     subtitle: 'Air Pump',                  icon: 'bi-wind',         sensor: 'do',   sensorLabel: 'Dissolved O₂', unit: 'mg/L' },
-    pump:    { title: 'Water Pump',  subtitle: 'Filtration System',         icon: 'bi-droplet-half', sensor: 'turb', sensorLabel: 'Turbidity',     unit: 'NTU'  },
-    fan:     { title: 'Cooling Fan', subtitle: 'Activates if temp > 30°C',  icon: 'bi-fan',          sensor: 'temp', sensorLabel: 'Temperature',   unit: '°C'   },
-    heater:  { title: 'Heater',      subtitle: 'Activates if temp < 24°C',  icon: 'bi-fire',         sensor: 'temp', sensorLabel: 'Temperature',   unit: '°C'   },
+    aerator: { title: 'Aerator',     subtitle: 'Air Pump',           icon: 'bi-wind',         sensor: 'do',   sensorLabel: 'Dissolved O₂', unit: 'mg/L' },
+    pump:    { title: 'Water Pump',  subtitle: 'Filtration System',  icon: 'bi-droplet-half', sensor: 'turb', sensorLabel: 'Turbidity',     unit: 'NTU'  },
+    fan:     { title: 'Cooling Fan', subtitle: 'Temp Control',       icon: 'bi-fan',          sensor: 'temp', sensorLabel: 'Temperature',   unit: '°C'   },
+    heater:  { title: 'Heater',      subtitle: 'Temp Control',       icon: 'bi-fire',         sensor: 'temp', sensorLabel: 'Temperature',   unit: '°C'   },
 };
-
-function openHwDetail(device) {
-    const info   = hwDeviceInfo[device];
-    const card   = document.getElementById(`hw-${device}`);
-    const group  = card.querySelector('.hw-mode-group');
-    const active = group.querySelector('.hw-mode-btn.active');
-    const mode   = active ? active.dataset.mode : 'auto';
-
-    document.getElementById('hw-detail-icon-wrap').innerHTML = `<i class="bi ${info.icon}"></i>`;
-    document.getElementById('hw-detail-title').textContent    = info.title;
-    document.getElementById('hw-detail-subtitle').textContent = info.subtitle;
-
-    const badge = document.getElementById('hw-detail-status-badge');
-    badge.textContent = mode.toUpperCase();
-    badge.className   = `hw-detail-status-badge ${mode}`;
-
-    document.getElementById('hw-detail-last').textContent = hwLastActivity[device]
-        ? `Last changed: ${hwLastActivity[device]}`
-        : 'No recent activity';
-
-    const sensorVal = document.getElementById(`val-${info.sensor}`)?.textContent || '--';
-    document.getElementById('hw-detail-sensor').innerHTML =
-        `<i class="bi bi-activity"></i> ${info.sensorLabel}: <strong>${sensorVal} ${info.unit}</strong>`;
-
-    // mode control
-    const modeGroup = document.getElementById('hw-detail-mode-group');
-    modeGroup.innerHTML = ['off','auto','on'].map(m =>
-        `<button class="hw-mode-btn${m === mode ? ' active' : ''}" data-mode="${m}" data-device="${device}">${m.toUpperCase()}</button>`
-    ).join('');
-    modeGroup.querySelectorAll('.hw-mode-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const newMode = btn.dataset.mode;
-            const realGroup = document.getElementById(`hw-${device}`).querySelector('.hw-mode-group');
-            realGroup.querySelectorAll('.hw-mode-btn').forEach(b => b.classList.remove('active'));
-            realGroup.querySelector(`[data-mode="${newMode}"]`).classList.add('active');
-            const realCard = document.getElementById(`hw-${device}`);
-            realCard.classList.remove('on','auto','off');
-            realCard.classList.add(newMode);
-            addHwLog(device, newMode);
-            openHwDetail(device);
-        });
-    });
-
-    // activity log
-    const logList = document.getElementById('hw-detail-log-list');
-    if (hwActivityLogs[device].length === 0) {
-        logList.innerHTML = `<p class="hw-detail-log-empty">No activity yet.</p>`;
-    } else {
-        logList.innerHTML = hwActivityLogs[device].map(l => `
-            <div class="hw-detail-log-item">
-              <div class="hw-detail-log-dot ${l.mode}"></div>
-              <div class="hw-detail-log-info">
-                <span class="hw-detail-log-action">${l.action}</span>
-                <span class="hw-detail-log-time">${l.date} &middot; ${l.time}</span>
-              </div>
-            </div>`).join('');
-    }
-
-    hwDetailOverlay.classList.add('show');
-    hwDetailModal.classList.add('show');
-}
-
-function closeHwDetail() {
-    hwDetailOverlay.classList.remove('show');
-    hwDetailModal.classList.remove('show');
-}
-
-hwDetailOverlay.addEventListener('click', closeHwDetail);
-document.getElementById('hw-detail-close').addEventListener('click', closeHwDetail);
-
-document.querySelectorAll('.hw-detail-btn').forEach(btn => {
-    btn.addEventListener('click', e => { e.stopPropagation(); openHwDetail(btn.dataset.device); });
-});
-document.querySelectorAll('.hardware-card[data-device]').forEach(card => {
-    card.style.cursor = 'pointer';
-    card.addEventListener('click', e => {
-        if (e.target.closest('.hw-mode-btn') || e.target.closest('.hw-detail-btn')) return;
-        openHwDetail(card.dataset.device);
-    });
-});
 
 // ─── HARDWARE 3-STATE MODE ────────────────────────────────────
 document.querySelectorAll('.hw-mode-group').forEach(group => {
@@ -294,8 +244,24 @@ function updateTempControl() {
         const active = group?.querySelector('.hw-mode-btn.active');
         if (!active || active.dataset.mode !== 'auto') return;
         const shouldBeOn = device === 'fan' ? temp > 30 : temp < 24;
-        card.classList.remove('on','auto','off');
-        card.classList.add(shouldBeOn ? 'on' : 'auto');
+        const currentlyOn = card.classList.contains('on');
+        if (shouldBeOn && !currentlyOn) {
+            card.classList.remove('on','auto','off');
+            card.classList.add('on');
+            const msg = device === 'fan'
+                ? `Auto-triggered: Temp reached ${temp}°C`
+                : `Auto-triggered: Temp dropped to ${temp}°C`;
+            addHwLog(device, 'on');
+            hwActivityLogs[device][0].action = msg;
+        } else if (!shouldBeOn && currentlyOn) {
+            card.classList.remove('on','auto','off');
+            card.classList.add('auto');
+            const msg = device === 'fan'
+                ? `Auto off: Temp back to ${temp}°C`
+                : `Auto off: Temp back to ${temp}°C`;
+            addHwLog(device, 'auto');
+            hwActivityLogs[device][0].action = msg;
+        }
     });
 }
 
@@ -317,12 +283,93 @@ function closeFeederLog() {
     feederLogModal.classList.remove('show');
 }
 
+// ─── HW LOG PANEL ────────────────────────────────────────────
+const hwLogOverlay = document.getElementById('hw-log-overlay');
+const hwLogModal   = document.getElementById('hw-log-modal');
+
+function openHwLog(device) {
+    const info = hwDeviceInfo[device];
+    const card = document.getElementById(`hw-${device}`);
+    const group = card.querySelector('.hw-mode-group');
+    const active = group.querySelector('.hw-mode-btn.active');
+    const mode = active ? active.dataset.mode : 'auto';
+
+    document.getElementById('hw-log-icon-wrap').innerHTML = `<i class="bi ${info.icon}"></i>`;
+    document.getElementById('hw-log-title').textContent = info.title;
+    document.getElementById('hw-log-subtitle').textContent = info.subtitle;
+
+    const badge = document.getElementById('hw-log-status-badge');
+    badge.textContent = mode.toUpperCase();
+    badge.className = `hw-detail-status-badge ${mode}`;
+
+    document.getElementById('hw-log-last').textContent = hwLastActivity[device]
+        ? `Last changed: ${hwLastActivity[device]}`
+        : 'No recent activity';
+
+    const sensorVal = document.getElementById(`val-${info.sensor}`)?.textContent || '--';
+    document.getElementById('hw-log-sensor').innerHTML =
+        `<i class="bi bi-activity"></i> ${info.sensorLabel}: <strong>${sensorVal} ${info.unit}</strong>`;
+
+    const modeGroup = document.getElementById('hw-log-mode-group');
+    modeGroup.innerHTML = ['off','auto','on'].map(m =>
+        `<button class="hw-mode-btn${m === mode ? ' active' : ''}" data-mode="${m}" data-device="${device}">${m.toUpperCase()}</button>`
+    ).join('');
+    modeGroup.querySelectorAll('.hw-mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const newMode = btn.dataset.mode;
+            const realGroup = document.getElementById(`hw-${device}`).querySelector('.hw-mode-group');
+            realGroup.querySelectorAll('.hw-mode-btn').forEach(b => b.classList.remove('active'));
+            realGroup.querySelector(`[data-mode="${newMode}"]`).classList.add('active');
+            const realCard = document.getElementById(`hw-${device}`);
+            realCard.classList.remove('on','auto','off');
+            realCard.classList.add(newMode);
+            addHwLog(device, newMode);
+            openHwLog(device);
+        });
+    });
+
+    const list = document.getElementById('hw-log-list');
+    if (hwActivityLogs[device].length === 0) {
+        list.innerHTML = `<p class="hw-detail-log-empty">No activity yet.</p>`;
+    } else {
+        list.innerHTML = hwActivityLogs[device].map(l => `
+            <div class="hw-detail-log-item">
+              <div class="hw-detail-log-dot ${l.mode}"></div>
+              <div class="hw-detail-log-info">
+                <span class="hw-detail-log-action">${l.action}</span>
+                <span class="hw-detail-log-time">${l.date} &middot; ${l.time}</span>
+              </div>
+            </div>`).join('');
+    }
+
+    hwLogOverlay.classList.add('show');
+    hwLogModal.classList.add('show');
+}
+
+function closeHwLog() {
+    hwLogOverlay.classList.remove('show');
+    hwLogModal.classList.remove('show');
+}
+
+hwLogOverlay.addEventListener('click', closeHwLog);
+document.getElementById('hw-log-close').addEventListener('click', closeHwLog);
+
+// Log buttons
+document.querySelectorAll('.hw-log-btn[data-device]').forEach(btn => {
+    btn.addEventListener('click', e => { e.stopPropagation(); openHwLog(btn.dataset.device); });
+});
+
+// Cards clickable
+document.querySelectorAll('.hardware-card[data-device]').forEach(card => {
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', e => {
+        if (e.target.closest('.hw-mode-btn')) return;
+        openHwLog(card.dataset.device);
+    });
+});
+
 document.getElementById('feeder-log-toggle-btn').addEventListener('click', openFeederLog);
 feederLogOverlay.addEventListener('click', closeFeederLog);
 document.getElementById('feeder-log-close').addEventListener('click', closeFeederLog);
-document.getElementById('feeder-log-clear').addEventListener('click', () => {
-    feederLogs.length = 0;
-    renderFeederLog();
-});
 
 renderFeederLog();
