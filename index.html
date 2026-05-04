@@ -915,6 +915,7 @@
               <div class="hw-temp-group">
                 <div class="hw-temp-header">
                   <span class="hw-temp-label"><i class="bi bi-funnel-fill"></i> Auto Feeder</span>
+                  <button class="hw-log-btn" id="feeder-log-toggle-btn"><i class="bi bi-journal-text"></i> Log</button>
                 </div>
                 <div class="feeder-card" style="margin-top:8px;box-shadow:none;border:none;padding:0;background:transparent">
                   <div class="feeder-top">
@@ -950,7 +951,7 @@
                 <div class="hw-temp-header">
                   <span class="hw-temp-label"><i class="bi bi-wind"></i> Aeration</span>
                 </div>
-                <div class="hardware-card" id="hw-aerator" style="margin-top:8px">
+                <div class="hardware-card" id="hw-aerator" style="margin-top:8px" data-device="aerator">
                   <div class="hw-card-left">
                     <div class="hw-icon-wrap"><i class="bi bi-wind"></i></div>
                     <div>
@@ -959,7 +960,7 @@
                     </div>
                   </div>
                   <div class="hw-card-right">
-                    <span class="hw-status" id="status-aerator">AUTO</span>
+                    <button class="hw-detail-btn" data-device="aerator"><i class="bi bi-chevron-right"></i></button>
                     <div class="hw-mode-group" data-device="aerator">
                       <button class="hw-mode-btn" data-mode="off">OFF</button>
                       <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
@@ -974,7 +975,7 @@
                 <div class="hw-temp-header">
                   <span class="hw-temp-label"><i class="bi bi-droplet-half"></i> Filtration</span>
                 </div>
-                <div class="hardware-card" id="hw-pump" style="margin-top:8px">
+                <div class="hardware-card" id="hw-pump" style="margin-top:8px" data-device="pump">
                   <div class="hw-card-left">
                     <div class="hw-icon-wrap"><i class="bi bi-droplet-half"></i></div>
                     <div>
@@ -983,7 +984,7 @@
                     </div>
                   </div>
                   <div class="hw-card-right">
-                    <span class="hw-status" id="status-pump">AUTO</span>
+                    <button class="hw-detail-btn" data-device="pump"><i class="bi bi-chevron-right"></i></button>
                     <div class="hw-mode-group" data-device="pump">
                       <button class="hw-mode-btn" data-mode="off">OFF</button>
                       <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
@@ -1003,7 +1004,7 @@
                 </div>
                 <div class="hw-temp-range">Ideal: 24.0 – 30.0°C</div>
 
-                <div class="hardware-card" id="hw-fan" style="margin-top:8px">
+                <div class="hardware-card" id="hw-fan" style="margin-top:8px" data-device="fan">
                   <div class="hw-card-left">
                     <div class="hw-icon-wrap"><i class="bi bi-fan"></i></div>
                     <div>
@@ -1012,7 +1013,7 @@
                     </div>
                   </div>
                   <div class="hw-card-right">
-                    <span class="hw-status" id="status-fan">AUTO</span>
+                    <button class="hw-detail-btn" data-device="fan"><i class="bi bi-chevron-right"></i></button>
                     <div class="hw-mode-group" data-device="fan">
                       <button class="hw-mode-btn" data-mode="off">OFF</button>
                       <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
@@ -1021,7 +1022,7 @@
                   </div>
                 </div>
 
-                <div class="hardware-card" id="hw-heater" style="margin-top:8px">
+                <div class="hardware-card" id="hw-heater" style="margin-top:8px" data-device="heater">
                   <div class="hw-card-left">
                     <div class="hw-icon-wrap"><i class="bi bi-fire"></i></div>
                     <div>
@@ -1030,7 +1031,7 @@
                     </div>
                   </div>
                   <div class="hw-card-right">
-                    <span class="hw-status" id="status-heater">AUTO</span>
+                    <button class="hw-detail-btn" data-device="heater"><i class="bi bi-chevron-right"></i></button>
                     <div class="hw-mode-group" data-device="heater">
                       <button class="hw-mode-btn" data-mode="off">OFF</button>
                       <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
@@ -1040,6 +1041,41 @@
                 </div>
               </div>
 
+            </div>
+
+            <!-- FEEDER LOG MODAL -->
+            <div class="breed-modal-overlay" id="feeder-log-overlay"></div>
+            <div class="breed-modal" id="feeder-log-modal" style="max-height:75%;overflow-y:auto">
+              <div class="legend-handle"></div>
+              <div class="hw-log-modal-header">
+                <p class="breed-modal-title" style="margin:0;text-align:left"><i class="bi bi-journal-text" style="color:var(--primary-teal)"></i> Feeder Activity Log</p>
+                <button class="hw-log-clear-btn" id="feeder-log-clear"><i class="bi bi-trash3"></i> Clear</button>
+              </div>
+              <div id="feeder-log-list" class="hw-detail-log-list" style="margin-top:12px"></div>
+              <button class="mortality-cancel" id="feeder-log-close" style="margin-top:14px">Close</button>
+            </div>
+
+            <!-- HARDWARE DETAIL MODAL -->
+            <div class="breed-modal-overlay" id="hw-detail-overlay"></div>
+            <div class="breed-modal" id="hw-detail-modal">
+              <div class="legend-handle"></div>
+              <div class="hw-detail-header">
+                <div class="hw-detail-icon-wrap" id="hw-detail-icon-wrap"></div>
+                <div>
+                  <p class="hw-detail-title" id="hw-detail-title"></p>
+                  <p class="hw-detail-subtitle" id="hw-detail-subtitle"></p>
+                </div>
+              </div>
+              <div class="hw-detail-status-row">
+                <div class="hw-detail-status-badge" id="hw-detail-status-badge"></div>
+                <span class="hw-detail-last" id="hw-detail-last"></span>
+              </div>
+              <div class="hw-detail-sensor" id="hw-detail-sensor"></div>
+              <p class="hw-detail-section-title">Mode Control</p>
+              <div class="hw-detail-mode-group" id="hw-detail-mode-group"></div>
+              <p class="hw-detail-section-title" style="margin-top:16px">Activity Log</p>
+              <div class="hw-detail-log-list" id="hw-detail-log-list"></div>
+              <button class="mortality-cancel" id="hw-detail-close" style="margin-top:14px">Close</button>
             </div>
 
           </section>
