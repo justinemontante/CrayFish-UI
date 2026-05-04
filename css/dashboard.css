@@ -3,7 +3,7 @@
     display: flex;
     background: #ffffff;
     border-radius: 16px;
-    padding: 16px 20px;
+    padding: 16px 20px 16px 12px;
     margin: 12px 12px 8px;
     box-shadow: 0 2px 12px rgba(11, 60, 73, 0.08);
 }
@@ -13,9 +13,13 @@
     height: 45px;
     background: #1FA5A5;
     border-radius: 2px;
-    margin-left: 2px;
+    margin-left: 0;
     align-self: center;
     flex-shrink: 0;
+}
+
+.greeting-content {
+    margin-left: 10px;
 }
 
 .greeting-content {
