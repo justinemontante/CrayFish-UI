@@ -543,176 +543,56 @@
               <div class="breed-tabs">
                 <button class="breed-tab active" data-breed="groups">🦞 Groups</button>
                 <button class="breed-tab" data-breed="isolation">📦 Isolation</button>
-                <button class="breed-tab" data-breed="hatching">🐣 Hatching</button>
-                <button class="breed-tab" data-breed="ai">🤖 AI</button>
-                <button class="breed-tab" data-breed="score">📊 Score</button>
               </div>
 
-              <!-- ── 3. BREEDING GROUPS ── -->
+              <!-- ── BREEDING GROUPS ── -->
               <div class="breed-panel active" id="breed-groups">
                 <div class="breed-section-header">
                   <span class="breed-section-title">Breeding Groups</span>
                   <button class="breed-add-btn" id="add-group-btn"><i class="bi bi-plus"></i> Add Group</button>
                 </div>
-
-                <div class="breed-group-list" id="breed-group-list">
-
-                  <!-- GROUP A -->
-                  <div class="breed-group-card">
-                    <div class="breed-group-photo">
-                      <div class="breed-group-photo-placeholder"><i class="bi bi-camera"></i></div>
-                    </div>
-                    <div class="breed-group-info">
-                      <div class="breed-group-top">
-                        <span class="breed-group-name">Group A</span>
-                        <div class="breed-group-actions">
-                          <button class="breed-icon-btn edit"><i class="bi bi-pencil-fill"></i></button>
-                          <button class="breed-icon-btn delete"><i class="bi bi-trash-fill"></i></button>
-                        </div>
-                      </div>
-                      <div class="breed-group-members">
-                        <span class="breed-member-tag male">♂ 1 Male</span>
-                        <span class="breed-member-tag female">♀ 4 Females</span>
-                      </div>
-                      <div class="breed-female-tags">
-                        <span class="breed-female-tag">F1</span>
-                        <span class="breed-female-tag">F2</span>
-                        <span class="breed-female-tag">F3</span>
-                        <span class="breed-female-tag berried">F4 🫐 Berried</span>
-                      </div>
-                      <div class="breed-group-meta">
-                        <i class="bi bi-calendar3"></i>
-                        <span>Created: June 20, 2025</span>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
+                <div class="breed-group-list" id="breed-group-list"></div>
               </div>
 
-              <!-- ── 4. ISOLATION BOXES ── -->
+              <!-- ── ISOLATION BOXES ── -->
               <div class="breed-panel" id="breed-isolation">
                 <div class="breed-section-header">
                   <span class="breed-section-title">Isolation Boxes</span>
                   <button class="breed-add-btn" id="add-box-btn"><i class="bi bi-plus"></i> Add Box</button>
                 </div>
+
+                <!-- GENERAL AI INSIGHTS -->
+                <div class="iso-ai-panel">
+                  <p class="iso-ai-title"><i class="bi bi-robot"></i> Water Conditions</p>
+                  <div class="ai-status-grid">
+                    <div class="ai-param-card" id="iso-ai-temp-card">
+                      <span class="ai-param-label">Temp</span>
+                      <span class="ai-param-val" id="iso-ai-temp">--</span>
+                      <span class="ai-param-badge" id="iso-ai-temp-badge">--</span>
+                    </div>
+                    <div class="ai-param-card" id="iso-ai-ph-card">
+                      <span class="ai-param-label">pH</span>
+                      <span class="ai-param-val" id="iso-ai-ph">--</span>
+                      <span class="ai-param-badge" id="iso-ai-ph-badge">--</span>
+                    </div>
+                    <div class="ai-param-card" id="iso-ai-do-card">
+                      <span class="ai-param-label">DO</span>
+                      <span class="ai-param-val" id="iso-ai-do">--</span>
+                      <span class="ai-param-badge" id="iso-ai-do-badge">--</span>
+                    </div>
+                  </div>
+                  <div class="ai-message-card" style="margin-top:8px">
+                    <div class="ai-message-icon"><i class="bi bi-robot"></i></div>
+                    <p class="ai-message-text" id="iso-ai-msg">Analyzing conditions...</p>
+                  </div>
+                </div>
+
                 <div class="iso-box-grid" id="iso-box-grid"></div>
               </div>
 
-              <!-- ── 5. HATCHING MONITOR ── -->
-              <div class="breed-panel" id="breed-hatching">
-                <div class="breed-section-header">
-                  <span class="breed-section-title">Hatching Monitor</span>
-                  <span class="hatch-note">Typical: 18–25 days</span>
-                </div>
-                <div id="hatch-card-list"></div>
-                <div class="hatch-transfer-banner" id="hatch-transfer-banner" style="display:none">
-                  <div class="hatch-transfer-info">
-                    <i class="bi bi-arrow-right-circle-fill"></i>
-                    <div>
-                      <p class="hatch-transfer-title">Ready to Transfer</p>
-                      <p class="hatch-transfer-sub">Day 18+ reached — move babies to Nursery</p>
-                    </div>
-                  </div>
-                  <button class="hatch-transfer-btn">Transfer to Nursery</button>
-                </div>
-              </div>
-
-              <!-- ── 6. AI BREEDING ASSISTANT ── -->
-              <div class="breed-panel" id="breed-ai">
-                <div class="breed-section-header">
-                  <span class="breed-section-title">AI Breeding Assistant</span>
-                </div>
-
-                <div class="ai-status-grid">
-                  <div class="ai-param-card ideal">
-                    <span class="ai-param-label">DO</span>
-                    <span class="ai-param-val">6.8 mg/L</span>
-                    <span class="ai-param-badge ideal">Ideal</span>
-                  </div>
-                  <div class="ai-param-card ideal">
-                    <span class="ai-param-label">Temperature</span>
-                    <span class="ai-param-val">26.5°C</span>
-                    <span class="ai-param-badge ideal">Ideal</span>
-                  </div>
-                  <div class="ai-param-card balanced">
-                    <span class="ai-param-label">pH</span>
-                    <span class="ai-param-val">7.4</span>
-                    <span class="ai-param-badge balanced">Balanced</span>
-                  </div>
-                </div>
-
-                <div class="ai-message-card">
-                  <div class="ai-message-icon"><i class="bi bi-robot"></i></div>
-                  <p class="ai-message-text">"All conditions are optimal for breeding and egg development."</p>
-                </div>
-
-                <button class="compute-btn ai-analysis-btn">View Full Analysis <i class="bi bi-arrow-right"></i></button>
-              </div>
-
-              <!-- ── 7. BREEDING SUCCESS SCORE ── -->
-              <div class="breed-panel" id="breed-score">
-                <div class="breed-section-header">
-                  <span class="breed-section-title">Breeding Success Score</span>
-                </div>
-
-                <div class="score-main-card">
-                  <div class="score-circle-wrap">
-                    <svg class="score-ring" viewBox="0 0 80 80">
-                      <circle class="score-ring-bg" cx="40" cy="40" r="34" />
-                      <circle class="score-ring-fill" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="38.4" />
-                    </svg>
-                    <div class="score-center">
-                      <span class="score-pct">82%</span>
-                    </div>
-                  </div>
-                  <div class="score-info">
-                    <p class="score-likelihood">High Likelihood</p>
-                    <div class="score-stars">
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-fill"></i>
-                      <i class="bi bi-star-half"></i>
-                    </div>
-                    <p class="score-interp">Your setup is well-optimized for successful breeding.</p>
-                  </div>
-                </div>
-
-                <div class="score-breakdown">
-                  <p class="score-breakdown-title">Breakdown</p>
-
-                  <div class="score-item">
-                    <div class="score-item-label">
-                      <span>Water Quality</span>
-                      <span class="score-item-val teal">85%</span>
-                    </div>
-                    <div class="tank-progress-bar">
-                      <div class="tank-progress-fill teal" style="width:85%"></div>
-                    </div>
-                  </div>
-
-                  <div class="score-item">
-                    <div class="score-item-label">
-                      <span>Isolation Compliance</span>
-                      <span class="score-item-val green">90%</span>
-                    </div>
-                    <div class="tank-progress-bar">
-                      <div class="tank-progress-fill green" style="width:90%"></div>
-                    </div>
-                  </div>
-
-                  <div class="score-item">
-                    <div class="score-item-label">
-                      <span>History Success</span>
-                      <span class="score-item-val amber">72%</span>
-                    </div>
-                    <div class="tank-progress-bar">
-                      <div class="tank-progress-fill amber" style="width:72%"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <!-- hidden containers for hatch data -->
+              <div id="hatch-card-list" style="display:none"></div>
+              <div id="hatch-transfer-banner" style="display:none"></div>
 
             </div>
 
@@ -834,6 +714,60 @@
               </div>
             </div>
 
+            <!-- GROUP DETAIL MODAL -->
+            <div class="breed-modal-overlay" id="grp-detail-overlay"></div>
+            <div class="breed-modal" id="grp-detail-modal" style="max-height:85%;overflow-y:auto">
+              <div class="legend-handle"></div>
+              <div class="grp-detail-header">
+                <div class="grp-detail-photo" id="grp-detail-photo"></div>
+                <div>
+                  <p class="breed-modal-title" id="grp-detail-name" style="margin:0;text-align:left"></p>
+                  <div class="breed-group-members" id="grp-detail-members" style="margin-top:4px"></div>
+                  <div class="breed-group-meta" id="grp-detail-date" style="margin-top:4px"></div>
+                </div>
+              </div>
+
+              <!-- BERRIED FEMALES -->
+              <div class="grp-detail-section" id="grp-detail-berried-wrap">
+                <p class="grp-detail-section-title"><i class="bi bi-egg-fill"></i> Berried Females</p>
+                <div id="grp-detail-berried"></div>
+              </div>
+
+              <!-- HATCHING STATUS -->
+              <div class="grp-detail-section" id="grp-detail-hatch-wrap">
+                <p class="grp-detail-section-title"><i class="bi bi-clock-history"></i> Hatching Status</p>
+                <div id="grp-detail-hatch"></div>
+              </div>
+
+              <!-- AI INSIGHTS -->
+              <div class="grp-detail-section">
+                <p class="grp-detail-section-title"><i class="bi bi-robot"></i> AI Insights</p>
+                <div class="ai-status-grid" style="margin-bottom:10px">
+                  <div class="ai-param-card ideal">
+                    <span class="ai-param-label">Temp</span>
+                    <span class="ai-param-val" id="grp-ai-temp">--</span>
+                    <span class="ai-param-badge ideal" id="grp-ai-temp-badge">--</span>
+                  </div>
+                  <div class="ai-param-card ideal">
+                    <span class="ai-param-label">pH</span>
+                    <span class="ai-param-val" id="grp-ai-ph">--</span>
+                    <span class="ai-param-badge ideal" id="grp-ai-ph-badge">--</span>
+                  </div>
+                  <div class="ai-param-card ideal">
+                    <span class="ai-param-label">DO</span>
+                    <span class="ai-param-val" id="grp-ai-do">--</span>
+                    <span class="ai-param-badge ideal" id="grp-ai-do-badge">--</span>
+                  </div>
+                </div>
+                <div class="ai-message-card">
+                  <div class="ai-message-icon"><i class="bi bi-robot"></i></div>
+                  <p class="ai-message-text" id="grp-ai-msg">Analyzing conditions...</p>
+                </div>
+              </div>
+
+              <button class="mortality-cancel" id="grp-detail-close">Close</button>
+            </div>
+
             <!-- BERRIED ASSIGN MODAL -->
             <div class="breed-modal-overlay" id="berried-overlay"></div>
             <div class="breed-modal" id="berried-modal">
@@ -863,6 +797,8 @@
                   <span class="iso-detail-val" id="iso-detail-date"></span>
                 </div>
               </div>
+              <div id="iso-detail-hatch-section"></div>
+              <div id="iso-detail-ai-section"></div>
               <button class="mortality-cancel" id="iso-detail-close">Close</button>
             </div>
 
@@ -971,95 +907,141 @@
 
           <section id="controls" class="nav-section hidden">
 
-            <!-- AUTO FEEDER -->
-            <div class="controls-section-label">Auto Feeder</div>
-            <div class="feeder-card">
-              <div class="feeder-top">
-                <div class="feeder-icon-wrap">
-                  <i class="bi bi-funnel-fill"></i>
-                </div>
-                <div class="feeder-info">
-                  <span class="feeder-title">Auto Feeder</span>
-                  <span class="feeder-ration" id="feeder-ration">System will dispense 44.1g today</span>
-                </div>
-                <div class="toggle-wrap">
-                  <span class="toggle-label" id="feeder-mode-label">Auto</span>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="feeder-toggle" checked />
-                    <span class="toggle-slider"></span>
-                  </label>
-                </div>
-              </div>
-
-              <button class="feed-now-btn" id="feed-now-btn">
-                <i class="bi bi-play-fill"></i> Feed Now
-              </button>
-
-              <div class="schedule-list">
-                <div class="schedule-label">Feeding Schedule</div>
-                <div class="schedule-items" id="schedule-items">
-                  <div class="schedule-item">
-                    <i class="bi bi-clock-fill"></i>
-                    <span>8:00 AM</span>
-                    <button class="schedule-remove" data-time="8:00 AM"><i class="bi bi-x"></i></button>
-                  </div>
-                  <div class="schedule-item">
-                    <i class="bi bi-clock-fill"></i>
-                    <span>5:00 PM</span>
-                    <button class="schedule-remove" data-time="5:00 PM"><i class="bi bi-x"></i></button>
-                  </div>
-                </div>
-                <div class="schedule-add-row">
-                  <input type="time" class="schedule-time-input" id="schedule-time-input" />
-                  <button class="schedule-add-btn" id="schedule-add-btn">Add</button>
-                </div>
-              </div>
-            </div>
-
             <!-- HARDWARE CONTROLS -->
             <div class="controls-section-label">Hardware Controls</div>
             <div class="hardware-grid">
 
-              <div class="hardware-card" id="hw-aerator">
-                <div class="hw-icon-wrap">
-                  <i class="bi bi-wind"></i>
+              <!-- AUTO FEEDER -->
+              <div class="hw-temp-group">
+                <div class="hw-temp-header">
+                  <span class="hw-temp-label"><i class="bi bi-funnel-fill"></i> Auto Feeder</span>
                 </div>
-                <span class="hw-title">Aerator</span>
-                <span class="hw-subtitle">Air Pump</span>
-                <label class="toggle-switch">
-                  <input type="checkbox" class="hw-toggle" data-device="aerator" />
-                  <span class="toggle-slider"></span>
-                </label>
-                <span class="hw-status" id="status-aerator">OFF</span>
+                <div class="feeder-card" style="margin-top:8px;box-shadow:none;border:none;padding:0;background:transparent">
+                  <div class="feeder-top">
+                    <div class="feeder-icon-wrap"><i class="bi bi-funnel-fill"></i></div>
+                    <div class="feeder-info">
+                      <span class="feeder-title">Auto Feeder</span>
+                      <span class="feeder-ration" id="feeder-ration">System will dispense 44.1g today</span>
+                    </div>
+                    <div class="toggle-wrap">
+                      <span class="toggle-label" id="feeder-mode-label">Auto</span>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="feeder-toggle" checked />
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                  <button class="feed-now-btn" id="feed-now-btn" style="margin-top:10px">
+                    <i class="bi bi-play-fill"></i> Feed Now
+                  </button>
+                  <div class="schedule-list" style="margin-top:10px">
+                    <div class="schedule-label">Feeding Schedule</div>
+                    <div class="schedule-items" id="schedule-items"></div>
+                    <div class="schedule-add-row">
+                      <input type="time" class="schedule-time-input" id="schedule-time-input" />
+                      <button class="schedule-add-btn" id="schedule-add-btn">Add</button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div class="hardware-card" id="hw-pump">
-                <div class="hw-icon-wrap">
-                  <i class="bi bi-droplet-half"></i>
+              <!-- AERATION -->
+              <div class="hw-temp-group">
+                <div class="hw-temp-header">
+                  <span class="hw-temp-label"><i class="bi bi-wind"></i> Aeration</span>
                 </div>
-                <span class="hw-title">Filtration</span>
-                <span class="hw-subtitle">Water Pump</span>
-                <label class="toggle-switch">
-                  <input type="checkbox" class="hw-toggle" data-device="pump" />
-                  <span class="toggle-slider"></span>
-                </label>
-                <span class="hw-status" id="status-pump">OFF</span>
+                <div class="hardware-card" id="hw-aerator" style="margin-top:8px">
+                  <div class="hw-card-left">
+                    <div class="hw-icon-wrap"><i class="bi bi-wind"></i></div>
+                    <div>
+                      <span class="hw-title">Aerator</span>
+                      <span class="hw-subtitle">Air Pump</span>
+                    </div>
+                  </div>
+                  <div class="hw-card-right">
+                    <span class="hw-status" id="status-aerator">AUTO</span>
+                    <div class="hw-mode-group" data-device="aerator">
+                      <button class="hw-mode-btn" data-mode="off">OFF</button>
+                      <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
+                      <button class="hw-mode-btn" data-mode="on">ON</button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div class="hardware-card" id="hw-fan">
-                <div class="hw-icon-wrap">
-                  <i class="bi bi-fan"></i>
+              <!-- FILTRATION -->
+              <div class="hw-temp-group">
+                <div class="hw-temp-header">
+                  <span class="hw-temp-label"><i class="bi bi-droplet-half"></i> Filtration</span>
                 </div>
-                <span class="hw-title">Temperature</span>
-                <span class="hw-subtitle">Cooling Fans</span>
-                <label class="toggle-switch">
-                  <input type="checkbox" class="hw-toggle" data-device="fan" />
-                  <span class="toggle-slider"></span>
-                </label>
-                <span class="hw-status" id="status-fan">OFF</span>
+                <div class="hardware-card" id="hw-pump" style="margin-top:8px">
+                  <div class="hw-card-left">
+                    <div class="hw-icon-wrap"><i class="bi bi-droplet-half"></i></div>
+                    <div>
+                      <span class="hw-title">Water Pump</span>
+                      <span class="hw-subtitle">Filtration System</span>
+                    </div>
+                  </div>
+                  <div class="hw-card-right">
+                    <span class="hw-status" id="status-pump">AUTO</span>
+                    <div class="hw-mode-group" data-device="pump">
+                      <button class="hw-mode-btn" data-mode="off">OFF</button>
+                      <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
+                      <button class="hw-mode-btn" data-mode="on">ON</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TEMPERATURE CONTROL GROUP -->
+              <div class="hw-temp-group">
+                <div class="hw-temp-header">
+                  <span class="hw-temp-label"><i class="bi bi-thermometer-half"></i> Temperature Control</span>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <span class="hw-temp-reading">Current: <strong id="hw-temp-val">--°C</strong></span>
+                  </div>
+                </div>
+                <div class="hw-temp-range">Ideal: 24.0 – 30.0°C</div>
+
+                <div class="hardware-card" id="hw-fan" style="margin-top:8px">
+                  <div class="hw-card-left">
+                    <div class="hw-icon-wrap"><i class="bi bi-fan"></i></div>
+                    <div>
+                      <span class="hw-title">Cooling Fan</span>
+                      <span class="hw-subtitle">Activates if temp &gt; 30°C</span>
+                    </div>
+                  </div>
+                  <div class="hw-card-right">
+                    <span class="hw-status" id="status-fan">AUTO</span>
+                    <div class="hw-mode-group" data-device="fan">
+                      <button class="hw-mode-btn" data-mode="off">OFF</button>
+                      <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
+                      <button class="hw-mode-btn" data-mode="on">ON</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="hardware-card" id="hw-heater" style="margin-top:8px">
+                  <div class="hw-card-left">
+                    <div class="hw-icon-wrap"><i class="bi bi-fire"></i></div>
+                    <div>
+                      <span class="hw-title">Heater</span>
+                      <span class="hw-subtitle">Activates if temp &lt; 24°C</span>
+                    </div>
+                  </div>
+                  <div class="hw-card-right">
+                    <span class="hw-status" id="status-heater">AUTO</span>
+                    <div class="hw-mode-group" data-device="heater">
+                      <button class="hw-mode-btn" data-mode="off">OFF</button>
+                      <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
+                      <button class="hw-mode-btn" data-mode="on">ON</button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
             </div>
+
           </section>
 
           <section id="notifications" class="nav-section hidden">

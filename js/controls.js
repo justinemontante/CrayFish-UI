@@ -1,12 +1,18 @@
 // CONTROLS — Hardware Control Center
 
-// Feeder Mode Toggle
+// ─── FEEDER MODE TOGGLE ───────────────────────────────────────
 const feederToggle = document.getElementById('feeder-toggle');
 const feederModeLabel = document.getElementById('feeder-mode-label');
+const scheduleList = document.querySelector('.schedule-list');
 
-feederToggle.addEventListener('change', () => {
-    feederModeLabel.textContent = feederToggle.checked ? 'Auto' : 'Manual';
-});
+function updateFeederMode() {
+    const isAuto = feederToggle.checked;
+    feederModeLabel.textContent = isAuto ? 'Auto' : 'Manual';
+    scheduleList.style.display = isAuto ? 'block' : 'none';
+}
+
+feederToggle.addEventListener('change', updateFeederMode);
+updateFeederMode();
 
 // Feed Now Button
 document.getElementById('feed-now-btn').addEventListener('click', () => {
@@ -95,18 +101,54 @@ document.getElementById('schedule-add-btn').addEventListener('click', () => {
     input.value = '';
 });
 
-// Hardware Toggles
-document.querySelectorAll('.hw-toggle').forEach(toggle => {
-    toggle.addEventListener('change', () => {
-        const device = toggle.dataset.device;
-        const card = document.getElementById(`hw-${device}`);
-        const statusEl = document.getElementById(`status-${device}`);
-        if (toggle.checked) {
-            card.classList.add('on');
-            statusEl.textContent = 'ON';
-        } else {
-            card.classList.remove('on');
-            statusEl.textContent = 'OFF';
-        }
+// ─── HARDWARE 3-STATE MODE (OFF / AUTO / ON) ─────────────────
+document.querySelectorAll('.hw-mode-group').forEach(group => {
+    group.querySelectorAll('.hw-mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const device = group.dataset.device;
+            const mode   = btn.dataset.mode;
+            const card   = document.getElementById(`hw-${device}`);
+            const status = document.getElementById(`status-${device}`);
+
+            group.querySelectorAll('.hw-mode-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            card.classList.remove('on', 'auto', 'off');
+            card.classList.add(mode);
+            status.textContent = mode.toUpperCase();
+        });
     });
 });
+
+// init all cards to AUTO state
+document.querySelectorAll('.hw-mode-group').forEach(group => {
+    const device = group.dataset.device;
+    document.getElementById(`hw-${device}`).classList.add('auto');
+});
+
+// ─── TEMPERATURE DISPLAY + AUTO LOGIC ────────────────────────
+function updateTempControl() {
+    const tempEl = document.getElementById('val-temp');
+    const hwTempVal = document.getElementById('hw-temp-val');
+    if (!tempEl || !hwTempVal) return;
+
+    const temp = parseFloat(tempEl.textContent);
+    hwTempVal.textContent = isNaN(temp) ? '--°C' : temp + '°C';
+    hwTempVal.style.color = isNaN(temp) ? '' : temp > 30 ? '#E63946' : temp < 24 ? '#3b82f6' : 'var(--primary-teal)';
+
+    ['fan', 'heater'].forEach(device => {
+        const card   = document.getElementById(`hw-${device}`);
+        const status = document.getElementById(`status-${device}`);
+        const group  = card?.querySelector('.hw-mode-group');
+        const active = group?.querySelector('.hw-mode-btn.active');
+        if (!active || active.dataset.mode !== 'auto') return;
+
+        const shouldBeOn = device === 'fan' ? temp > 30 : temp < 24;
+        card.classList.remove('on', 'auto', 'off');
+        card.classList.add(shouldBeOn ? 'on' : 'auto');
+        status.textContent = shouldBeOn ? 'ON (AUTO)' : 'AUTO';
+    });
+}
+
+updateTempControl();
+setInterval(updateTempControl, 5000);

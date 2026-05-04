@@ -96,7 +96,24 @@ initHatchChart('hatch-chart-f2', []);
 initHatchChart('hatch-chart-f4', []);
 
 // ─── BREEDING GROUPS DATA & RENDER ───────────────────────────
-let breedGroups = [];
+let breedGroups = [
+    {
+        name: 'Group A',
+        maleTag: 'M1',
+        femaleTags: ['F1', 'F2', 'F3', 'F4'],
+        berriedTags: ['F2', 'F4'],
+        date: '2025-06-20',
+        photo: null
+    },
+    {
+        name: 'Group B',
+        maleTag: 'M2',
+        femaleTags: ['F1', 'F2'],
+        berriedTags: [],
+        date: '2025-07-01',
+        photo: null
+    }
+];
 
 function renderGroups() {
     const list = document.getElementById('breed-group-list');
@@ -119,7 +136,7 @@ function renderGroups() {
             ? `<img src="${g.photo}" alt="Group photo" style="width:100%;height:100%;object-fit:cover;border-radius:12px" />`
             : `<div class="breed-group-photo-placeholder"><i class="bi bi-camera"></i></div>`;
         return `
-        <div class="breed-group-card">
+        <div class="breed-group-card" data-index="${i}" style="cursor:pointer">
           <div class="breed-group-photo">${photoHTML}</div>
           <div class="breed-group-info">
             <div class="breed-group-top">
@@ -143,13 +160,16 @@ function renderGroups() {
     }).join('');
 
     list.querySelectorAll('.breed-icon-btn.edit').forEach(btn => {
-        btn.addEventListener('click', () => openGroupModal(parseInt(btn.dataset.index)));
+        btn.addEventListener('click', e => { e.stopPropagation(); openGroupModal(parseInt(btn.dataset.index)); });
     });
     list.querySelectorAll('.breed-icon-btn.delete').forEach(btn => {
-        btn.addEventListener('click', () => openDeleteModal('group', parseInt(btn.dataset.index)));
+        btn.addEventListener('click', e => { e.stopPropagation(); openDeleteModal('group', parseInt(btn.dataset.index)); });
     });
     list.querySelectorAll('.berried-tag-btn').forEach(btn => {
-        btn.addEventListener('click', () => openBerriedModal(parseInt(btn.dataset.group), btn.dataset.female));
+        btn.addEventListener('click', e => { e.stopPropagation(); openBerriedModal(parseInt(btn.dataset.group), btn.dataset.female); });
+    });
+    list.querySelectorAll('.breed-group-card').forEach(card => {
+        card.addEventListener('click', () => openGroupDetail(parseInt(card.dataset.index)));
     });
 }
 
@@ -183,6 +203,108 @@ document.getElementById('bm-tag-add').addEventListener('click', addFemaleTag);
 document.getElementById('bm-tag-field').addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); addFemaleTag(); }
 });
+
+// ─── GROUP DETAIL MODAL ──────────────────────────────────────
+const grpDetailOverlay = document.getElementById('grp-detail-overlay');
+const grpDetailModal   = document.getElementById('grp-detail-modal');
+
+function openGroupDetail(index) {
+    const g = breedGroups[index];
+    const today = new Date();
+
+    // header
+    document.getElementById('grp-detail-name').textContent = g.name;
+    const photoEl = document.getElementById('grp-detail-photo');
+    photoEl.innerHTML = g.photo
+        ? `<img src="${g.photo}" alt="" style="width:100%;height:100%;object-fit:cover" />`
+        : `<i class="bi bi-camera"></i>`;
+    document.getElementById('grp-detail-members').innerHTML =
+        `<span class="breed-member-tag male">♂ 1 Male (${g.maleTag})</span>
+         <span class="breed-member-tag female">♀ ${g.femaleTags.length} Female${g.femaleTags.length !== 1 ? 's' : ''}</span>`;
+    const dateStr = g.date
+        ? new Date(g.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+        : '—';
+    document.getElementById('grp-detail-date').innerHTML =
+        `<i class="bi bi-calendar3"></i><span>Mating Date: ${dateStr}</span>`;
+
+    // berried females
+    const berried = g.berriedTags || [];
+    const berriedEl = document.getElementById('grp-detail-berried');
+    berriedEl.innerHTML = berried.length > 0
+        ? berried.map(f => `<span class="grp-berried-tag"><i class="bi bi-egg-fill"></i> ${f}</span>`).join(' ')
+        : `<p class="grp-berried-empty">No berried females yet.</p>`;
+
+    // hatching status
+    const hatchEl = document.getElementById('grp-detail-hatch');
+    const hatchItems = isoBBoxes.filter(b => b.occupant && b.date && berried.some(f => b.occupant.includes(f)));
+    if (hatchItems.length === 0) {
+        hatchEl.innerHTML = `<p class="grp-berried-empty">No females in isolation yet.</p>`;
+    } else {
+        hatchEl.innerHTML = hatchItems.map(b => {
+            const placed  = new Date(b.date + 'T00:00:00');
+            const dayIn   = Math.max(Math.floor((today - placed) / 86400000), 0);
+            const total   = 25;
+            const pct     = Math.min(Math.round((dayIn / total) * 100), 100);
+            const etaDate = new Date(placed);
+            etaDate.setDate(etaDate.getDate() + total);
+            const eta = etaDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            return `
+            <div class="grp-hatch-item">
+              <div class="grp-hatch-top">
+                <span class="grp-hatch-name">${b.occupant} – ${b.name}</span>
+                <span class="grp-hatch-badge">Day ${dayIn} / ${total}</span>
+              </div>
+              <div class="hatch-progress-wrap">
+                <div class="tank-progress-bar"><div class="tank-progress-fill teal" style="width:${pct}%"></div></div>
+                <span class="hatch-pct">${pct}%</span>
+              </div>
+              <p class="grp-hatch-eta"><i class="bi bi-calendar-check"></i> Est. Hatch: ${eta}</p>
+            </div>`;
+        }).join('');
+    }
+
+    // AI insights from live sensor values
+    const temp = document.getElementById('val-temp')?.textContent || '--';
+    const ph   = document.getElementById('val-ph')?.textContent  || '--';
+    const doV  = document.getElementById('val-do')?.textContent  || '--';
+    const tempNum = parseFloat(temp), phNum = parseFloat(ph), doNum = parseFloat(doV);
+    const tempOk = !isNaN(tempNum) && tempNum >= 24 && tempNum <= 30;
+    const phOk   = !isNaN(phNum)   && phNum   >= 7.0 && phNum   <= 8.5;
+    const doOk   = !isNaN(doNum)   && doNum   >= 5.0;
+
+    document.getElementById('grp-ai-temp').textContent = isNaN(tempNum) ? '--' : temp + '°C';
+    document.getElementById('grp-ai-ph').textContent   = isNaN(phNum)   ? '--' : ph;
+    document.getElementById('grp-ai-do').textContent   = isNaN(doNum)   ? '--' : doV + ' mg/L';
+
+    const setBadge = (id, ok) => {
+        const el = document.getElementById(id);
+        el.textContent = ok ? 'Ideal' : 'Check';
+        el.className   = `ai-param-badge ${ok ? 'ideal' : 'warn'}`;
+        el.closest('.ai-param-card').className = `ai-param-card ${ok ? 'ideal' : 'warn'}`;
+    };
+    setBadge('grp-ai-temp-badge', tempOk);
+    setBadge('grp-ai-ph-badge',   phOk);
+    setBadge('grp-ai-do-badge',   doOk);
+
+    const allOk  = tempOk && phOk && doOk;
+    const someOk = tempOk || phOk || doOk;
+    document.getElementById('grp-ai-msg').textContent = allOk
+        ? '"All conditions are optimal for breeding and egg development."'
+        : someOk
+        ? '"Some parameters need attention. Monitor closely for best results."'
+        : '"Water conditions are not ideal. Adjust before breeding."';
+
+    grpDetailOverlay.classList.add('show');
+    grpDetailModal.classList.add('show');
+}
+
+function closeGroupDetail() {
+    grpDetailOverlay.classList.remove('show');
+    grpDetailModal.classList.remove('show');
+}
+
+grpDetailOverlay.addEventListener('click', closeGroupDetail);
+document.getElementById('grp-detail-close').addEventListener('click', closeGroupDetail);
 
 // ─── BERRIED ASSIGN MODAL ────────────────────────────────────
 const berriedOverlay = document.getElementById('berried-overlay');
@@ -386,8 +508,48 @@ document.getElementById('bd-confirm-btn').addEventListener('click', () => {
 
 renderGroups();
 
+// ─── ISOLATION GENERAL AI PANEL ──────────────────────────────
+function updateIsoAI() {
+    const temp = document.getElementById('val-temp')?.textContent || '--';
+    const ph   = document.getElementById('val-ph')?.textContent  || '--';
+    const doV  = document.getElementById('val-do')?.textContent  || '--';
+    const tempNum = parseFloat(temp), phNum = parseFloat(ph), doNum = parseFloat(doV);
+    const tempOk = !isNaN(tempNum) && tempNum >= 24 && tempNum <= 30;
+    const phOk   = !isNaN(phNum)   && phNum   >= 7.0 && phNum   <= 8.5;
+    const doOk   = !isNaN(doNum)   && doNum   >= 5.0;
+
+    const setCard = (valId, badgeId, cardId, val, ok) => {
+        document.getElementById(valId).textContent = val;
+        const badge = document.getElementById(badgeId);
+        badge.textContent = ok ? 'Ideal' : 'Check';
+        badge.className   = `ai-param-badge ${ok ? 'ideal' : 'warn'}`;
+        document.getElementById(cardId).className = `ai-param-card ${ok ? 'ideal' : 'warn'}`;
+    };
+    setCard('iso-ai-temp', 'iso-ai-temp-badge', 'iso-ai-temp-card', isNaN(tempNum) ? '--' : temp + '°C', tempOk);
+    setCard('iso-ai-ph',   'iso-ai-ph-badge',   'iso-ai-ph-card',   isNaN(phNum)   ? '--' : ph,             phOk);
+    setCard('iso-ai-do',   'iso-ai-do-badge',   'iso-ai-do-card',   isNaN(doNum)   ? '--' : doV + ' mg/L',  doOk);
+
+    const allOk  = tempOk && phOk && doOk;
+    const someOk = tempOk || phOk || doOk;
+    document.getElementById('iso-ai-msg').textContent = allOk
+        ? '"All conditions are optimal for egg incubation."'
+        : someOk
+        ? '"Some parameters need attention. Monitor closely."'
+        : '"Water conditions are not ideal. Adjust parameters."';
+}
+
+document.querySelectorAll('.breed-tab').forEach(tab => {
+    if (tab.dataset.breed === 'isolation') tab.addEventListener('click', updateIsoAI);
+});
+updateIsoAI();
+
 // ─── ISOLATION BOXES DATA & RENDER ───────────────────────────
-let isoBBoxes = [];
+let isoBBoxes = [
+    { name: 'Box A', occupant: 'Female F2', date: '2025-07-05' },
+    { name: 'Box B', occupant: 'Female F4', date: '2025-07-08' },
+    { name: 'Box C', occupant: '', date: '' },
+    { name: 'Box D', occupant: '', date: '' },
+];
 
 function renderIsoBoxes() {
     const grid = document.getElementById('iso-box-grid');
@@ -441,15 +603,57 @@ const isoDetailModal   = document.getElementById('iso-detail-modal');
 function openIsoDetail(index) {
     const b        = isoBBoxes[index];
     const occupied = b.occupant.trim() !== '';
+    const today    = new Date();
     const dateStr  = b.date
         ? new Date(b.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
         : '—';
+
     document.getElementById('iso-detail-name').textContent     = b.name;
     document.getElementById('iso-detail-status').innerHTML     = occupied
         ? '<span style="color:#c97d08">🟠 Occupied</span>'
         : '<span style="color:#2d9e5f">🟢 Available</span>';
     document.getElementById('iso-detail-occupant').textContent = occupied ? b.occupant : '— Empty —';
     document.getElementById('iso-detail-date').textContent     = occupied ? dateStr : '—';
+
+    const hatchSection = document.getElementById('iso-detail-hatch-section');
+    const aiSection    = document.getElementById('iso-detail-ai-section');
+
+    if (!occupied) {
+        hatchSection.innerHTML = '';
+        aiSection.innerHTML    = '';
+    } else {
+        // hatching
+        const placed  = new Date(b.date + 'T00:00:00');
+        const dayIn   = Math.max(Math.floor((today - placed) / 86400000), 0);
+        const total   = 25;
+        const pct     = Math.min(Math.round((dayIn / total) * 100), 100);
+        const etaDate = new Date(placed);
+        etaDate.setDate(etaDate.getDate() + total);
+        const eta = etaDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const readyBanner = dayIn >= 18
+            ? `<div style="margin-top:8px;padding:8px 10px;background:rgba(31,165,165,0.08);border-radius:10px;font-size:10px;font-weight:700;color:var(--primary-teal)">
+                <i class="bi bi-arrow-right-circle-fill"></i> Ready to Transfer to Nursery
+               </div>` : '';
+
+        hatchSection.innerHTML = `
+        <div class="grp-detail-section" style="margin-top:12px">
+          <p class="grp-detail-section-title"><i class="bi bi-clock-history"></i> Hatching Status</p>
+          <div class="grp-hatch-item">
+            <div class="grp-hatch-top">
+              <span class="grp-hatch-name">${b.occupant}</span>
+              <span class="grp-hatch-badge">Day ${dayIn} / ${total}</span>
+            </div>
+            <div class="hatch-progress-wrap">
+              <div class="tank-progress-bar"><div class="tank-progress-fill teal" style="width:${pct}%"></div></div>
+              <span class="hatch-pct">${pct}%</span>
+            </div>
+            <p class="grp-hatch-eta"><i class="bi bi-calendar-check"></i> Est. Hatch: ${eta}</p>
+            ${readyBanner}
+          </div>
+        </div>`;
+        aiSection.innerHTML = '';
+    }
+
     isoDetailOverlay.classList.add('show');
     isoDetailModal.classList.add('show');
 }
