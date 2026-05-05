@@ -254,22 +254,6 @@ document.getElementById('quick-pump')?.addEventListener('click', () => {
     }, 100);
 });
 
-document.getElementById('quick-fan')?.addEventListener('click', () => {
-    window.showNavSection('controls');
-    setTimeout(() => {
-        const card = document.getElementById('hw-fan');
-        if (card) card.click();
-    }, 100);
-});
-
-document.getElementById('quick-heater')?.addEventListener('click', () => {
-    window.showNavSection('controls');
-    setTimeout(() => {
-        const card = document.getElementById('hw-heater');
-        if (card) card.click();
-    }, 100);
-});
-
 document.getElementById('quick-feed-now')?.addEventListener('click', () => {
     window.showNavSection('controls');
 });

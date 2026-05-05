@@ -348,6 +348,8 @@ function confirmBerriedAssign(boxIndex) {
     // mark female as berried in group
     if (!breedGroups[groupIndex].berriedTags) breedGroups[groupIndex].berriedTags = [];
     breedGroups[groupIndex].berriedTags.push(femaleTag);
+    // remove from group's female tags (she's now in isolation)
+    breedGroups[groupIndex].femaleTags = breedGroups[groupIndex].femaleTags.filter(f => f !== femaleTag);
     // assign to isolation box
     const today = new Date().toISOString().split('T')[0];
     isoBBoxes[boxIndex].occupant = `Female ${femaleTag}`;

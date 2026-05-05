@@ -577,15 +577,17 @@
 
 .quick-actions-grid {
     display: flex;
-    gap: 8px;
+    gap: 3px;
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding-bottom: 0;
     direction: rtl;
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
 
 .quick-actions-grid::-webkit-scrollbar {
+    width: 0;
+    height: 0;
     display: none;
 }
 

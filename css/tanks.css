@@ -382,33 +382,34 @@
 ═══════════════════════════════════════════ */
 .breed-tabs {
     display: flex;
-    gap: 4px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding-bottom: 2px;
+    gap: 8px;
+    background: #f4f4f4;
+    padding: 4px;
+    border-radius: 12px;
 }
 .breed-tabs::-webkit-scrollbar { display: none; }
 
 .breed-tab {
-    flex-shrink: 0;
-    padding: 6px 11px;
-    font-size: 10px;
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 11px;
     font-weight: 700;
     font-family: 'Poppins', sans-serif;
-    border: 1.5px solid rgba(11,60,73,0.1);
-    border-radius: 20px;
-    background: #f4f4f4;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
     color: var(--dark-text);
     opacity: 0.5;
     cursor: pointer;
     transition: all 0.2s;
     white-space: nowrap;
+    text-align: center;
 }
 .breed-tab.active {
-    background: var(--primary-teal);
-    border-color: var(--primary-teal);
-    color: #fff;
+    background: #fff;
+    color: var(--primary-teal);
     opacity: 1;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 
 .breed-panel { display: none; flex-direction: column; gap: 12px; }
@@ -419,29 +420,33 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 4px 0;
 }
 .breed-section-title {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--dark-text);
 }
 .breed-add-btn {
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 6px 12px;
-    font-size: 10px;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 11px;
     font-weight: 700;
     font-family: 'Poppins', sans-serif;
     background: var(--primary-teal);
     color: #fff;
     border: none;
-    border-radius: 20px;
+    border-radius: 10px;
     cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(31,165,165,0.2);
 }
+.breed-add-btn:active { transform: scale(0.96); }
 
 /* ── BREEDING GROUP CARD ── */
-.breed-group-list { display: flex; flex-direction: column; gap: 10px; }
+.breed-group-list { display: flex; flex-direction: column; gap: 12px; }
 
 .breed-group-card {
     display: flex;
@@ -449,9 +454,11 @@
     background: #fff;
     border: 1.5px solid rgba(11,60,73,0.08);
     border-radius: 16px;
-    padding: 12px;
-    box-shadow: 0 1px 6px rgba(11,60,73,0.04);
+    padding: 14px;
+    box-shadow: 0 2px 8px rgba(11,60,73,0.05);
+    transition: all 0.2s;
 }
+.breed-group-card:active { transform: scale(0.99); }
 
 .breed-group-photo {
     width: 64px;
@@ -477,26 +484,33 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 8px;
 }
 .breed-group-name {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--dark-text);
 }
-.breed-group-actions { display: flex; gap: 6px; }
+.breed-group-actions { 
+    display: flex; 
+    gap: 8px;
+    flex-shrink: 0;
+}
 .breed-icon-btn {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 13px;
+    transition: all 0.2s;
 }
-.breed-icon-btn.edit { background: rgba(31,165,165,0.1); color: var(--primary-teal); }
-.breed-icon-btn.delete { background: rgba(230,57,70,0.08); color: #E63946; }
+.breed-icon-btn:active { transform: scale(0.92); }
+.breed-icon-btn.edit { background: rgba(31,165,165,0.12); color: var(--primary-teal); }
+.breed-icon-btn.delete { background: rgba(230,57,70,0.1); color: #E63946; }
 
 .breed-group-members { display: flex; gap: 6px; }
 .breed-member-tag {
@@ -508,11 +522,34 @@
 .breed-member-tag.male { background: rgba(59,130,246,0.1); color: #3b82f6; }
 .breed-member-tag.female { background: rgba(236,72,153,0.1); color: #ec4899; }
 
-.breed-female-tags { display: flex; flex-wrap: wrap; gap: 4px; }
-.breed-female-tag {
+.breed-female-list-label {
     font-size: 9px;
+    font-weight: 600;
+    color: var(--dark-text);
+    opacity: 0.5;
+    margin: 0;
+}
+.breed-female-tags { 
+    display: flex; 
+    flex-direction: column;
+    gap: 5px;
+}
+.breed-female-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.breed-female-row .breed-female-tag {
+    flex: 1;
+    background: rgba(11,60,73,0.06);
+    color: var(--dark-text);
+    border: none;
+}
+.breed-female-tag {
+    font-size: 10px;
     font-weight: 700;
-    padding: 3px 8px;
+    padding: 4px 10px;
     border-radius: 20px;
     background: rgba(11,60,73,0.06);
     color: var(--dark-text);
@@ -522,6 +559,24 @@
     color: #c97d08;
     border: 1px solid rgba(245,158,11,0.3);
 }
+.berried-tag-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    background: rgba(245,158,11,0.1);
+    color: #c97d08;
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.berried-tag-btn:active { transform: scale(0.95); }
 
 .breed-group-meta {
     display: flex;
@@ -536,17 +591,19 @@
 .iso-box-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 12px;
 }
 
 .iso-box {
     border-radius: 14px;
-    padding: 12px;
+    padding: 14px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     border: 1.5px solid transparent;
+    transition: all 0.2s;
 }
+.iso-box:active { transform: scale(0.98); }
 .iso-box.occupied {
     background: rgba(245,158,11,0.06);
     border-color: rgba(245,158,11,0.2);
@@ -560,29 +617,32 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 6px;
 }
 .iso-box-name {
     font-size: 13px;
     font-weight: 800;
     color: var(--dark-text);
 }
+.iso-box-header .breed-icon-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    font-size: 11px;
+}
 .iso-status {
     display: flex;
     align-items: center;
     gap: 4px;
-    font-size: 8px;
+    font-size: 9px;
     font-weight: 700;
     border-radius: 20px;
-    padding: 2px 7px;
+    padding: 3px 8px;
 }
 .iso-status.occupied { background: rgba(245,158,11,0.15); color: #c97d08; }
 .iso-status.available { background: rgba(82,194,131,0.15); color: #2d9e5f; }
 
-.iso-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-}
+.iso-dot { width: 6px; height: 6px; border-radius: 50%; }
 .iso-status.occupied .iso-dot { background: #f59e0b; }
 .iso-status.available .iso-dot { background: #52c283; }
 
@@ -605,21 +665,23 @@
     min-height: 14px;
 }
 
-.iso-actions { margin-top: 2px; }
+.iso-actions { margin-top: 4px; }
 .iso-btn {
     width: 100%;
-    padding: 6px;
-    font-size: 9px;
+    padding: 8px;
+    font-size: 10px;
     font-weight: 700;
     font-family: 'Poppins', sans-serif;
-    border-radius: 8px;
+    border-radius: 10px;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 6px;
+    transition: all 0.2s;
 }
+.iso-btn:active { transform: scale(0.96); }
 .iso-btn.unlock { background: rgba(245,158,11,0.15); color: #c97d08; }
 .iso-btn.assign { background: rgba(82,194,131,0.15); color: #2d9e5f; }
 
@@ -1132,49 +1194,7 @@ select.login-input { appearance: none; cursor: pointer; }
     border: 1px solid rgba(245,158,11,0.3);
 }
 
-/* ── FEMALE TAG ROW ── */
-.breed-female-tags {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-.breed-female-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-}
-.breed-female-row .breed-female-tag {
-    flex: 1;
-    background: rgba(11,60,73,0.06);
-    color: var(--dark-text);
-    border: none;
-}
-.berried-tag-btn {
-    flex-shrink: 0;
-    padding: 3px 10px;
-    font-size: 10px;
-    font-weight: 700;
-    font-family: 'Poppins', sans-serif;
-    background: rgba(245,158,11,0.1);
-    border: 1px solid rgba(245,158,11,0.25);
-    border-radius: 20px;
-    color: #c97d08;
-    cursor: pointer;
-    white-space: nowrap;
-}
-.berried-tag-btn:active { background: rgba(245,158,11,0.2); }
-
-/* ── FEMALE LIST LABEL ── */
-.breed-female-list-label {
-    font-size: 9px;
-    font-weight: 700;
-    color: var(--dark-text);
-    opacity: 0.4;
-    margin: 0 0 2px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
+/* ── ISO BOX DETAIL MODAL ── */
 
 /* ── ISO BOX DETAIL MODAL ── */
 .iso-detail-body {

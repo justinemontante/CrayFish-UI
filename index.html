@@ -411,14 +411,6 @@
                   <i class="bi bi-droplet-half"></i>
                   <span>Pump</span>
                 </button>
-                <button class="quick-action-btn" id="quick-fan">
-                  <i class="bi bi-fan"></i>
-                  <span>Fan</span>
-                </button>
-                <button class="quick-action-btn" id="quick-heater">
-                  <i class="bi bi-fire"></i>
-                  <span>Heater</span>
-                </button>
                 <button class="quick-action-btn" id="quick-feed-now">
                   <i class="bi bi-egg-fried"></i>
                   <span>Feed Now</span>
@@ -1007,52 +999,6 @@
                   </div>
                   <div class="hw-card-right">
                     <div class="hw-mode-group" data-device="pump">
-                      <button class="hw-mode-btn" data-mode="off">OFF</button>
-                      <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
-                      <button class="hw-mode-btn" data-mode="on">ON</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- TEMPERATURE CONTROL GROUP -->
-              <div class="hw-temp-group">
-                <div class="hw-temp-header">
-                  <span class="hw-temp-label"><i class="bi bi-thermometer-half"></i> Temperature Control</span>
-                  <div style="display:flex;align-items:center;gap:8px">
-                    <span class="hw-temp-reading">Current: <strong id="hw-temp-val">--°C</strong></span>
-                    <button class="hw-log-btn" data-device="fan" style="margin-left:4px"><i class="bi bi-journal-text"></i> Log</button>
-                  </div>
-                </div>
-                <div class="hw-temp-range">Ideal: 24.0 – 30.0°C</div>
-
-                <div class="hardware-card" id="hw-fan" style="margin-top:8px" data-device="fan">
-                  <div class="hw-card-left">
-                    <div class="hw-icon-wrap"><i class="bi bi-fan"></i></div>
-                    <div>
-                      <span class="hw-title">Cooling Fan</span>
-                      <span class="hw-subtitle">Activates if temp 30°C</span>
-                    </div>
-                  </div>
-                  <div class="hw-card-right">
-                    <div class="hw-mode-group" data-device="fan">
-                      <button class="hw-mode-btn" data-mode="off">OFF</button>
-                      <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
-                      <button class="hw-mode-btn" data-mode="on">ON</button>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="hardware-card" id="hw-heater" style="margin-top:8px" data-device="heater">
-                  <div class="hw-card-left">
-                    <div class="hw-icon-wrap"><i class="bi bi-fire"></i></div>
-                    <div>
-                      <span class="hw-title">Heater</span>
-                      <span class="hw-subtitle">Activates if temp 24°C</span>
-                    </div>
-                  </div>
-                  <div class="hw-card-right">
-                    <div class="hw-mode-group" data-device="heater">
                       <button class="hw-mode-btn" data-mode="off">OFF</button>
                       <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
                       <button class="hw-mode-btn" data-mode="on">ON</button>
