@@ -930,12 +930,11 @@
                   <span class="hw-temp-label"><i class="bi bi-funnel-fill"></i> Auto Feeder</span>
                   <button class="hw-log-btn" id="feeder-log-toggle-btn"><i class="bi bi-journal-text"></i> Log</button>
                 </div>
-                <div class="feeder-card" style="margin-top:8px;box-shadow:none;border:none;padding:0;background:transparent">
+                <div class="feeder-card" style="margin-top:8px">
                   <div class="feeder-top">
                     <div class="feeder-icon-wrap"><i class="bi bi-funnel-fill"></i></div>
                     <div class="feeder-info">
                       <span class="feeder-title">Auto Feeder</span>
-                      <span class="feeder-ration" id="feeder-ration">System will dispense 44.1g today</span>
                     </div>
                     <div class="toggle-wrap">
                       <span class="toggle-label" id="feeder-mode-label">Auto</span>
@@ -945,17 +944,42 @@
                       </label>
                     </div>
                   </div>
-                  <button class="feed-now-btn" id="feed-now-btn" style="margin-top:10px">
+                  <button class="feed-now-btn" id="feed-now-btn">
                     <i class="bi bi-play-fill"></i> Feed Now
                   </button>
-                  <div class="schedule-list" style="margin-top:10px">
-                    <div class="schedule-label">Feeding Schedule</div>
-                    <div class="schedule-items" id="schedule-items"></div>
-                    <div class="schedule-add-row">
-                      <input type="time" class="schedule-time-input" id="schedule-time-input" />
-                      <button class="schedule-add-btn" id="schedule-add-btn">Add</button>
+                  <div class="feeder-logo-wrap">
+                    <div class="feeder-logo-circle">
+                      <img src="resources/images/crayfish_feeder.png" alt="Crayfish Feeder" />
                     </div>
                   </div>
+                    <div class="schedule-list">
+                      <div class="schedule-grand-total" id="schedule-grand-total">Total: 44g</div>
+                      <div class="schedule-period" id="schedule-morning">
+                        <div class="schedule-period-header">
+                          <div class="schedule-period-label">
+                            <i class="bi bi-sunrise"></i>
+                            <span>Morning</span>
+                          </div>
+                          <div class="schedule-period-amount" id="morning-total">22g</div>
+                        </div>
+                        <div class="schedule-items" id="morning-items"></div>
+                      </div>
+                      <div class="schedule-period" id="schedule-afternoon">
+                        <div class="schedule-period-header">
+                          <div class="schedule-period-label">
+                            <i class="bi bi-sunset"></i>
+                            <span>Afternoon</span>
+                          </div>
+                          <div class="schedule-period-amount" id="afternoon-total">22g</div>
+                        </div>
+                        <div class="schedule-items" id="afternoon-items"></div>
+                      </div>
+                      <div class="schedule-add-row">
+                        <input type="time" class="schedule-time-input" id="schedule-time-input" />
+                        <input type="number" class="schedule-grams-input" id="schedule-grams-input" placeholder="g" min="1" max="100" />
+                        <button class="schedule-add-btn" id="schedule-add-btn">Add</button>
+                      </div>
+                    </div>
                 </div>
               </div>
 

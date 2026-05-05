@@ -80,83 +80,229 @@ function formatTime(val) {
     return `${h12}:${m} ${ampm}`;
 }
 
-function renderSchedule(items) {
-    const container = document.getElementById('schedule-items');
-    container.innerHTML = items.map(time => `
-        <div class="schedule-item">
-            <i class="bi bi-clock-fill"></i>
-            <span class="schedule-time-text">${time}</span>
-            <button class="schedule-edit" data-time="${time}"><i class="bi bi-pencil-fill"></i></button>
-            <button class="schedule-remove" data-time="${time}"><i class="bi bi-trash-fill"></i></button>
-        </div>
-    `).join('');
+function parseTimeTo24h(timeStr) {
+    const [timePart, ampm] = timeStr.split(' ');
+    const [h, m] = timePart.split(':');
+    let hour = parseInt(h);
+    if (ampm === 'PM' && hour !== 12) hour += 12;
+    if (ampm === 'AM' && hour === 12) hour = 0;
+    return { hour: parseInt(h), minute: parseInt(m), isPM: ampm === 'PM', display: `${String(hour).padStart(2,'0')}:${m}` };
+}
 
-    container.querySelectorAll('.schedule-remove').forEach(btn => {
-        btn.addEventListener('click', () => {
+function getScheduleStatus(s) {
+    const now = new Date();
+    const schedMin = s.hour * 60 + s.minute;
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    
+    if (schedMin < nowMin) return 'completed';
+    if (schedMin === nowMin) return 'pending';
+    return 'upcoming';
+}
+
+function renderSchedules() {
+    const morningContainer = document.getElementById('morning-items');
+    const afternoonContainer = document.getElementById('afternoon-items');
+    
+    const morning = schedules.filter(s => !s.isPM && s.hour < 12);
+    const afternoon = schedules.filter(s => s.isPM || s.hour === 12);
+    
+    const morningGrams = morning.reduce((sum, s) => sum + s.grams, 0);
+    const afternoonGrams = afternoon.reduce((sum, s) => sum + s.grams, 0);
+    const totalGrams = morningGrams + afternoonGrams;
+    
+    document.getElementById('schedule-grand-total').innerHTML = `<i class="bi bi-egg-fried"></i> ${totalGrams}g Total`;
+    document.getElementById('morning-total').textContent = morningGrams + 'g';
+    document.getElementById('afternoon-total').textContent = afternoonGrams + 'g';
+
+    const morningHTML = morning.map(s => {
+        const status = getScheduleStatus(s);
+        const statusIcons = { completed: 'bi-check-circle-fill', pending: 'bi-hourglass-split', upcoming: 'bi-clock' };
+        return `
+        <div class="schedule-item ${status}">
+            <i class="bi ${statusIcons[status]}"></i>
+            <span class="schedule-time-text">${s.display}</span>
+            <span class="schedule-status ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+            <button class="schedule-edit" data-time="${s.time}" data-period="morning"><i class="bi bi-pencil-fill"></i></button>
+            <button class="schedule-remove" data-time="${s.time}" data-period="morning"><i class="bi bi-trash-fill"></i></button>
+        </div>`;
+    }).join('');
+
+    const afternoonHTML = afternoon.map(s => {
+        const status = getScheduleStatus(s);
+        const statusIcons = { completed: 'bi-check-circle-fill', pending: 'bi-hourglass-split', upcoming: 'bi-clock' };
+        return `
+        <div class="schedule-item ${status}">
+            <i class="bi ${statusIcons[status]}"></i>
+            <span class="schedule-time-text">${s.display}</span>
+            <span class="schedule-status ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+            <button class="schedule-edit" data-time="${s.time}" data-period="afternoon"><i class="bi bi-pencil-fill"></i></button>
+            <button class="schedule-remove" data-time="${s.time}" data-period="afternoon"><i class="bi bi-trash-fill"></i></button>
+        </div>`;
+    }).join('');
+
+    morningContainer.innerHTML = morningHTML;
+    afternoonContainer.innerHTML = afternoonHTML;
+
+    morningContainer.querySelectorAll('.schedule-edit').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openScheduleEdit(btn.dataset.time, 'morning');
+        });
+    });
+    
+    morningContainer.querySelectorAll('.schedule-remove').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
             addFeederLog(`Schedule removed: ${btn.dataset.time}`, 'schedule');
-            schedules = schedules.filter(t => t !== btn.dataset.time);
-            renderSchedule(schedules);
+            schedules = schedules.filter(t => t.time !== btn.dataset.time);
+            saveSchedules();
+            renderSchedules();
+        });
+    });
+    
+    afternoonContainer.querySelectorAll('.schedule-edit').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openScheduleEdit(btn.dataset.time, 'afternoon');
         });
     });
 
-    container.querySelectorAll('.schedule-edit').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const oldTime = btn.dataset.time;
-            const item = btn.closest('.schedule-item');
-            const [timePart, ampm] = oldTime.split(' ');
-            const [h, m] = timePart.split(':');
-            let hour = parseInt(h);
-            if (ampm === 'PM' && hour !== 12) hour += 12;
-            if (ampm === 'AM' && hour === 12) hour = 0;
-            const val = `${String(hour).padStart(2,'0')}:${m}`;
-
-            item.innerHTML = `
-                <i class="bi bi-clock-fill"></i>
-                <input type="time" class="schedule-time-input edit-input" value="${val}" />
-                <button class="schedule-save" data-old="${oldTime}"><i class="bi bi-check-lg"></i></button>
-                <button class="schedule-cancel"><i class="bi bi-x-lg"></i></button>
-            `;
-
-            item.querySelector('.schedule-save').addEventListener('click', () => {
-                const newVal = item.querySelector('.edit-input').value;
-                if (!newVal) return;
-                const formatted = formatTime(newVal);
-                addFeederLog(`Schedule updated: ${oldTime} → ${formatted}`, 'schedule');
-                schedules = schedules.map(t => t === oldTime ? formatted : t);
-                schedules.sort();
-                renderSchedule(schedules);
-            });
-
-            item.querySelector('.schedule-cancel').addEventListener('click', () => {
-                renderSchedule(schedules);
-            });
+    afternoonContainer.querySelectorAll('.schedule-remove').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            addFeederLog(`Schedule removed: ${btn.dataset.time}`, 'schedule');
+            schedules = schedules.filter(t => t.time !== btn.dataset.time);
+            saveSchedules();
+            renderSchedules();
         });
     });
 }
 
-let schedules = ['8:00 AM', '5:00 PM'];
-renderSchedule(schedules);
+function openScheduleEdit(timeStr, period) {
+    const sched = schedules.find(s => s.time === timeStr);
+    if (!sched) return;
 
-document.getElementById('schedule-add-btn').addEventListener('click', () => {
-    const input = document.getElementById('schedule-time-input');
-    if (!input.value) return;
-    const formatted = formatTime(input.value);
-    if (!schedules.includes(formatted)) {
-        schedules.push(formatted);
-        schedules.sort();
-        addFeederLog(`Schedule added: ${formatted}`, 'schedule');
-        renderSchedule(schedules);
+    const timeInput = document.getElementById('schedule-time-input');
+    const gramsInput = document.getElementById('schedule-grams-input');
+    const addBtn = document.getElementById('schedule-add-btn');
+
+    const [timePart, ampm] = timeStr.split(' ');
+    const [h, m] = timePart.split(':');
+    let hour = parseInt(h);
+    if (ampm === 'PM' && hour !== 12) hour += 12;
+    if (ampm === 'AM' && hour === 12) hour = 0;
+
+    timeInput.value = `${String(hour).padStart(2,'0')}:${m}`;
+    gramsInput.value = sched.grams;
+    editMode = true;
+    editTimeStr = timeStr;
+    addBtn.textContent = 'Update';
+}
+
+let editMode = false;
+let editTimeStr = null;
+
+function addHandler() {
+    if (editMode) {
+        updateSchedule();
+        return;
     }
-    input.value = '';
-});
+    const timeInput = document.getElementById('schedule-time-input');
+    const gramsInput = document.getElementById('schedule-grams-input');
+    if (!timeInput.value) return;
+
+    const formatted = formatTime(timeInput.value);
+    const parsed = parseTimeTo24h(formatted);
+    const grams = parseInt(gramsInput.value) || 10;
+
+    if (!schedules.find(s => s.time === formatted)) {
+        schedules.push({
+            time: formatted,
+            display: formatted,
+            hour: parsed.hour,
+            minute: parsed.minute,
+            isPM: parsed.isPM,
+            grams: grams
+        });
+        schedules.sort((a, b) => (a.hour * 60 + a.minute) - (b.hour * 60 + b.minute));
+        addFeederLog(`Schedule added: ${formatted} (${grams}g)`, 'schedule');
+        saveSchedules();
+        renderSchedules();
+    }
+    timeInput.value = '';
+    gramsInput.value = '';
+}
+
+function updateSchedule() {
+    const timeInput = document.getElementById('schedule-time-input');
+    const gramsInput = document.getElementById('schedule-grams-input');
+    const addBtn = document.getElementById('schedule-add-btn');
+    if (!timeInput.value) return;
+
+    const newFormatted = formatTime(timeInput.value);
+    const newParsed = parseTimeTo24h(newFormatted);
+    const newGrams = parseInt(gramsInput.value) || 10;
+
+    schedules = schedules.filter(t => t.time !== editTimeStr);
+    schedules.push({
+        time: newFormatted,
+        display: newFormatted,
+        hour: newParsed.hour,
+        minute: newParsed.minute,
+        isPM: newParsed.isPM,
+        grams: newGrams
+    });
+    schedules.sort((a, b) => (a.hour * 60 + a.minute) - (b.hour * 60 + b.minute));
+
+    addFeederLog(`Schedule updated: ${editTimeStr} → ${newFormatted} (${newGrams}g)`, 'schedule');
+    saveSchedules();
+
+    editMode = false;
+    editTimeStr = null;
+    addBtn.textContent = 'Add';
+    timeInput.value = '';
+    gramsInput.value = '';
+    renderSchedules();
+}
+
+let schedules = [
+    { time: '6:00 AM', display: '6:00 AM', hour: 6, minute: 0, isPM: false, grams: 15 },
+    { time: '8:00 AM', display: '8:00 AM', hour: 8, minute: 0, isPM: false, grams: 22 },
+    { time: '5:00 PM', display: '5:00 PM', hour: 17, minute: 0, isPM: true, grams: 22 }
+];
+
+function loadSchedules() {
+    const saved = localStorage.getItem('crayfish_feeder_schedules');
+    if (saved) {
+        try {
+            schedules = JSON.parse(saved);
+        } catch (e) {}
+    }
+}
+
+function saveSchedules() {
+    localStorage.setItem('crayfish_feeder_schedules', JSON.stringify(schedules));
+}
+
+loadSchedules();
+renderSchedules();
+
+const addBtn = document.getElementById('schedule-add-btn');
+addBtn.addEventListener('click', addHandler);
 
 // Simulate auto feed when schedule time matches current time
 setInterval(() => {
     if (!feederToggle.checked) return;
     const now = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-    if (schedules.includes(now)) {
-        addFeederLog(`Auto Feed — Scheduled at ${now}`, 'auto');
+    const match = schedules.find(s => s.display === now);
+    if (match) {
+        addFeederLog(`Auto Feed — Scheduled at ${now} (${match.grams}g)`, 'auto');
     }
+}, 60000);
+
+// Refresh statuses every minute
+setInterval(() => {
+    renderSchedules();
 }, 60000);
 
 // ─── HARDWARE ACTIVITY LOGS ───────────────────────────────────
