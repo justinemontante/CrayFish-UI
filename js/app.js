@@ -58,6 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sectionTitle) sectionTitle.textContent = titles[sectionId] || 'Dashboard';
     }
 
+    window.showNavSection = showNavSection;
+
     setTimeout(() => {
         showScreen('login');
     }, 3000);

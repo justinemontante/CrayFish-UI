@@ -213,29 +213,65 @@ Object.keys(SENSORS).forEach(key => {
 });
 
 // QUICK ACTIONS
-document.querySelectorAll('.quick-action-btn[data-target]').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const target = btn.dataset.target;
-        if (target && window.showNavSection) {
-            window.showNavSection(target);
-        }
-    });
+
+document.getElementById('quick-tank-1')?.addEventListener('click', () => {
+    window.showNavSection('tanks');
+    setTimeout(() => {
+        const tankTab = document.querySelector('.tank-tab[data-tank="1"]');
+        if (tankTab) tankTab.click();
+    }, 100);
+});
+
+document.getElementById('quick-tank-2')?.addEventListener('click', () => {
+    window.showNavSection('tanks');
+    setTimeout(() => {
+        const tankTab = document.querySelector('.tank-tab[data-tank="2"]');
+        if (tankTab) tankTab.click();
+    }, 100);
+});
+
+document.getElementById('quick-tank-3')?.addEventListener('click', () => {
+    window.showNavSection('tanks');
+    setTimeout(() => {
+        const tankTab = document.querySelector('.tank-tab[data-tank="3"]');
+        if (tankTab) tankTab.click();
+    }, 100);
+});
+
+document.getElementById('quick-aerator')?.addEventListener('click', () => {
+    window.showNavSection('controls');
+    setTimeout(() => {
+        const card = document.getElementById('hw-aerator');
+        if (card) card.click();
+    }, 100);
+});
+
+document.getElementById('quick-pump')?.addEventListener('click', () => {
+    window.showNavSection('controls');
+    setTimeout(() => {
+        const card = document.getElementById('hw-pump');
+        if (card) card.click();
+    }, 100);
+});
+
+document.getElementById('quick-fan')?.addEventListener('click', () => {
+    window.showNavSection('controls');
+    setTimeout(() => {
+        const card = document.getElementById('hw-fan');
+        if (card) card.click();
+    }, 100);
+});
+
+document.getElementById('quick-heater')?.addEventListener('click', () => {
+    window.showNavSection('controls');
+    setTimeout(() => {
+        const card = document.getElementById('hw-heater');
+        if (card) card.click();
+    }, 100);
 });
 
 document.getElementById('quick-feed-now')?.addEventListener('click', () => {
-    if (window.addFeederLog) {
-        window.addFeederLog('Manual feed triggered (Quick Action)', 'manual');
-    }
-    const feedBtn = document.getElementById('feed-now-btn');
-    if (feedBtn) feedBtn.click();
-});
-
-document.getElementById('quick-check-water')?.addEventListener('click', () => {
-    simulateSensors();
-    const insightText = document.getElementById('insight-text');
-    if (insightText) {
-        insightText.textContent = 'Water quality data refreshed successfully.';
-    }
+    window.showNavSection('controls');
 });
 
 simulateSensors();

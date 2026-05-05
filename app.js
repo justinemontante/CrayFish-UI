@@ -41,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sectionTitle) sectionTitle.textContent = titles[sectionId] || 'Dashboard';
     }
 
+    window.showNavSection = showNavSection;
+
     // Greeting
     function updateGreeting() {
         const h = new Date().getHours();
