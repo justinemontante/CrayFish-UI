@@ -553,10 +553,10 @@
               </div>
 
               <!-- INNER TABS -->
-              <div class="breed-tabs">
-                <button class="breed-tab active" data-breed="stock">🦞 Crayfish</button>
-                <button class="breed-tab" data-breed="groups">🦞 Groups</button>
-                <button class="breed-tab" data-breed="isolation">📦 Isolation</button>
+                <div class="breed-tabs">
+                <button class="breed-tab active" data-breed="stock">Crayfish</button>
+                <button class="breed-tab" data-breed="groups">Groups</button>
+                <button class="breed-tab" data-breed="isolation">Isolation</button>
               </div>
 
               <!-- ── STOCK POOL ── -->
@@ -584,42 +584,20 @@
               <!-- ── ISOLATION BOXES ── -->
               <div class="breed-panel" id="breed-isolation">
                 <div class="breed-section-header">
-                  <span class="breed-section-title">Berried in Isolation</span>
-                </div>
-                <div class="berried-bridge-list" id="berried-bridge-list"></div>
-
-                <div class="breed-section-header" style="margin-top:12px">
                   <span class="breed-section-title">Isolation Boxes</span>
                   <button class="breed-add-btn" id="add-box-btn"><i class="bi bi-plus"></i> Add Box</button>
                 </div>
 
+                <div class="iso-box-grid" id="iso-box-grid"></div>
+
                 <!-- GENERAL AI INSIGHTS -->
                 <div class="iso-ai-panel">
-                  <p class="iso-ai-title"><i class="bi bi-robot"></i> Water Conditions</p>
-                  <div class="ai-status-grid">
-                    <div class="ai-param-card" id="iso-ai-temp-card">
-                      <span class="ai-param-label">Temp</span>
-                      <span class="ai-param-val" id="iso-ai-temp">--</span>
-                      <span class="ai-param-badge" id="iso-ai-temp-badge">--</span>
-                    </div>
-                    <div class="ai-param-card" id="iso-ai-ph-card">
-                      <span class="ai-param-label">pH</span>
-                      <span class="ai-param-val" id="iso-ai-ph">--</span>
-                      <span class="ai-param-badge" id="iso-ai-ph-badge">--</span>
-                    </div>
-                    <div class="ai-param-card" id="iso-ai-do-card">
-                      <span class="ai-param-label">DO</span>
-                      <span class="ai-param-val" id="iso-ai-do">--</span>
-                      <span class="ai-param-badge" id="iso-ai-do-badge">--</span>
-                    </div>
-                  </div>
-                  <div class="ai-message-card" style="margin-top:8px">
+                  <p class="iso-ai-title"><i class="bi bi-robot"></i> AI Insights</p>
+                  <div class="ai-message-card">
                     <div class="ai-message-icon"><i class="bi bi-robot"></i></div>
-                    <p class="ai-message-text" id="iso-ai-msg">Analyzing conditions...</p>
+                    <p class="ai-message-text" id="iso-ai-msg">AI insights will show here</p>
                   </div>
                 </div>
-
-                <div class="iso-box-grid" id="iso-box-grid"></div>
               </div>
 
               <!-- hidden containers for hatch data -->
@@ -633,47 +611,22 @@
               <div class="tank-panel-header green">
                 <div class="tank-panel-icon green"><i class="bi bi-stars"></i></div>
                 <div>
-                  <p class="tank-panel-title">Nursery Tank</p>
-                  <p class="tank-panel-sub">Juvenile lifecycle tracker</p>
+                  <p class="tank-panel-title">Tank 2 — Nursery</p>
+                  <p class="tank-panel-sub" id="nursery-source">Juveniles from isolation</p>
                 </div>
               </div>
 
-              <div class="tank-block">
-                <p class="tank-block-label">Transfer Date from Tank 1</p>
-                <input type="date" class="tank-date-input" id="nursery-date" />
+              <div id="nursery-entries" class="nursery-entries-list"></div>
+
+              <div class="nursery-locked-card" id="nursery-empty">
+                <div class="nursery-locked-icon"><i class="bi bi-inbox"></i></div>
+                <p class="nursery-locked-text">No juveniles added yet.</p>
+                <p class="nursery-locked-text">Tap "+ Add Entry" to create a nursery record.</p>
               </div>
 
-              <div class="tank-stat-row">
-                <div class="tank-stat teal">
-                  <span class="tank-stat-val" id="nursery-age">--</span>
-                  <span class="tank-stat-label">Days Old</span>
-                </div>
-                <div class="tank-stat green">
-                  <span class="tank-stat-val">200-300</span>
-                  <span class="tank-stat-label">Est. Fries</span>
-                </div>
-                <div class="tank-stat amber">
-                  <span class="tank-stat-val" id="nursery-days-left">--</span>
-                  <span class="tank-stat-label">Days Left</span>
-                </div>
-              </div>
-
-              <div class="tank-block">
-                <div class="tank-progress-label">
-                  <span>Nursery Duration (30 days)</span>
-                  <span id="nursery-pct" class="tank-progress-value">0%</span>
-                </div>
-                <div class="tank-progress-bar"><div class="tank-progress-fill green" id="nursery-fill"></div></div>
-              </div>
-
-              <div class="tank-block">
-                <p class="tank-block-label">Visual Length Log (cm)</p>
-                <div class="tank-counter">
-                  <button class="counter-btn" data-target="length" data-action="dec"><i class="bi bi-dash"></i></button>
-                  <span class="counter-val" id="length-val">0.0</span>
-                  <button class="counter-btn" data-target="length" data-action="inc"><i class="bi bi-plus"></i></button>
-                </div>
-              </div>
+              <button class="nursery-add-btn" id="nursery-add-btn">
+                <i class="bi bi-plus-circle-fill"></i> Add Entry
+              </button>
             </div>
 
             <!-- TANK 3 -->
@@ -754,7 +707,8 @@
                 <div class="grp-detail-photo" id="grp-detail-photo"></div>
                 <div>
                   <p class="breed-modal-title" id="grp-detail-name" style="margin:0;text-align:left"></p>
-                  <div class="breed-group-members" id="grp-detail-members" style="margin-top:4px"></div>
+                  <div id="grp-detail-status" style="margin-top:4px"></div>
+                  <div class="breed-group-members" id="grp-detail-members" style="margin-top:6px"></div>
                   <div class="breed-group-meta" id="grp-detail-date" style="margin-top:4px"></div>
                 </div>
               </div>
@@ -797,6 +751,9 @@
                 </div>
               </div>
 
+              <button class="compute-btn" id="grp-detail-new-cycle" style="background:linear-gradient(135deg, var(--primary-teal), #2d9e5f); margin-bottom:8px">
+                <i class="bi bi-arrow-repeat"></i> Start New Cycle
+              </button>
               <button class="mortality-cancel" id="grp-detail-close">Close</button>
             </div>
 
@@ -804,7 +761,7 @@
             <div class="breed-modal-overlay" id="berried-overlay"></div>
             <div class="breed-modal" id="berried-modal">
               <div class="legend-handle"></div>
-              <p class="breed-modal-title" id="berried-modal-title">🫐 Mark as Berried</p>
+              <p class="breed-modal-title" id="berried-modal-title"><i class="bi bi-egg-fill"></i> Mark as Berried</p>
               <p class="mortality-sub" id="berried-modal-sub">Select an available isolation box for this female.</p>
               <div class="berried-box-list" id="berried-box-list"></div>
               <button class="mortality-cancel" id="berried-cancel-btn" style="margin-top:10px">Cancel</button>
@@ -942,6 +899,35 @@
               <input type="hidden" id="bd-index" value="" />
               <button class="compute-btn" id="bd-confirm-btn">Yes, Delete</button>
               <button class="mortality-cancel" id="bd-cancel-btn">Cancel</button>
+            </div>
+
+            <!-- NURSERY ADD ENTRY MODAL -->
+            <div class="breed-modal-overlay" id="nursery-add-overlay"></div>
+            <div class="breed-modal" id="nursery-add-modal">
+              <div class="legend-handle"></div>
+              <p class="breed-modal-title">Add Nursery Entry</p>
+              <div class="breed-modal-body">
+                <div class="breed-modal-row">
+                  <div style="flex:1">
+                    <label style="font-size:11px;font-weight:700;color:var(--dark-text);opacity:0.6;display:block;margin-bottom:6px">Source Box</label>
+                    <input type="text" class="login-input" id="nursery-add-source" placeholder="e.g. Box A" />
+                  </div>
+                  <div style="flex:1">
+                    <label style="font-size:11px;font-weight:700;color:var(--dark-text);opacity:0.6;display:block;margin-bottom:6px">Female Tag</label>
+                    <input type="text" class="login-input" id="nursery-add-female" placeholder="e.g. F1" />
+                  </div>
+                </div>
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:var(--dark-text);opacity:0.6;display:block;margin-bottom:6px">Date Transferred</label>
+                  <input type="date" class="login-input" id="nursery-add-date" />
+                </div>
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:var(--dark-text);opacity:0.6;display:block;margin-bottom:6px">Estimated Count</label>
+                  <input type="text" class="login-input" id="nursery-add-est" placeholder="e.g. 200–300" value="200–300" />
+                </div>
+              </div>
+              <button class="compute-btn" id="nursery-add-confirm" style="background:linear-gradient(135deg,#52c283,#3ba56a)">Add Entry</button>
+              <button class="mortality-cancel" id="nursery-add-cancel">Cancel</button>
             </div>
 
             <!-- MORTALITY MODAL -->
@@ -1146,7 +1132,7 @@
 
             <!-- CLEAR ALL -->
             <div class="notif-header-row">
-              <span class="notif-count" id="notif-count">6 Notifications</span>
+              <span class="notif-count" id="notif-count">0 Notifications</span>
               <button class="notif-clear-btn" id="notif-clear-btn">Clear All</button>
             </div>
 

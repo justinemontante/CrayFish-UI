@@ -1,47 +1,112 @@
 // NOTIFICATIONS — Alert Log & Reminders
 
 const NOTIFS = [
+    // ── CRITICAL (4) ──
     {
         id: 1, type: 'critical', icon: 'bi-thermometer-high',
         title: 'High Temperature Alert',
-        message: 'Temperature reached 32.4°C — Cooling fans triggered automatically.',
-        timestamp: Date.now() - 2 * 60000, unread: true
+        message: 'Temperature reached 32.1°C in Tank 1. Cooling system activated.',
+        timestamp: Date.now() - 5 * 60000, unread: true
     },
     {
         id: 2, type: 'critical', icon: 'bi-droplet-fill',
-        title: 'Low DO Alert',
-        message: 'Dissolved Oxygen dropped to 2.8 mg/L — Aerator activated automatically.',
-        timestamp: Date.now() - 15 * 60000, unread: true
+        title: 'Low Dissolved Oxygen',
+        message: 'DO dropped to 3.1 mg/L in Tank 2. Aerator triggered automatically.',
+        timestamp: Date.now() - 45 * 60000, unread: true
     },
     {
-        id: 3, type: 'operational', icon: 'bi-check-circle-fill',
-        title: 'Feeding Schedule Completed',
-        message: 'Auto Feeder dispensed 44.1g at 8:00 AM successfully.',
+        id: 3, type: 'critical', icon: 'bi-exclamation-triangle-fill',
+        title: 'pH Out of Range',
+        message: 'pH dropped to 6.5 in Tank 3. Dosing pump initiated correction.',
         timestamp: Date.now() - 2 * 3600000, unread: false
     },
     {
-        id: 4, type: 'reminder', icon: 'bi-calendar-check-fill',
+        id: 4, type: 'critical', icon: 'bi-cloud-fog-fill',
+        title: 'High Turbidity Detected',
+        message: 'Turbidity reached 45 NTU in Tank 1. Filtration cycle extended.',
+        timestamp: Date.now() - 5 * 3600000, unread: false
+    },
+
+    // ── OPERATIONAL (8) ──
+    {
+        id: 5, type: 'operational', icon: 'bi-check-circle-fill',
+        title: 'Morning Feeding Completed',
+        message: 'Auto feeder dispensed 44.1g at 8:00 AM in Tank 3.',
+        timestamp: Date.now() - 30 * 60000, unread: true
+    },
+    {
+        id: 6, type: 'operational', icon: 'bi-funnel-fill',
+        title: 'Filtration Cycle Started',
+        message: 'Water pump activated. Expected duration: 6 hours.',
+        timestamp: Date.now() - 1 * 3600000, unread: true
+    },
+    {
+        id: 7, type: 'operational', icon: 'bi-water',
+        title: 'Water Change Completed',
+        message: '30% water change completed in Tank 1 successfully.',
+        timestamp: Date.now() - 3 * 3600000, unread: false
+    },
+    {
+        id: 8, type: 'operational', icon: 'bi-battery-charging',
+        title: 'Backup Battery OK',
+        message: 'UPS battery level at 98%. All systems running on mains power.',
+        timestamp: Date.now() - 6 * 3600000, unread: false
+    },
+    {
+        id: 9, type: 'operational', icon: 'bi-check2-circle',
+        title: 'Evening Feeding Completed',
+        message: 'Auto feeder dispensed 38.5g at 6:00 PM in Tank 3.',
+        timestamp: Date.now() - 86400000 - 2 * 3600000, unread: false
+    },
+    {
+        id: 10, type: 'operational', icon: 'bi-arrow-repeat',
+        title: 'System Reboot',
+        message: 'Controller rebooted successfully after firmware update.',
+        timestamp: Date.now() - 86400000 - 8 * 3600000, unread: false
+    },
+    {
+        id: 11, type: 'operational', icon: 'bi-thermometer-half',
+        title: 'Temperature Stabilized',
+        message: 'Tank 2 temperature normalized to 26.5°C after heating event.',
+        timestamp: Date.now() - 86400000 * 2, unread: false
+    },
+    {
+        id: 12, type: 'operational', icon: 'bi-droplet-half',
+        title: 'DO Levels Normal',
+        message: 'Dissolved Oxygen stabilized at 7.2 mg/L across all tanks.',
+        timestamp: Date.now() - 86400000 * 3, unread: false
+    },
+
+    // ── REMINDERS (5) ──
+    {
+        id: 13, type: 'reminder', icon: 'bi-calendar-check-fill',
         title: 'Bi-weekly Sampling Due',
-        message: 'Tank 3 Grow-out is ready for sampling. Catch 10 random samples.',
-        timestamp: Date.now() - 3 * 3600000, unread: true
+        message: 'Tank 3 Grow-out is due for sampling. Weigh 10 random samples.',
+        timestamp: Date.now() - 15 * 60000, unread: true
     },
     {
-        id: 5, type: 'operational', icon: 'bi-funnel-fill',
-        title: 'Filtration Running',
-        message: 'Water pump has been running for 6 hours. System is circulating normally.',
-        timestamp: Date.now() - 86400000 - 3600000, unread: false
+        id: 14, type: 'reminder', icon: 'bi-stars',
+        title: 'Nursery Count Ready',
+        message: 'Box A juveniles are 30 days old. Ready for actual counting.',
+        timestamp: Date.now() - 1 * 3600000, unread: true
     },
     {
-        id: 6, type: 'reminder', icon: 'bi-stars',
-        title: 'Nursery Transfer Ready',
-        message: 'Batch 01 is 30 days old. Ready for counting and transfer to Tank 3.',
-        timestamp: Date.now() - 86400000 - 7200000, unread: false
+        id: 15, type: 'reminder', icon: 'bi-calendar-event-fill',
+        title: 'Filter Media Replacement',
+        message: 'Filter cartridges due for replacement next week.',
+        timestamp: Date.now() - 2 * 3600000, unread: false
     },
     {
-        id: 7, type: 'critical', icon: 'bi-exclamation-triangle-fill',
-        title: 'pH Critical Alert',
-        message: 'pH dropped to 6.2 — Chemical danger detected.',
-        timestamp: Date.now() - 2 * 86400000, unread: false
+        id: 16, type: 'reminder', icon: 'bi-clipboard2-check',
+        title: 'Water Quality Log Due',
+        message: 'Daily water quality readings for today have not been recorded.',
+        timestamp: Date.now() - 86400000 - 4 * 3600000, unread: false
+    },
+    {
+        id: 17, type: 'reminder', icon: 'bi-journal-plus',
+        title: 'Weekly Report Pending',
+        message: 'Weekly growth report for Tank 3 has not been submitted.',
+        timestamp: Date.now() - 86400000 * 2, unread: false
     }
 ];
 
@@ -185,13 +250,5 @@ document.getElementById('notif-clear-btn').addEventListener('click', () => {
         : notifications.filter(n => n.type !== activeFilter);
     renderNotifications();
 });
-
-// Auto-push from dashboard
-function pushNotification(type, icon, title, message) {
-    notifications.unshift({ id: Date.now(), type, icon, title, message, timestamp: Date.now(), unread: true });
-    renderNotifications();
-}
-
-window.pushNotification = pushNotification;
 
 renderNotifications();
