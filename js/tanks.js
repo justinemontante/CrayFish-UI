@@ -20,6 +20,250 @@ document.querySelectorAll('.breed-tab').forEach(tab => {
     });
 });
 
+// ─── STOCK POOL ──────────────────────────────────────────────
+let stockPool = [];
+
+function getNextStockId(gender) {
+    const prefix = gender === 'male' ? 'M' : 'F';
+    const nums = stockPool.filter(s => s.gender === gender).map(s => parseInt(s.id.replace(prefix, '')));
+    return prefix + (nums.length > 0 ? Math.max(...nums) + 1 : 1);
+}
+
+function renderStock() {
+    const grid = document.getElementById('stock-pool-grid');
+    if (stockPool.length === 0) {
+        grid.innerHTML = `<p class="stock-pool-empty"><i class="bi bi-inbox"></i> No crayfish yet. Add your first one!</p>`;
+        return;
+    }
+    const males = stockPool.filter(s => s.gender === 'male');
+    const females = stockPool.filter(s => s.gender === 'female');
+    let html = '';
+    if (males.length > 0) {
+        html += `<p class="stock-group-label"><i class="bi bi-gender-male"></i> Males (${males.length})</p>`;
+        males.forEach((s) => {
+            const i = stockPool.indexOf(s);
+            const photoHTML = s.photo
+                ? `<img src="${s.photo}" alt="" />`
+                : `<div class="stock-photo-placeholder"><i class="bi bi-camera"></i></div>`;
+            html += `
+            <div class="stock-card">
+                <div class="stock-card-photo">${photoHTML}</div>
+                <div class="stock-card-info">
+                    <div class="stock-card-top">
+                        <span class="stock-card-tag male">Male ${s.id}</span>
+                        <div class="stock-card-actions">
+                            <button class="stock-card-edit" data-index="${i}"><i class="bi bi-pencil-fill"></i></button>
+                            <button class="stock-card-remove" data-index="${i}"><i class="bi bi-trash-fill"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        });
+    }
+    if (females.length > 0) {
+        html += `<p class="stock-group-label"><i class="bi bi-gender-female"></i> Females (${females.length})</p>`;
+        females.forEach((s) => {
+            const i = stockPool.indexOf(s);
+            const photoHTML = s.photo
+                ? `<img src="${s.photo}" alt="" />`
+                : `<div class="stock-photo-placeholder"><i class="bi bi-camera"></i></div>`;
+            html += `
+            <div class="stock-card">
+                <div class="stock-card-photo">${photoHTML}</div>
+                <div class="stock-card-info">
+                    <div class="stock-card-top">
+                        <span class="stock-card-tag female">Female ${s.id}</span>
+                        <div class="stock-card-actions">
+                            <button class="stock-card-edit" data-index="${i}"><i class="bi bi-pencil-fill"></i></button>
+                            <button class="stock-card-remove" data-index="${i}"><i class="bi bi-trash-fill"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        });
+    }
+    grid.innerHTML = html;
+
+    grid.querySelectorAll('.stock-card-remove').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            stockPool.splice(parseInt(btn.dataset.index), 1);
+            renderStock();
+        });
+    });
+
+    grid.querySelectorAll('.stock-card-edit').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            openEditStockModal(parseInt(btn.dataset.index));
+        });
+    });
+}
+
+let stockEditIndex = null;
+
+function openStockModal() {
+    stockEditIndex = null;
+    document.getElementById('stock-id-field').value = getNextStockId(stockGender);
+    document.getElementById('stock-save-btn').textContent = 'Add to Stock';
+    setStockPhoto(null);
+    stockOverlay.classList.add('show');
+    stockModal.classList.add('show');
+}
+
+function openEditStockModal(index) {
+    const s = stockPool[index];
+    stockEditIndex = index;
+    stockGender = s.gender;
+    document.getElementById('stock-modal-title').textContent = 'Edit ' + (s.gender === 'male' ? 'Male' : 'Female');
+    document.getElementById('stock-id-label').textContent = (s.gender === 'male' ? 'Male' : 'Female') + ' ID';
+    document.getElementById('stock-id-field').value = s.id;
+    document.getElementById('stock-save-btn').textContent = 'Save Changes';
+    setStockPhoto(s.photo || null);
+    stockOverlay.classList.add('show');
+    stockModal.classList.add('show');
+}
+
+// ── STOCK ADD MODAL ──
+const stockOverlay = document.getElementById('stock-overlay');
+const stockModal = document.getElementById('stock-modal');
+let stockGender = 'male';
+let stockCurrentPhoto = null;
+
+const stockPhotoInput = document.getElementById('stock-photo-input');
+const stockPhotoImg = document.getElementById('stock-photo-img');
+const stockPhotoIcon = document.getElementById('stock-photo-icon');
+const stockPhotoRemove = document.getElementById('stock-photo-remove');
+
+document.getElementById('stock-photo-btn').addEventListener('click', () => stockPhotoInput.click());
+document.getElementById('stock-camera-btn').addEventListener('click', () => {
+    stockPhotoInput.setAttribute('capture', 'environment');
+    stockPhotoInput.click();
+});
+
+stockPhotoInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => setStockPhoto(e.target.result);
+    reader.readAsDataURL(file);
+    this.value = '';
+});
+
+stockPhotoRemove.addEventListener('click', () => setStockPhoto(null));
+
+function setStockPhoto(src) {
+    stockCurrentPhoto = src;
+    if (src) {
+        stockPhotoImg.src = src;
+        stockPhotoImg.style.display = 'block';
+        stockPhotoIcon.style.display = 'none';
+        stockPhotoRemove.style.display = 'inline-flex';
+    } else {
+        stockPhotoImg.src = '';
+        stockPhotoImg.style.display = 'none';
+        stockPhotoIcon.style.display = 'block';
+        stockPhotoRemove.style.display = 'none';
+    }
+}
+
+document.getElementById('stock-add-male').addEventListener('click', () => {
+    stockGender = 'male';
+    document.getElementById('stock-modal-title').textContent = 'Add Male';
+    document.getElementById('stock-id-label').textContent = 'Male ID';
+    document.getElementById('stock-id-field').value = getNextStockId('male');
+    openStockModal();
+});
+document.getElementById('stock-add-female').addEventListener('click', () => {
+    stockGender = 'female';
+    document.getElementById('stock-modal-title').textContent = 'Add Female';
+    document.getElementById('stock-id-label').textContent = 'Female ID';
+    document.getElementById('stock-id-field').value = getNextStockId('female');
+    openStockModal();
+});
+
+function openStockModal() {
+    setStockPhoto(null);
+    stockOverlay.classList.add('show');
+    stockModal.classList.add('show');
+}
+
+function closeStockModal() {
+    stockOverlay.classList.remove('show');
+    stockModal.classList.remove('show');
+}
+
+stockOverlay.addEventListener('click', closeStockModal);
+document.getElementById('stock-cancel-btn').addEventListener('click', closeStockModal);
+
+document.getElementById('stock-save-btn').addEventListener('click', () => {
+    const id = document.getElementById('stock-id-field').value;
+    if (stockEditIndex !== null) {
+        stockPool[stockEditIndex].id = id;
+        stockPool[stockEditIndex].photo = stockCurrentPhoto;
+        stockEditIndex = null;
+    } else {
+        stockPool.push({ id, gender: stockGender, color: '', age: null, photo: stockCurrentPhoto, inGroup: null });
+    }
+    renderStock();
+    closeStockModal();
+});
+
+renderStock();
+
+// ── BERRIED BRIDGE SECTION ──
+function renderBerriedBridge() {
+    const list = document.getElementById('berried-bridge-list');
+    if (!list) return;
+    const occupied = isoBBoxes.filter(b => b.occupant.trim() !== '' && b.date && !b.completed);
+
+    if (occupied.length === 0) {
+        list.innerHTML = `<p class="bridge-empty"><i class="bi bi-egg-fill"></i> No berried females in isolation yet.</p>`;
+        return;
+    }
+
+    const today = new Date();
+    list.innerHTML = occupied.map(b => {
+        const placed = new Date(b.date + 'T00:00:00');
+        const dayIn = Math.max(Math.floor((today - placed) / 86400000), 0);
+        const total = 25;
+        const pct = Math.min(Math.round((dayIn / total) * 100), 100);
+        const ready = dayIn >= 18;
+        const boxIdx = isoBBoxes.indexOf(b);
+
+        let fromGroup = '';
+        for (let gi = 0; gi < breedGroups.length; gi++) {
+            const g = breedGroups[gi];
+            if ((g.berriedTags || []).some(f => b.occupant.includes(f))) {
+                fromGroup = g.name;
+                break;
+            }
+        }
+
+        return `
+        <div class="berried-bridge-card${ready ? ' ready' : ''}" data-box-index="${boxIdx}">
+            <div class="bridge-left">
+                <span class="bridge-female-tag"><i class="bi bi-egg-fill"></i> ${b.occupant}</span>
+                ${fromGroup ? `<span class="bridge-from">From: ${fromGroup}</span>` : ''}
+            </div>
+            <div class="bridge-arrow"><i class="bi bi-arrow-right"></i></div>
+            <div class="bridge-right">
+                <span class="bridge-box-tag">📦 ${b.name}</span>
+                <span class="bridge-day">Day ${dayIn}/${total}</span>
+            </div>
+            <div class="bridge-progress-wrap">
+                <div class="tank-progress-bar"><div class="tank-progress-fill teal" style="width:${pct}%"></div></div>
+                <span class="bridge-pct">${pct}%</span>
+            </div>
+            ${ready ? `<div class="bridge-ready-banner"><i class="bi bi-check-circle-fill"></i> Ready to transfer</div>` : ''}
+        </div>`;
+    }).join('');
+
+    list.querySelectorAll('.berried-bridge-card').forEach(card => {
+        card.addEventListener('click', () => openIsoDetail(parseInt(card.dataset.boxIndex)));
+    });
+}
+
 // ─── HATCHING MINI CHARTS ─────────────────────────────────────
 const hatchChartInstances = {};
 
@@ -96,24 +340,7 @@ initHatchChart('hatch-chart-f2', []);
 initHatchChart('hatch-chart-f4', []);
 
 // ─── BREEDING GROUPS DATA & RENDER ───────────────────────────
-let breedGroups = [
-    {
-        name: 'Group A',
-        maleTag: 'M1',
-        femaleTags: ['F1', 'F2', 'F3', 'F4'],
-        berriedTags: ['F2', 'F4'],
-        date: '2025-06-20',
-        photo: null
-    },
-    {
-        name: 'Group B',
-        maleTag: 'M2',
-        femaleTags: ['F1', 'F2'],
-        berriedTags: [],
-        date: '2025-07-01',
-        photo: null
-    }
-];
+let breedGroups = [];
 
 function renderGroups() {
     const list = document.getElementById('breed-group-list');
@@ -173,36 +400,43 @@ function renderGroups() {
     });
 }
 
-// ─── TAG INPUT (Female Tags) ─────────────────────────────────
-let bmFemaleTags = [];
+// ─── FEMALE CHECKBOX LIST (for group modal) ──────────────────
+let bmSelectedFemales = [];
 
-function renderTagChips() {
-    const chips = document.getElementById('bm-tag-chips');
-    chips.innerHTML = bmFemaleTags.map((tag, i) => `
-        <span class="tag-chip">${tag}
-          <button type="button" class="tag-chip-remove" data-i="${i}"><i class="bi bi-x"></i></button>
-        </span>`).join('');
-    chips.querySelectorAll('.tag-chip-remove').forEach(btn => {
-        btn.addEventListener('click', () => {
-            bmFemaleTags.splice(parseInt(btn.dataset.i), 1);
-            renderTagChips();
+function renderFemaleChecks(isEdit = false, currentGroupName = '') {
+    const container = document.getElementById('bm-female-checks');
+    let available;
+    if (isEdit) {
+        available = stockPool.filter(s => s.gender === 'female' && (!s.inGroup || s.inGroup === currentGroupName));
+    } else {
+        available = stockPool.filter(s => s.gender === 'female' && !s.inGroup);
+    }
+    if (available.length === 0) {
+        container.innerHTML = `<p class="stock-check-empty">No available females in stock.</p>`;
+        return;
+    }
+    container.innerHTML = available.map(f => {
+        const checked = bmSelectedFemales.includes(f.id);
+        return `
+        <div class="stock-check-item${checked ? ' checked' : ''}" data-id="${f.id}">
+            <div class="stock-check-box"><i class="bi bi-check"></i></div>
+            <span class="stock-check-label">${f.id}</span>
+            <span class="stock-check-detail">${f.color || '—'} · ${f.age ? f.age + 'd' : '—'}</span>
+        </div>`;
+    }).join('');
+
+    container.querySelectorAll('.stock-check-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const id = item.dataset.id;
+            if (bmSelectedFemales.includes(id)) {
+                bmSelectedFemales = bmSelectedFemales.filter(f => f !== id);
+            } else {
+                bmSelectedFemales.push(id);
+            }
+            renderFemaleChecks(isEdit, currentGroupName);
         });
     });
 }
-
-function addFemaleTag() {
-    const field = document.getElementById('bm-tag-field');
-    const val = field.value.trim();
-    if (!val || bmFemaleTags.includes(val)) { field.value = ''; return; }
-    bmFemaleTags.push(val);
-    field.value = '';
-    renderTagChips();
-}
-
-document.getElementById('bm-tag-add').addEventListener('click', addFemaleTag);
-document.getElementById('bm-tag-field').addEventListener('keydown', e => {
-    if (e.key === 'Enter') { e.preventDefault(); addFemaleTag(); }
-});
 
 // ─── GROUP DETAIL MODAL ──────────────────────────────────────
 const grpDetailOverlay = document.getElementById('grp-detail-overlay');
@@ -316,7 +550,7 @@ function openBerriedModal(groupIndex, femaleTag) {
     document.getElementById('berried-modal-title').innerHTML = `<i class="bi bi-egg-fill"></i> Mark ${femaleTag} as Berried`;
     document.getElementById('berried-modal-sub').textContent = 'Select an available isolation box to assign her to.';
 
-    const availableBoxes = isoBBoxes.filter(b => b.occupant.trim() === '');
+    const availableBoxes = isoBBoxes.filter(b => b.occupant.trim() === '' && !b.completed);
     const boxList = document.getElementById('berried-box-list');
 
     if (availableBoxes.length === 0) {
@@ -348,16 +582,15 @@ function confirmBerriedAssign(boxIndex) {
     // mark female as berried in group
     if (!breedGroups[groupIndex].berriedTags) breedGroups[groupIndex].berriedTags = [];
     breedGroups[groupIndex].berriedTags.push(femaleTag);
-    // remove from group's female tags (she's now in isolation)
-    breedGroups[groupIndex].femaleTags = breedGroups[groupIndex].femaleTags.filter(f => f !== femaleTag);
     // assign to isolation box
     const today = new Date().toISOString().split('T')[0];
     isoBBoxes[boxIndex].occupant = `Female ${femaleTag}`;
     isoBBoxes[boxIndex].date = today;
+    isoBBoxes[boxIndex].completed = false;
     // re-render both
     renderGroups();
     renderIsoBoxes();
-    renderHatchCards();
+    renderBerriedBridge();
     closeBerriedModal();
 }
 
@@ -404,24 +637,29 @@ function setModalPhoto(src) {
 
 function openGroupModal(editIndex = null) {
     const isEdit = editIndex !== null;
-    document.getElementById('breed-modal-title').textContent = isEdit ? 'Edit Group' : 'Add Group';
+    document.getElementById('breed-modal-title').textContent = isEdit ? 'Edit Group' : 'Create Group';
     document.getElementById('bm-edit-index').value = isEdit ? editIndex : '';
     if (isEdit) {
         const g = breedGroups[editIndex];
-        document.getElementById('bm-name').value     = g.name;
-        document.getElementById('bm-male-tag').value = g.maleTag;
-        document.getElementById('bm-date').value     = g.date;
-        bmFemaleTags = [...g.femaleTags];
-        renderTagChips();
-        setModalPhoto(g.photo || null);
+        document.getElementById('bm-name').value = g.name;
+        document.getElementById('bm-date').value = g.date;
+        bmSelectedFemales = [...g.femaleTags];
+
+        const maleSelect = document.getElementById('bm-male-select');
+        const males = stockPool.filter(s => s.gender === 'male' && (!s.inGroup || s.inGroup === g.name));
+        maleSelect.innerHTML = `<option value="">— Select male —</option>` +
+            males.map(m => `<option value="${m.id}"${m.id === g.maleTag ? ' selected' : ''}>${m.id} ${m.color ? '· ' + m.color : ''}</option>`).join('');
     } else {
-        document.getElementById('bm-name').value     = '';
-        document.getElementById('bm-male-tag').value = '';
-        document.getElementById('bm-date').value     = '';
-        bmFemaleTags = [];
-        renderTagChips();
-        setModalPhoto(null);
+        document.getElementById('bm-name').value = '';
+        document.getElementById('bm-date').value = '';
+        bmSelectedFemales = [];
+
+        const males = stockPool.filter(s => s.gender === 'male' && !s.inGroup);
+        document.getElementById('bm-male-select').innerHTML = `<option value="">— Select male —</option>` +
+            males.map(m => `<option value="${m.id}">${m.id} ${m.color ? '· ' + m.color : ''}</option>`).join('');
     }
+    renderFemaleChecks(isEdit, isEdit ? breedGroups[editIndex].name : '');
+    setModalPhoto(null);
     breedOverlay.classList.add('show');
     breedModal.classList.add('show');
 }
@@ -436,37 +674,50 @@ breedOverlay.addEventListener('click', closeGroupModal);
 document.getElementById('bm-cancel-btn').addEventListener('click', closeGroupModal);
 
 document.getElementById('bm-save-btn').addEventListener('click', () => {
-    const name       = document.getElementById('bm-name').value.trim();
-    const maleTag    = document.getElementById('bm-male-tag').value.trim();
-    const femaleTags = [...bmFemaleTags];
-    const date       = document.getElementById('bm-date').value;
-    const photo      = bmCurrentPhoto;
+    const name = document.getElementById('bm-name').value.trim();
+    const maleTag = document.getElementById('bm-male-select').value;
+    const femaleTags = [...bmSelectedFemales];
+    const date = document.getElementById('bm-date').value;
+    const photo = bmCurrentPhoto;
 
-    // validation
-    const nameEl    = document.getElementById('bm-name');
-    const maleEl    = document.getElementById('bm-male-tag');
-    const dateEl    = document.getElementById('bm-date');
+    const nameEl = document.getElementById('bm-name');
+    const maleEl = document.getElementById('bm-male-select');
+    const dateEl = document.getElementById('bm-date');
     [nameEl, maleEl, dateEl].forEach(el => el.style.borderColor = '');
 
     let valid = true;
-    if (!name)          { nameEl.style.borderColor = '#E63946'; valid = false; }
-    if (!maleTag)       { maleEl.style.borderColor = '#E63946'; valid = false; }
-    if (!date)          { dateEl.style.borderColor = '#E63946'; valid = false; }
+    if (!name) { nameEl.style.borderColor = '#E63946'; valid = false; }
+    if (!maleTag) { maleEl.style.borderColor = '#E63946'; valid = false; }
+    if (!date) { dateEl.style.borderColor = '#E63946'; valid = false; }
     if (femaleTags.length === 0) {
-        document.getElementById('bm-tag-wrap').style.borderColor = '#E63946';
+        document.getElementById('bm-female-checks').style.borderColor = '#E63946';
         valid = false;
     } else {
-        document.getElementById('bm-tag-wrap').style.borderColor = '';
+        document.getElementById('bm-female-checks').style.borderColor = '';
     }
     if (!valid) return;
 
     const editIndex = document.getElementById('bm-edit-index').value;
+
     if (editIndex !== '') {
-        breedGroups[parseInt(editIndex)] = { name, maleTag, femaleTags, date, photo };
+        const oldGroup = breedGroups[parseInt(editIndex)];
+        stockPool.forEach(s => {
+            if (s.id === oldGroup.maleTag || oldGroup.femaleTags.includes(s.id)) {
+                if (!femaleTags.includes(s.id) && s.id !== maleTag) s.inGroup = null;
+            }
+        });
+        breedGroups[parseInt(editIndex)] = { name, maleTag, femaleTags, date, photo, berriedTags: breedGroups[parseInt(editIndex)].berriedTags || [] };
     } else {
-        breedGroups.push({ name, maleTag, femaleTags, date, photo });
+        breedGroups.push({ name, maleTag, femaleTags, date, photo, berriedTags: [] });
     }
+
+    stockPool.forEach(s => {
+        if (s.id === maleTag) s.inGroup = name;
+        if (femaleTags.includes(s.id)) s.inGroup = name;
+    });
+
     renderGroups();
+    renderStock();
     closeGroupModal();
 });
 
@@ -499,11 +750,17 @@ deleteOverlay.addEventListener('click', closeDeleteModal);
 document.getElementById('bd-cancel-btn').addEventListener('click', closeDeleteModal);
 document.getElementById('bd-confirm-btn').addEventListener('click', () => {
     if (deleteContext.type === 'group') {
+        const g = breedGroups[deleteContext.index];
+        stockPool.forEach(s => {
+            if (s.id === g.maleTag || g.femaleTags.includes(s.id)) s.inGroup = null;
+        });
         breedGroups.splice(deleteContext.index, 1);
         renderGroups();
+        renderStock();
     } else {
         isoBBoxes.splice(deleteContext.index, 1);
         renderIsoBoxes();
+        renderBerriedBridge();
     }
     closeDeleteModal();
 });
@@ -546,25 +803,28 @@ document.querySelectorAll('.breed-tab').forEach(tab => {
 updateIsoAI();
 
 // ─── ISOLATION BOXES DATA & RENDER ───────────────────────────
-let isoBBoxes = [
-    { name: 'Box A', occupant: 'Female F2', date: '2025-07-05' },
-    { name: 'Box B', occupant: 'Female F4', date: '2025-07-08' },
-    { name: 'Box C', occupant: '', date: '' },
-    { name: 'Box D', occupant: '', date: '' },
-];
+let isoBBoxes = [];
 
 function renderIsoBoxes() {
     const grid = document.getElementById('iso-box-grid');
     grid.innerHTML = isoBBoxes.map((b, i) => {
-        const occupied    = b.occupant.trim() !== '';
-        const statusClass = occupied ? 'occupied' : 'available';
-        const statusLabel = occupied ? 'Occupied' : 'Available';
+        const isCompleted = b.completed === true;
+        const occupied    = b.occupant.trim() !== '' && !isCompleted;
+        const statusClass = isCompleted ? 'completed' : (occupied ? 'occupied' : 'available');
+        const statusLabel = isCompleted ? 'Completed' : (occupied ? 'Incubating' : 'Available');
         const dateStr     = b.date
             ? new Date(b.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
             : '';
-        const actionBtn = occupied
-            ? `<button class="iso-btn unlock" data-index="${i}"><i class="bi bi-unlock-fill"></i> Unlock</button>`
-            : `<button class="iso-btn assign" data-index="${i}"><i class="bi bi-person-plus-fill"></i> Assign</button>`;
+
+        let actionBtn = '';
+        if (isCompleted) {
+            actionBtn = `<button class="iso-btn completed-btn" data-index="${i}"><i class="bi bi-check-circle-fill"></i> Completed</button>`;
+        } else if (occupied) {
+            actionBtn = `<button class="iso-btn unlock" data-index="${i}"><i class="bi bi-box-arrow-up"></i> Release</button>`;
+        } else {
+            actionBtn = `<button class="iso-btn assign" data-index="${i}"><i class="bi bi-person-plus-fill"></i> Assign</button>`;
+        }
+
         return `
         <div class="iso-box ${statusClass}" data-index="${i}" style="cursor:pointer">
           <div class="iso-box-header">
@@ -575,7 +835,7 @@ function renderIsoBoxes() {
               <button class="breed-icon-btn delete" data-index="${i}" style="width:24px;height:24px;font-size:10px"><i class="bi bi-trash-fill"></i></button>
             </div>
           </div>
-          <p class="iso-occupant${occupied ? '' : ' empty'}">${occupied ? b.occupant : '— Empty —'}</p>
+          <p class="iso-occupant${occupied ? '' : ' empty'}">${b.occupant || '— Empty —'}</p>
           <p class="iso-date">${dateStr ? '<i class="bi bi-calendar3"></i> ' + dateStr : ''}</p>
           <div class="iso-actions">${actionBtn}</div>
         </div>`;
@@ -729,15 +989,16 @@ isoUnlockOverlay.addEventListener('click', closeIsoUnlock);
 document.getElementById('iso-unlock-cancel').addEventListener('click', closeIsoUnlock);
 document.getElementById('iso-unlock-confirm').addEventListener('click', () => {
     const index = parseInt(document.getElementById('iso-unlock-index').value);
-    isoBBoxes[index].occupant = '';
-    isoBBoxes[index].date = '';
+    // Mark as completed instead of clearing
+    isoBBoxes[index].completed = true;
     renderIsoBoxes();
-    renderHatchCards();
+    renderBerriedBridge();
     closeIsoUnlock();
 });
 
 renderIsoBoxes();
 renderHatchCards();
+renderBerriedBridge();
 
 // ─── TANK 2: NURSERY ─────────────────────────────────────────
 let lengthVal = 0.0;

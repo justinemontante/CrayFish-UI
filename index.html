@@ -554,15 +554,29 @@
 
               <!-- INNER TABS -->
               <div class="breed-tabs">
-                <button class="breed-tab active" data-breed="groups">🦞 Groups</button>
+                <button class="breed-tab active" data-breed="stock">🦞 Crayfish</button>
+                <button class="breed-tab" data-breed="groups">🦞 Groups</button>
                 <button class="breed-tab" data-breed="isolation">📦 Isolation</button>
               </div>
 
+              <!-- ── STOCK POOL ── -->
+              <div class="breed-panel active" id="breed-stock">
+                <div class="breed-section-header">
+                  <span class="breed-section-title">Crayfish Members</span>
+                </div>
+                <p class="breed-section-sub">Manage males and females for breeding pair creation</p>
+                <div class="stock-quick-add">
+                  <button class="stock-add-btn male" id="stock-add-male"><i class="bi bi-gender-male"></i> Add Male</button>
+                  <button class="stock-add-btn female" id="stock-add-female"><i class="bi bi-gender-female"></i> Add Female</button>
+                </div>
+                <div class="stock-pool-grid" id="stock-pool-grid"></div>
+              </div>
+
               <!-- ── BREEDING GROUPS ── -->
-              <div class="breed-panel active" id="breed-groups">
+              <div class="breed-panel" id="breed-groups">
                 <div class="breed-section-header">
                   <span class="breed-section-title">Breeding Groups</span>
-                  <button class="breed-add-btn" id="add-group-btn"><i class="bi bi-plus"></i> Add Group</button>
+                  <button class="breed-add-btn" id="add-group-btn"><i class="bi bi-plus"></i> Create Group</button>
                 </div>
                 <div class="breed-group-list" id="breed-group-list"></div>
               </div>
@@ -570,6 +584,11 @@
               <!-- ── ISOLATION BOXES ── -->
               <div class="breed-panel" id="breed-isolation">
                 <div class="breed-section-header">
+                  <span class="breed-section-title">Berried in Isolation</span>
+                </div>
+                <div class="berried-bridge-list" id="berried-bridge-list"></div>
+
+                <div class="breed-section-header" style="margin-top:12px">
                   <span class="breed-section-title">Isolation Boxes</span>
                   <button class="breed-add-btn" id="add-box-btn"><i class="bi bi-plus"></i> Add Box</button>
                 </div>
@@ -842,11 +861,39 @@
               <button class="mortality-cancel" id="iso-unlock-cancel">Cancel</button>
             </div>
 
+            <!-- STOCK ADD MODAL -->
+            <div class="breed-modal-overlay" id="stock-overlay"></div>
+            <div class="breed-modal" id="stock-modal">
+              <div class="legend-handle"></div>
+              <p class="breed-modal-title" id="stock-modal-title">Add Crayfish</p>
+              <div class="breed-modal-body">
+                <!-- PHOTO PICKER -->
+                <div class="stock-photo-picker">
+                  <div class="stock-photo-preview" id="stock-photo-preview">
+                    <i class="bi bi-camera" id="stock-photo-icon"></i>
+                    <img id="stock-photo-img" src="" alt="" style="display:none" />
+                  </div>
+                  <div class="stock-photo-actions">
+                    <button type="button" class="stock-photo-btn" id="stock-photo-btn"><i class="bi bi-upload"></i> Upload Photo</button>
+                    <button type="button" class="stock-photo-btn camera" id="stock-camera-btn"><i class="bi bi-camera-fill"></i> Take Photo</button>
+                    <button type="button" class="stock-photo-remove" id="stock-photo-remove" style="display:none"><i class="bi bi-x"></i> Remove</button>
+                  </div>
+                  <input type="file" id="stock-photo-input" accept="image/*" style="display:none" />
+                </div>
+                <div class="input-group">
+                  <label class="input-label" id="stock-id-label">ID</label>
+                  <input type="text" class="login-input" id="stock-id-field" placeholder="e.g. M1" />
+                </div>
+              </div>
+              <button class="compute-btn" id="stock-save-btn">Add to Stock</button>
+              <button class="mortality-cancel" id="stock-cancel-btn">Cancel</button>
+            </div>
+
             <!-- BREEDING GROUP MODAL -->
             <div class="breed-modal-overlay" id="breed-modal-overlay"></div>
             <div class="breed-modal" id="breed-modal">
               <div class="legend-handle"></div>
-              <p class="breed-modal-title" id="breed-modal-title">Add Group</p>
+              <p class="breed-modal-title" id="breed-modal-title">Create Group</p>
               <div class="breed-modal-body">
                 <!-- PHOTO PICKER -->
                 <div class="bm-photo-picker" id="bm-photo-picker">
@@ -867,18 +914,14 @@
                   <input type="text" class="login-input" id="bm-name" placeholder="e.g. Group A" />
                 </div>
                 <div class="input-group">
-                  <label class="input-label">Male Tag</label>
-                  <input type="text" class="login-input" id="bm-male-tag" placeholder="e.g. M1" />
+                  <label class="input-label">Pick Male</label>
+                  <select class="login-input" id="bm-male-select">
+                    <option value="">— Select male —</option>
+                  </select>
                 </div>
                 <div class="input-group">
-                  <label class="input-label">Female Tags</label>
-                  <div class="tag-input-wrap" id="bm-tag-wrap">
-                    <div class="tag-chips" id="bm-tag-chips"></div>
-                    <div class="tag-input-row">
-                      <input type="text" class="tag-input-field" id="bm-tag-field" placeholder="e.g. F1" />
-                      <button type="button" class="tag-add-btn" id="bm-tag-add"><i class="bi bi-plus"></i></button>
-                    </div>
-                  </div>
+                  <label class="input-label">Pick Females</label>
+                  <div class="stock-checkbox-list" id="bm-female-checks"></div>
                 </div>
                 <div class="input-group">
                   <label class="input-label">Mating Date</label>
