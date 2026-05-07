@@ -552,7 +552,18 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('go-sample-weight').value = '';
 
         renderGrowout();
+        
+        // Update AI recommendation in feeder
+        if (window.renderFeederRecommendation) {
+            window.renderFeederRecommendation();
+        }
     });
 
     renderGrowout();
 });
+
+// Expose functions globally for controls.js
+window.growoutData = growoutData;
+window.getLiveCount = getLiveCount;
+window.getTotalMortality = getTotalMortality;
+window.getDaysInCulture = getDaysInCulture;

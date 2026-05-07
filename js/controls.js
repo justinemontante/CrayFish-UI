@@ -4,8 +4,6 @@
 const feederLogs = [
     { action: 'Dispensed 44.1g feed (Scheduled)', type: 'auto', time: '8:00 AM', date: 'Today' },
     { action: 'Manual feed triggered', type: 'manual', time: '7:45 AM', date: 'Today' },
-    { action: 'Feeding schedule added: 6:00 PM', type: 'schedule', time: '7:30 AM', date: 'Today' },
-    { action: 'Mode changed to Auto', type: 'mode', time: '7:00 AM', date: 'Today' },
     { action: 'Dispensed 44.1g feed (Scheduled)', type: 'auto', time: '6:00 AM', date: 'Today' }
 ];
 
@@ -26,12 +24,14 @@ function addFeederLog(action, type) {
 function renderFeederLog() {
     const list = document.getElementById('feeder-log-list');
     if (!list) return;
-    if (feederLogs.length === 0) {
+    // Only show 'auto' and 'manual' feed logs
+    const feedLogs = feederLogs.filter(l => l.type === 'auto' || l.type === 'manual');
+    if (feedLogs.length === 0) {
         list.innerHTML = `<p class="hw-detail-log-empty">No activity yet.</p>`;
         return;
     }
-    const dotClass = { auto: 'auto', manual: 'on', mode: 'off', schedule: 'auto' };
-    list.innerHTML = feederLogs.map(l => `
+    const dotClass = { auto: 'auto', manual: 'on' };
+    list.innerHTML = feedLogs.map(l => `
         <div class="hw-detail-log-item">
           <div class="hw-detail-log-dot ${dotClass[l.type] || 'auto'}"></div>
           <div class="hw-detail-log-info">
@@ -55,7 +55,6 @@ function updateFeederMode() {
 feederToggle.addEventListener('change', () => {
     const isAuto = feederToggle.checked;
     updateFeederMode();
-    addFeederLog(`Mode changed to ${isAuto ? 'Auto' : 'Manual'}`, 'mode');
 });
 updateFeederMode();
 
@@ -86,7 +85,7 @@ function parseTimeTo24h(timeStr) {
     let hour = parseInt(h);
     if (ampm === 'PM' && hour !== 12) hour += 12;
     if (ampm === 'AM' && hour === 12) hour = 0;
-    return { hour: parseInt(h), minute: parseInt(m), isPM: ampm === 'PM', display: `${String(hour).padStart(2,'0')}:${m}` };
+    return { hour: hour, minute: parseInt(m), isPM: ampm === 'PM', display: `${String(hour).padStart(2,'0')}:${m}` };
 }
 
 function getScheduleStatus(s) {
@@ -153,7 +152,6 @@ function renderSchedules() {
     morningContainer.querySelectorAll('.schedule-remove').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            addFeederLog(`Schedule removed: ${btn.dataset.time}`, 'schedule');
             schedules = schedules.filter(t => t.time !== btn.dataset.time);
             saveSchedules();
             renderSchedules();
@@ -170,7 +168,6 @@ function renderSchedules() {
     afternoonContainer.querySelectorAll('.schedule-remove').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            addFeederLog(`Schedule removed: ${btn.dataset.time}`, 'schedule');
             schedules = schedules.filter(t => t.time !== btn.dataset.time);
             saveSchedules();
             renderSchedules();
@@ -225,7 +222,6 @@ function addHandler() {
             grams: grams
         });
         schedules.sort((a, b) => (a.hour * 60 + a.minute) - (b.hour * 60 + b.minute));
-        addFeederLog(`Schedule added: ${formatted} (${grams}g)`, 'schedule');
         saveSchedules();
         renderSchedules();
     }
@@ -253,8 +249,6 @@ function updateSchedule() {
         grams: newGrams
     });
     schedules.sort((a, b) => (a.hour * 60 + a.minute) - (b.hour * 60 + b.minute));
-
-    addFeederLog(`Schedule updated: ${editTimeStr} → ${newFormatted} (${newGrams}g)`, 'schedule');
     saveSchedules();
 
     editMode = false;
@@ -290,15 +284,56 @@ renderSchedules();
 const addBtn = document.getElementById('schedule-add-btn');
 addBtn.addEventListener('click', addHandler);
 
+// Track last triggered time to prevent duplicates within the same minute
+let lastTriggeredTime = null;
+let lastCheckedMinute = null;
+let appReady = false; // Flag to prevent triggering on page load
+
+// Helper to get current hour and minute as integers (24-hour format)
+function getCurrentTime() {
+    const now = new Date();
+    return { hour: now.getHours(), minute: now.getMinutes() };
+}
+
+// Helper to parse schedule time to 24-hour format
+function parseScheduleTime(schedule) {
+    let hour = schedule.hour;
+    if (schedule.isPM && hour !== 12) hour += 12;
+    if (!schedule.isPM && hour === 12) hour = 0;
+    return { hour, minute: schedule.minute };
+}
+
+// Start checking after 2 seconds (allow app to fully load)
+setTimeout(() => {
+    appReady = true;
+}, 2000);
+
 // Simulate auto feed when schedule time matches current time
 setInterval(() => {
     if (!feederToggle.checked) return;
-    const now = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-    const match = schedules.find(s => s.display === now);
-    if (match) {
-        addFeederLog(`Auto Feed — Scheduled at ${now} (${match.grams}g)`, 'auto');
+    if (!appReady) return;
+    
+    const now = getCurrentTime();
+    const currentMinute = now.minute;
+    
+    // Reset trigger tracker at the start of each new minute
+    if (lastCheckedMinute !== currentMinute) {
+        lastCheckedMinute = currentMinute;
+        lastTriggeredTime = null;
     }
-}, 60000);
+    
+    // Compare numerically instead of string
+    const match = schedules.find(s => {
+        const sched = parseScheduleTime(s);
+        return sched.hour === now.hour && sched.minute === now.minute;
+    });
+    
+    if (match && lastTriggeredTime !== currentMinute) {
+        lastTriggeredTime = currentMinute;
+        const timeDisplay = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        addFeederLog(`Auto Feed — Scheduled at ${timeDisplay} (${match.grams}g)`, 'auto');
+    }
+}, 1000);
 
 // Refresh statuses every minute
 setInterval(() => {
@@ -519,3 +554,167 @@ feederLogOverlay.addEventListener('click', closeFeederLog);
 document.getElementById('feeder-log-close').addEventListener('click', closeFeederLog);
 
 renderFeederLog();
+
+// ═════════════════════════════════════════
+//   AI RECOMENDATION
+// ═════════════════════════════════════════
+
+// Calculate recommendation based on sampling data or inventory
+function calculateRecommendation() {
+    // Use exposed global functions from tanks.js
+    const data = window.growoutData || {
+        initialStock: 68,
+        stockingDate: null,
+        samplingHistory: []
+    };
+    
+    const hasSampling = data.samplingHistory && data.samplingHistory.length > 0;
+    const liveCount = window.getLiveCount ? window.getLiveCount() : (data.initialStock || 68);
+    const daysInCulture = window.getDaysInCulture ? window.getDaysInCulture() : 0;
+    
+    if (hasSampling) {
+        // Use latest sampling data
+        const latest = data.samplingHistory[data.samplingHistory.length - 1];
+        return {
+            source: 'sampling',
+            date: latest.date,
+            abw: latest.abw,
+            biomass: latest.biomass,
+            feedRation: latest.feedRation,
+            population: liveCount,
+            // Suggest 2 feedings per day
+            timesPerDay: 2,
+            suggestion: [
+                { time: '6:00 AM', grams: Math.round(latest.feedRation / 2) },
+                { time: '6:00 PM', grams: Math.round(latest.feedRation / 2) }
+            ]
+        };
+    } else {
+        // No sampling - calculate from inventory
+        const population = liveCount;
+        const days = daysInCulture;
+        
+        // Estimate ABW based on days in culture (simplified model)
+        let estimatedABW = 5; // Default 5g for young crayfish
+        if (days > 60) estimatedABW = 30;
+        else if (days > 30) estimatedABW = 15;
+        else if (days > 14) estimatedABW = 8;
+        
+        const biomass = +(population * estimatedABW).toFixed(1);
+        const feedRation = +(biomass * 0.03).toFixed(1); // 3% of biomass
+        
+        return {
+            source: 'inventory',
+            population: population,
+            daysInCulture: days,
+            abw: estimatedABW,
+            biomass: biomass,
+            feedRation: feedRation,
+            timesPerDay: 2,
+            suggestion: [
+                { time: '6:00 AM', grams: Math.round(feedRation / 2) },
+                { time: '6:00 PM', grams: Math.round(feedRation / 2) }
+            ]
+        };
+    }
+}
+
+// Render the recommendation UI
+function renderRecommendation() {
+    const contentEl = document.getElementById('ai-rec-content');
+    const applyBtn = document.getElementById('ai-rec-apply-btn');
+    if (!contentEl) return;
+    
+    const rec = calculateRecommendation();
+    if (!rec) {
+        contentEl.innerHTML = `<div class="ai-rec-no-data">No data available for recommendation.</div>`;
+        if (applyBtn) applyBtn.disabled = true;
+        return;
+    }
+    
+    let html = '';
+    
+    // Based on text
+    if (rec.source === 'sampling') {
+        html += `<div class="ai-rec-based">Based on: Sampling (${rec.date})</div>`;
+    } else {
+        html += `<div class="ai-rec-based">Based on: Inventory (${rec.daysInCulture} days in culture)</div>`;
+    }
+    
+    // Stats
+    html += `<div class="ai-rec-stats">
+        <span class="ai-rec-stat">ABW: <strong>${rec.abw}g</strong></span>
+        <span class="ai-rec-stat">Pop: <strong>${rec.population}</strong></span>
+        <span class="ai-rec-stat">Biomass: <strong>${rec.biomass}g</strong></span>
+    </div>`;
+    
+    // Daily feed
+    html += `<div class="ai-rec-daily">📊 Daily Feed: ${rec.feedRation}g (3% biomass)</div>`;
+    
+    // Suggestions
+    html += `<div class="ai-rec-suggestions">
+        <div class="ai-rec-suggestion"><i class="bi bi-clock"></i> <span class="ai-rec-time">${rec.timesPerDay}x daily</span></div>`;
+    
+    rec.suggestion.forEach(s => {
+        html += `<div class="ai-rec-suggestion">
+            <i class="bi bi-sunrise"></i>
+            <span class="ai-rec-time">${s.time}</span>
+            <span class="ai-rec-grams">${s.grams}g</span>
+        </div>`;
+    });
+    
+    html += `</div>`;
+    
+    contentEl.innerHTML = html;
+    if (applyBtn) {
+        applyBtn.disabled = false;
+        applyBtn.style.display = 'block';
+    }
+}
+
+// Apply recommendation to schedules
+function applyRecommendation() {
+    const rec = calculateRecommendation();
+    if (!rec || !rec.suggestion) return;
+    
+    // Clear existing schedules
+    if (typeof schedules !== 'undefined') {
+        // Remove all existing schedules
+        schedules = [];
+        
+        // Add recommended schedules
+        rec.suggestion.forEach(s => {
+            const parsed = parseTimeTo24h(s.time);
+            schedules.push({
+                time: s.time,
+                display: s.time,
+                hour: parsed.hour,
+                minute: parsed.minute,
+                isPM: parsed.isPM,
+                grams: s.grams
+            });
+        });
+        
+        schedules.sort((a, b) => (a.hour * 60 + a.minute) - (b.hour * 60 + b.minute));
+        saveSchedules();
+        renderSchedules();
+        
+        // Log the action
+        addFeederLog(`AI Recommendation applied: ${rec.feedRation}g/day in ${rec.timesPerDay} feedings`, 'auto');
+    }
+}
+
+// Initialize
+const aiApplyBtn = document.getElementById('ai-rec-apply-btn');
+if (aiApplyBtn) {
+    aiApplyBtn.addEventListener('click', applyRecommendation);
+}
+
+// Render on load
+setTimeout(() => {
+    renderRecommendation();
+}, 500);
+
+// Expose render function for tanks.js to call after sampling
+window.renderFeederRecommendation = renderRecommendation;
+

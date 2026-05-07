@@ -838,3 +838,144 @@
     padding: 16px 0;
     margin: 0;
 }
+
+/* ════════════════
+   AI RECOMENDATION
+   ════════════════ */
+.ai-recommendation {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(31, 165, 165, 0.06);
+    border: 1.5px solid rgba(31, 165, 165, 0.15);
+    border-radius: 16px;
+}
+
+.ai-rec-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.ai-rec-header i {
+    font-size: 18px;
+    color: var(--primary-teal);
+}
+
+.ai-rec-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dark-text);
+}
+
+.ai-rec-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.ai-rec-no-data {
+    font-size: 12px;
+    color: var(--dark-text);
+    opacity: 0.6;
+    text-align: center;
+    padding: 8px 0;
+}
+
+.ai-rec-based {
+    font-size: 11px;
+    color: var(--dark-text);
+    opacity: 0.5;
+    margin-bottom: 4px;
+}
+
+.ai-rec-stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.ai-rec-stat {
+    font-size: 11px;
+    color: var(--dark-text);
+    opacity: 0.7;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 4px 10px;
+    border-radius: 8px;
+}
+
+.ai-rec-stat strong {
+    color: var(--primary-teal);
+    font-weight: 700;
+}
+
+.ai-rec-daily {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin-bottom: 4px;
+}
+
+.ai-rec-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ai-rec-suggestion {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--dark-text);
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+}
+
+.ai-rec-suggestion i {
+    font-size: 14px;
+    color: var(--primary-teal);
+}
+
+.ai-rec-time {
+    font-weight: 600;
+    min-width: 65px;
+}
+
+.ai-rec-grams {
+    font-weight: 700;
+    color: var(--primary-teal);
+}
+
+.ai-rec-apply-btn {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(135deg, var(--dark-text), var(--primary-teal));
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    box-shadow: 0 4px 12px rgba(31, 165, 165, 0.3);
+}
+
+.ai-rec-apply-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.ai-rec-apply-btn:active {
+    transform: translateY(0);
+}
+
+.ai-rec-apply-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
