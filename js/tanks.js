@@ -79,6 +79,23 @@ function renderGrowout() {
     document.getElementById('go-mortality').textContent = getTotalMortality();
     document.getElementById('go-initial-stock').textContent = growoutData.initialStock;
     
+    // Update dashboard inventory card
+    const dashLive = document.getElementById('dash-live-count');
+    const dashSurvival = document.getElementById('dash-survival');
+    const dashInitial = document.getElementById('dash-initial');
+    if (dashLive) dashLive.textContent = live;
+    if (dashSurvival) dashSurvival.textContent = survival.toFixed(1) + '%';
+    if (dashInitial) dashInitial.textContent = growoutData.initialStock;
+    
+    // Update dashboard next action card
+    const dashDays = document.getElementById('dash-days-culture');
+    const dashSampling = document.getElementById('dash-sampling-due');
+    if (dashDays) dashDays.textContent = days + ' day' + (days !== 1 ? 's' : '');
+    if (dashSampling) {
+        const daysLeft = getDaysUntilSampling();
+        dashSampling.textContent = daysLeft > 0 ? `Due in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}` : 'Due today!';
+    }
+    
     // Update donut - circumference = 2 * PI * r = 2 * 3.1416 * 50 = 314.16
     const circumference = 2 * Math.PI * 50;
     const offset = circumference - (survival / 100) * circumference;

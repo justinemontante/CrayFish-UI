@@ -395,9 +395,30 @@
                 <span class="gauge-ideal">Ideal: 0 – 25 NTU</span>
               </div>
 
-            </div>
+              </div>
 
-            <!-- QUICK ACTIONS -->
+             <div class="dashboard-header">
+               <span class="dashboard-label">Physical Parameters</span>
+               <span class="dashboard-live"><span class="live-dot"></span>Live Data</span>
+             </div>
+
+             <!-- WATER LEVEL CARD -->
+             <div class="gauge-card" id="gauge-water-level">
+               <div class="gauge-header">
+                 <span class="gauge-title">Water Level</span>
+                 <span class="gauge-icon">
+                   <img src="resources/images/water-level.png" alt="Water Level" />
+                 </span>
+               </div>
+               <div class="gauge-body">
+                 <span class="gauge-value" id="val-water-level">--</span>
+                 <span class="gauge-unit">cm</span>
+               </div>
+               <span class="gauge-badge" id="status-water-level"><span class="gauge-dot" id="dot-water-level"></span>Loading</span>
+               <span class="gauge-ideal">Ideal: 80 – 120 cm</span>
+             </div>
+
+             <!-- QUICK ACTIONS -->
             <div class="quick-actions">
               <div class="quick-actions-header">
                 <span class="quick-actions-title">Quick Actions</span>
@@ -416,9 +437,73 @@
                   <span>Feed Now</span>
                 </button>
               </div>
-            </div>
+             </div>
 
-          </section>
+             <!-- INVENTORY STATUS CARD -->
+             <div class="dash-card" id="dash-inventory">
+               <div class="dash-card-header">
+                 <i class="bi bi-box-seam"></i>
+                 <span class="dash-card-title">Inventory Status</span>
+               </div>
+               <div class="dash-card-body">
+                 <div class="dash-stat">
+                   <span class="dash-stat-value" id="dash-live-count">--</span>
+                   <span class="dash-stat-label">Live Count</span>
+                 </div>
+                 <div class="dash-stat">
+                   <span class="dash-stat-value" id="dash-survival">--%</span>
+                   <span class="dash-stat-label">Survival</span>
+                 </div>
+                 <div class="dash-stat">
+                   <span class="dash-stat-value" id="dash-initial">--</span>
+                   <span class="dash-stat-label">Initial</span>
+                 </div>
+               </div>
+             </div>
+
+             <!-- FEEDING STATUS CARD -->
+              <div class="dash-card" id="dash-feeding">
+                <div class="dash-card-header">
+                  <i class="bi bi-egg-fried"></i>
+                  <span class="dash-card-title">Feeding Schedule</span>
+                </div>
+                <div class="dash-card-body">
+                  <div class="dash-feed-info">
+                    <span class="dash-feed-label">Last Fed</span>
+                    <span class="dash-feed-value" id="dash-last-fed">--</span>
+                  </div>
+                  <div class="dash-feed-info">
+                    <span class="dash-feed-label">Next Feeding</span>
+                    <span class="dash-feed-value" id="dash-next-feed">--</span>
+                  </div>
+                </div>
+              </div>
+
+             <!-- NEXT ACTION CARD -->
+             <div class="dash-card" id="dash-next-action">
+               <div class="dash-card-header">
+                 <i class="bi bi-calendar-check"></i>
+                 <span class="dash-card-title">Next Action</span>
+               </div>
+               <div class="dash-card-body">
+                 <div class="dash-action-item" id="dash-sampling-info">
+                   <i class="bi bi-clipboard-data"></i>
+                   <div>
+                     <span class="dash-action-label">Sampling</span>
+                     <span class="dash-action-value" id="dash-sampling-due">--</span>
+                   </div>
+                 </div>
+                 <div class="dash-action-item" id="dash-days-info">
+                   <i class="bi bi-hourglass-split"></i>
+                   <div>
+                     <span class="dash-action-label">Days in Culture</span>
+                     <span class="dash-action-value" id="dash-days-culture">--</span>
+                   </div>
+                 </div>
+               </div>
+             </div>
+
+           </section>
 
           <section id="analytics" class="nav-section hidden">
 

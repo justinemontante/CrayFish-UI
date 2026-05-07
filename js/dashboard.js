@@ -44,6 +44,17 @@ const SENSORS = window.SENSORS = {
             if (v <= 50) return { label: 'Cloudy', state: 'warning' };
             return { label: 'Dirty', state: 'critical' };
         }
+    },
+    waterLevel: {
+        valEl: document.getElementById('val-water-level'),
+        badgeEl: document.getElementById('status-water-level'),
+        dotEl: document.getElementById('dot-water-level'),
+        cardEl: document.getElementById('gauge-water-level'),
+        getState(v) {
+            if (v >= 80 && v <= 120) return { label: 'Normal', state: 'optimal' };
+            if ((v >= 60 && v < 80) || (v > 120 && v <= 140)) return { label: 'Off Range', state: 'warning' };
+            return { label: 'Danger', state: 'critical' };
+        }
     }
 };
 
@@ -63,7 +74,8 @@ function updateGauge(key, value) {
             temp: { icon: 'bi-thermometer-high', title: 'High Temperature Alert', msg: `Temperature is at ${value}°C — Lethal range detected.`, type: 'critical' },
             ph:   { icon: 'bi-exclamation-triangle-fill', title: 'pH Critical Alert', msg: `pH level is at ${value} — Chemical danger detected.`, type: 'critical' },
             do:   { icon: 'bi-droplet-fill', title: 'Low DO Alert', msg: `Dissolved Oxygen dropped to ${value} mg/L — Aerator triggered.`, type: 'warning' },
-            turb: { icon: 'bi-eye-slash-fill', title: 'Turbidity Alert', msg: `Turbidity is at ${value} NTU — Fouled water detected.`, type: 'warning' }
+            turb: { icon: 'bi-eye-slash-fill', title: 'Turbidity Alert', msg: `Turbidity is at ${value} NTU — Fouled water detected.`, type: 'warning' },
+            waterLevel: { icon: 'bi-water', title: 'Water Level Alert', msg: `Water level is at ${value} cm — Out of range warning.`, type: (state === 'critical' ? 'critical' : 'warning') }
         };
         const n = NOTIF_MAP[key];
         if (n) window.pushNotification(n.type, n.icon, n.title, n.msg);
@@ -75,6 +87,7 @@ function simulateSensors() {
     updateGauge('ph',   (7.8).toFixed(1));
     updateGauge('do',   (4.2).toFixed(1));
     updateGauge('turb', 60);
+    updateGauge('waterLevel', (100).toFixed(1));
 }
 
 const LEGENDS = {
@@ -108,6 +121,14 @@ const LEGENDS = {
             { state: 'optimal', label: 'Clear', range: '0 – 25 NTU', desc: 'Clean water with good visibility and low bacteria risk.' },
             { state: 'warning', label: 'Cloudy', range: '26 – 50 NTU', desc: 'Suspended particles may clog gills over time.' },
             { state: 'critical', label: 'Dirty', range: 'Above 60 NTU', desc: 'Severely dirty water. Triggers filtration alert immediately.' }
+        ]
+    },
+    waterLevel: {
+        title: 'Water Level Status Legend',
+        items: [
+            { state: 'optimal', label: 'Normal', range: '80 – 120 cm', desc: 'Ideal water level for crayfish growth and oxygen exchange.' },
+            { state: 'warning', label: 'Off Range', range: '60 – 79 cm or 121 – 140 cm', desc: 'May affect water quality and circulation.' },
+            { state: 'critical', label: 'Danger', range: 'Below 60 cm or Above 140 cm', desc: 'Extreme water level. Can stress or kill crayfish.' }
         ]
     }
 };
@@ -146,7 +167,8 @@ const GAUGE_META = {
     temp: { title: 'Temperature', unit: '°C', img: 'resources/images/temperature.png', ideal: 'Ideal: 24.0 – 30.0°C' },
     ph:   { title: 'pH Level',    unit: 'pH',   img: 'resources/images/pH.png',          ideal: 'Ideal: 7.0 – 8.5' },
     do:   { title: 'Dissolved O₂', unit: 'mg/L', img: 'resources/images/DO.png',       ideal: 'Ideal: >5.0 mg/L' },
-    turb: { title: 'Turbidity',   unit: 'NTU',  img: 'resources/images/Turbidity.png',  ideal: 'Ideal: 0 – 25 NTU' }
+    turb: { title: 'Turbidity',   unit: 'NTU',  img: 'resources/images/Turbidity.png',  ideal: 'Ideal: 0 – 25 NTU' },
+    waterLevel: { title: 'Water Level', unit: 'cm', img: 'resources/images/Turbidity.png', ideal: 'Ideal: 80 – 120 cm' }
 };
 
 const gaugeModalOverlay = document.getElementById('gauge-modal-overlay');

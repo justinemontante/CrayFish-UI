@@ -19,7 +19,58 @@ function addFeederLog(action, type) {
     feederLogs.unshift({ action, type, time, date });
     if (feederLogs.length > 50) feederLogs.pop();
     renderFeederLog();
+    updateDashboardFeeding();
 }
+
+// Update Dashboard feeding card
+function updateDashboardFeeding() {
+    const lastFedEl = document.getElementById('dash-last-fed');
+    const nextFeedEl = document.getElementById('dash-next-feed');
+    if (!lastFedEl || !nextFeedEl) return;
+    
+    // Get last feed time
+    const feedLogs = feederLogs.filter(l => l.type === 'auto' || l.type === 'manual');
+    if (feedLogs.length > 0) {
+        lastFedEl.textContent = feedLogs[0].time;
+    } else {
+        lastFedEl.textContent = '--';
+    }
+    
+    // Calculate next feeding time (check schedules)
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    let nextTime = null;
+    
+    document.querySelectorAll('.schedule-item').forEach(item => {
+        const timeStr = item.querySelector('.schedule-time')?.textContent;
+        if (!timeStr) return;
+        const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if (!match) return;
+        let h = parseInt(match[1]);
+        const m = parseInt(match[2]);
+        const ampm = match[3].toUpperCase();
+        if (ampm === 'PM' && h < 12) h += 12;
+        if (ampm === 'AM' && h === 12) h = 0;
+        const minutes = h * 60 + m;
+        
+        if (minutes > currentMinutes && (!nextTime || minutes < nextTime)) {
+            nextTime = minutes;
+        }
+    });
+    
+    if (nextTime) {
+        const h = Math.floor(nextTime / 60);
+        const m = nextTime % 60;
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const hour12 = h % 12 || 12;
+        nextFeedEl.textContent = `${hour12}:${String(m).padStart(2, '0')} ${ampm}`;
+    } else {
+        nextFeedEl.textContent = 'Tomorrow';
+    }
+}
+
+// Initial dashboard update
+setTimeout(updateDashboardFeeding, 1000);
 
 function renderFeederLog() {
     const list = document.getElementById('feeder-log-list');
@@ -731,4 +782,18 @@ setTimeout(() => {
 
 // Expose render function for tanks.js to call after sampling
 window.renderFeederRecommendation = renderRecommendation;
+
+// Dashboard Feed Now button
+const dashFeedNow = document.getElementById('dash-feed-now');
+if (dashFeedNow) {
+    dashFeedNow.addEventListener('click', () => {
+        dashFeedNow.innerHTML = '<i class="bi bi-check-lg"></i> Dispensing...';
+        dashFeedNow.style.opacity = '0.7';
+        addFeederLog('Manual Feed — Feed Now (Dashboard)', 'manual');
+        setTimeout(() => {
+            dashFeedNow.innerHTML = '<i class="bi bi-play-fill"></i> Feed Now';
+            dashFeedNow.style.opacity = '1';
+        }, 2000);
+    });
+}
 
