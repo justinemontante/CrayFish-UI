@@ -91,6 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginSubmit) {
         loginSubmit.addEventListener('click', (e) => {
             e.preventDefault();
+            // Store user password for verification later
+            const password = document.getElementById('password').value;
+            if (password) {
+                localStorage.setItem('craycare_user_password', password);
+            }
             showMainApp();
         });
     }
@@ -114,6 +119,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('signup-submit').addEventListener('click', (e) => {
         e.preventDefault();
+        // Store user password for verification later
+        const password = document.getElementById('signup-password').value;
+        if (password) {
+            localStorage.setItem('craycare_user_password', password);
+        }
         showScreen('verify');
     });
 

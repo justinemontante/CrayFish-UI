@@ -206,7 +206,27 @@ function renderNotifications() {
             }, 300);
         });
     });
+
+    updateNotifBadge();
 }
+
+// Update notification badge in nav button
+function updateNotifBadge() {
+    const badge = document.getElementById('notif-badge');
+    if (!badge) return;
+    
+    const unreadCount = notifications.filter(n => n.unread).length;
+    badge.textContent = unreadCount;
+    
+    if (unreadCount > 0) {
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
+}
+
+// Initial badge update
+updateNotifBadge();
 
 // Notification Modal
 const notifOverlay = document.getElementById('notif-overlay');
@@ -223,6 +243,7 @@ function openNotifModal(n) {
     // Mark as read
     n.unread = false;
     renderNotifications();
+    updateNotifBadge(); // Update badge count
 }
 
 function closeNotifModal() {

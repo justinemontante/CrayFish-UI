@@ -91,13 +91,11 @@ function renderGrowout() {
     pctEl.style.color = donutColor;
 
     const suggested = Math.ceil(live * 0.1);
-    const samplesEl = document.getElementById('go-suggested-samples');
-    if (samplesEl) samplesEl.textContent = suggested;
-    const promptEl = document.getElementById('go-sampling-prompt');
-    if (promptEl) promptEl.innerHTML = `Target: Catch at least <strong>${suggested}</strong> random samples (10%). Actual count may vary.`;
+    document.getElementById('go-suggested-samples').textContent = suggested;
+    document.getElementById('go-sampling-prompt').innerHTML = `Target: Catch at least <strong>${suggested}</strong> random samples (10%). Actual count may vary.`;
 
     const countInput = document.getElementById('go-sample-count');
-    if (countInput && (countInput.value === '' || countInput.value === '0')) countInput.value = suggested;
+    if (countInput.value === '' || countInput.value === '0') countInput.value = suggested;
 
     document.getElementById('go-days-culture').textContent = days + ' day' + (days !== 1 ? 's' : '');
 
@@ -437,54 +435,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(openStockDateModal, 800);
     }
 
-    // Click on date display to change it
-    const stockDateDisplay = document.getElementById('go-stock-date-display');
-    if (stockDateDisplay) {
-        stockDateDisplay.addEventListener('click', openStockDateModal);
-        stockDateDisplay.style.cursor = 'pointer';
-    }
-
-    // Initial stock modal
-    const initialStockOverlay = document.getElementById('initial-stock-overlay');
-    const initialStockModal   = document.getElementById('initial-stock-modal');
-
-    function openInitialStockModal() {
-        const input = document.getElementById('initial-stock-input');
-        input.value = growoutData.initialStock > 0 ? growoutData.initialStock : '';
-        initialStockOverlay.classList.add('show');
-        initialStockModal.classList.add('show');
-        setTimeout(() => input.focus(), 100);
-    }
-
-    const setInitialStockBtn = document.getElementById('go-set-initial-stock');
-    if (setInitialStockBtn) {
-        setInitialStockBtn.addEventListener('click', openInitialStockModal);
-    }
-
-    document.getElementById('initial-stock-confirm').addEventListener('click', () => {
-        const val = parseInt(document.getElementById('initial-stock-input').value);
-        if (!val || val <= 0) {
-            return;
-        }
-        growoutData.initialStock = val;
-        saveGrowout();
-        renderGrowout();
-        initialStockOverlay.classList.remove('show');
-        initialStockModal.classList.remove('show');
-    });
-
-    document.getElementById('initial-stock-cancel').addEventListener('click', () => {
-        initialStockOverlay.classList.remove('show');
-        initialStockModal.classList.remove('show');
-    });
-
-    initialStockOverlay.addEventListener('click', (e) => {
-        if (e.target === initialStockOverlay) {
-            initialStockOverlay.classList.remove('show');
-            initialStockModal.classList.remove('show');
-        }
-    });
-
     // Mortality modal
     const goMortOverlay = document.getElementById('mortality-overlay');
     const goMortModal   = document.getElementById('mortality-modal');
@@ -750,6 +700,53 @@ function performSelectiveReset() {
     if (resetAll || resetMortality) feedback += '• Mortality Log: Cleared\n';
     if (resetAll || resetStockingDate) feedback += '• Stocking Date: Cleared\n';
     if (resetAll || resetSampling) feedback += '• Sampling Data: Cleared (trends also reset)\n';
+    
+    // Update AI recommendation if available
+    if (window.renderFeederRecommendation) {
+        window.renderFeederRecommendation();
+    }
+    
+    hideResetSelectModal();
+    alert(feedback);
+}
+    
+    if (resetAll || resetInitialStock) {
+        growoutData.initialStock = 0;
+    }
+    if (resetAll || resetMortality) {
+        growoutData.mortalityHistory = [];
+    }
+    if (resetAll || resetStockingDate) {
+        growoutData.stockingDate = null;
+    }
+    if (resetAll || resetSampling) {
+        growoutData.samplingHistory = [];
+        growoutData.lastSamplingDate = null;
+        // Also clear trend data (Growth & Population charts)
+        // These are derived from samplingHistory
+        try {
+            localStorage.removeItem('craycare_growth_trend');
+            localStorage.removeItem('craycare_population_trend');
+        } catch(e) {}
+    }
+    
+    if (resetAll || resetMortality) {
+        growoutData.mortalityHistory = [];
+        // Also clear mortality trend
+        try {
+            localStorage.removeItem('craycare_mortality_trend');
+        } catch(e) {}
+    }
+    
+    saveGrowout();
+    renderGrowout();
+    
+    // Build detailed feedback message
+    let feedback = '✅ Reset Complete!\n';
+    if (resetAll || resetInitialStock) feedback += `• Initial Stock: → 0\n`;
+    if (resetAll || resetMortality) feedback += `• Mortality Log: Cleared\n`;
+    if (resetAll || resetStockingDate) feedback += `• Stocking Date: Cleared\n`;
+    if (resetAll || resetSampling) feedback += `• Sampling Data: Cleared (trends also reset)\n`;
     
     // Update AI recommendation if available
     if (window.renderFeederRecommendation) {

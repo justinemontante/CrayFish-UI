@@ -569,11 +569,11 @@
                 <div class="growout-donut-card">
                   <div class="growout-donut-wrap">
                     <svg viewBox="0 0 120 120" class="growout-donut-svg">
-                      <circle class="donut-bg" cx="60" cy="60" r="50" />
-                      <circle class="donut-fill" id="go-donut-fill" cx="60" cy="60" r="50" />
+                      <circle class="donut-bg" cx="60" cy="60" r="50" fill="none" stroke="rgba(11,60,73,0.08)" stroke-width="12" />
+                      <circle class="donut-fill" id="go-donut-fill" cx="60" cy="60" r="50" fill="none" stroke="#52c283" stroke-width="12" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16" transform="rotate(-90 60 60)" />
                     </svg>
                     <div class="growout-donut-center">
-                      <span class="donut-pct" id="go-survival-pct">100.0%</span>
+                      <span class="donut-pct" id="go-survival-pct">0.0%</span>
                       <span class="donut-label">Survival</span>
                     </div>
                   </div>
@@ -598,9 +598,19 @@
                   <i class="bi bi-heart-broken"></i> Log Mortality
                 </button>
 
+                <!-- SET INITIAL STOCK BUTTON -->
+                <button class="growout-inv-pill-btn primary" id="go-set-initial-stock">
+                  <i class="bi bi-plus-circle-fill"></i> Set Initial Stock
+                </button>
+
                 <!-- VIEW LOG BUTTON -->
                 <button class="growout-inv-pill-btn outline" id="go-view-mort-log">
                   <i class="bi bi-journal-text"></i> View Log
+                </button>
+
+                <!-- FORCE RESET BUTTON -->
+                <button class="growout-inv-pill-btn danger" id="go-force-reset-btn">
+                  <i class="bi bi-exclamation-triangle"></i> Force Reset
                 </button>
 
                 <!-- STOCKING INFO (Text only, NO buttons) -->
@@ -753,6 +763,17 @@
               <button class="mortality-cancel" id="stock-date-cancel">Cancel</button>
             </div>
 
+            <!-- INITIAL STOCK MODAL -->
+            <div class="stock-date-overlay" id="initial-stock-overlay"></div>
+            <div class="stock-date-modal" id="initial-stock-modal">
+              <div class="legend-handle"></div>
+              <p class="mortality-title">Set Initial Stock</p>
+              <p class="mortality-sub">How many crayfish are in the tank?</p>
+              <input type="number" class="growout-input" id="initial-stock-input" style="margin-top:12px" placeholder="e.g. 100" min="0" />
+              <button class="compute-btn" id="initial-stock-confirm" style="margin-top:12px">Confirm</button>
+              <button class="mortality-cancel" id="initial-stock-cancel">Cancel</button>
+            </div>
+
             <!-- MORTALITY MODAL -->
             <div class="mortality-overlay" id="mortality-overlay"></div>
             <div class="mortality-modal" id="mortality-modal">
@@ -772,16 +793,65 @@
             </div>
 
             <!-- MORTALITY LOG SHEET -->
-            <div class="mort-log-overlay" id="mort-log-overlay"></div>
-            <div class="mort-log-sheet" id="mort-log-sheet">
-              <div class="legend-handle"></div>
-              <p class="mortality-title"><i class="bi bi-journal-text" style="color:#E63946"></i> Mortality Log</p>
-              <p class="mortality-sub" id="mort-log-summary">Total: 0 dead</p>
-              <div class="mort-log-list" id="mort-log-list"></div>
-              <button class="mortality-cancel" id="mort-log-close">Close</button>
-            </div>
+              <div class="mort-log-overlay" id="mort-log-overlay"></div>
+             <div class="mort-log-sheet" id="mort-log-sheet">
+               <div class="legend-handle"></div>
+               <p class="mortality-title"><i class="bi bi-journal-text" style="color:#E63946"></i> Mortality Log</p>
+               <p class="mortality-sub" id="mort-log-summary">Total: 0 dead</p>
+               <div class="mort-log-list" id="mort-log-list"></div>
+               <button class="mortality-cancel" id="mort-log-close">Close</button>
+             </div>
 
-          </section>
+             <!-- FORCE RESET MODALS -->
+             <!-- Password Modal -->
+             <div class="reset-overlay" id="reset-password-overlay"></div>
+             <div class="reset-modal" id="reset-password-modal">
+               <div class="legend-handle"></div>
+               <p class="reset-title"><i class="bi bi-shield-lock"></i> Enter Password</p>
+               <p class="reset-sub">Enter your current password to continue</p>
+               <input type="password" class="reset-input" id="reset-password-input" placeholder="Password" />
+               <div class="reset-error" id="reset-password-error"></div>
+               <button class="compute-btn" id="reset-password-confirm">Verify</button>
+               <button class="mortality-cancel" id="reset-password-cancel">Cancel</button>
+             </div>
+
+             <!-- OTP Modal -->
+             <div class="reset-overlay" id="reset-otp-overlay"></div>
+             <div class="reset-modal" id="reset-otp-modal">
+               <div class="legend-handle"></div>
+               <p class="reset-title"><i class="bi bi-envelope"></i> Enter OTP</p>
+               <p class="reset-sub">A 6-digit code was sent to your email</p>
+               <div class="otp-container" id="reset-otp-container">
+                 <input type="text" class="otp-input" maxlength="1" inputmode="numeric" />
+                 <input type="text" class="otp-input" maxlength="1" inputmode="numeric" />
+                 <input type="text" class="otp-input" maxlength="1" inputmode="numeric" />
+                 <input type="text" class="otp-input" maxlength="1" inputmode="numeric" />
+                 <input type="text" class="otp-input" maxlength="1" inputmode="numeric" />
+                 <input type="text" class="otp-input" maxlength="1" inputmode="numeric" />
+               </div>
+               <div class="reset-error" id="reset-otp-error"></div>
+               <button class="compute-btn" id="reset-otp-confirm">Verify OTP</button>
+               <button class="mortality-cancel" id="reset-otp-cancel">Cancel</button>
+             </div>
+
+             <!-- Selective Reset Modal -->
+             <div class="reset-overlay" id="reset-select-overlay"></div>
+             <div class="reset-modal" id="reset-select-modal">
+               <div class="legend-handle"></div>
+               <p class="reset-title"><i class="bi bi-exclamation-triangle"></i> Select Data to Reset</p>
+               <p class="reset-sub">Choose which data to force reset</p>
+               <div class="reset-options">
+                 <label class="reset-checkbox"><input type="checkbox" id="reset-initial-stock" /> Reset Initial Stock (set to 0)</label>
+                 <label class="reset-checkbox"><input type="checkbox" id="reset-mortality" /> Reset Mortality Log</label>
+                 <label class="reset-checkbox"><input type="checkbox" id="reset-stocking-date" /> Reset Stocking Date</label>
+                 <label class="reset-checkbox"><input type="checkbox" id="reset-sampling" /> Reset Sampling Data</label>
+                 <label class="reset-checkbox"><input type="checkbox" id="reset-all" /> <strong>Reset All</strong></label>
+               </div>
+               <div class="reset-error" id="reset-select-error"></div>
+               <button class="compute-btn danger" id="reset-select-confirm">Reset Selected Data</button>
+               <button class="mortality-cancel" id="reset-select-cancel">Cancel</button>
+             </div>
+           </section>
 
           <section id="controls" class="nav-section hidden">
 
@@ -1021,6 +1091,7 @@
           <button type="button" class="nav-btn" data-target="notifications">
             <span class="nav-icon"><i class="bi bi-bell-fill"></i></span>
             <span class="nav-label">Notifications</span>
+            <div class="notif-badge" id="notif-badge">0</div>
           </button>
         </nav>
       </section>
