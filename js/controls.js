@@ -412,7 +412,7 @@ function updateTempControl() {
 }
 
 updateTempControl();
-setInterval(updateTempControl, 5000);
+setInterval(updateTempControl, 300000);
 
 // ─── FEEDER LOG PANEL ────────────────────────────────────────
 const feederLogOverlay = document.getElementById('feeder-log-overlay');

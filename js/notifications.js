@@ -5,25 +5,25 @@ const NOTIFS = [
     {
         id: 1, type: 'critical', icon: 'bi-thermometer-high',
         title: 'High Temperature Alert',
-        message: 'Temperature reached 32.1°C in Tank 1. Cooling system activated.',
+        message: 'Temperature reached 32.1°C in Grow-out Tank. Cooling system activated.',
         timestamp: Date.now() - 5 * 60000, unread: true
     },
     {
         id: 2, type: 'critical', icon: 'bi-droplet-fill',
         title: 'Low Dissolved Oxygen',
-        message: 'DO dropped to 3.1 mg/L in Tank 2. Aerator triggered automatically.',
+        message: 'DO dropped to 3.1 mg/L in Grow-out Tank. Aerator triggered automatically.',
         timestamp: Date.now() - 45 * 60000, unread: true
     },
     {
         id: 3, type: 'critical', icon: 'bi-exclamation-triangle-fill',
         title: 'pH Out of Range',
-        message: 'pH dropped to 6.5 in Tank 3. Dosing pump initiated correction.',
+        message: 'pH dropped to 6.5 in Grow-out Tank. Dosing pump initiated correction.',
         timestamp: Date.now() - 2 * 3600000, unread: false
     },
     {
         id: 4, type: 'critical', icon: 'bi-cloud-fog-fill',
         title: 'High Turbidity Detected',
-        message: 'Turbidity reached 45 NTU in Tank 1. Filtration cycle extended.',
+        message: 'Turbidity reached 45 NTU in Grow-out Tank. Filtration cycle extended.',
         timestamp: Date.now() - 5 * 3600000, unread: false
     },
 
@@ -31,7 +31,7 @@ const NOTIFS = [
     {
         id: 5, type: 'operational', icon: 'bi-check-circle-fill',
         title: 'Morning Feeding Completed',
-        message: 'Auto feeder dispensed 44.1g at 8:00 AM in Tank 3.',
+        message: 'Auto feeder dispensed 44.1g at 8:00 AM in Grow-out Tank.',
         timestamp: Date.now() - 30 * 60000, unread: true
     },
     {
@@ -43,7 +43,7 @@ const NOTIFS = [
     {
         id: 7, type: 'operational', icon: 'bi-water',
         title: 'Water Change Completed',
-        message: '30% water change completed in Tank 1 successfully.',
+        message: '30% water change completed in Grow-out Tank successfully.',
         timestamp: Date.now() - 3 * 3600000, unread: false
     },
     {
@@ -55,7 +55,7 @@ const NOTIFS = [
     {
         id: 9, type: 'operational', icon: 'bi-check2-circle',
         title: 'Evening Feeding Completed',
-        message: 'Auto feeder dispensed 38.5g at 6:00 PM in Tank 3.',
+        message: 'Auto feeder dispensed 38.5g at 6:00 PM in Grow-out Tank.',
         timestamp: Date.now() - 86400000 - 2 * 3600000, unread: false
     },
     {
@@ -67,7 +67,7 @@ const NOTIFS = [
     {
         id: 11, type: 'operational', icon: 'bi-thermometer-half',
         title: 'Temperature Stabilized',
-        message: 'Tank 2 temperature normalized to 26.5°C after heating event.',
+        message: 'Grow-out Tank temperature normalized to 26.5°C after heating event.',
         timestamp: Date.now() - 86400000 * 2, unread: false
     },
     {
@@ -81,13 +81,13 @@ const NOTIFS = [
     {
         id: 13, type: 'reminder', icon: 'bi-calendar-check-fill',
         title: 'Bi-weekly Sampling Due',
-        message: 'Tank 3 Grow-out is due for sampling. Weigh 10 random samples.',
+        message: 'Grow-out Tank is due for sampling. Weigh 10 random samples.',
         timestamp: Date.now() - 15 * 60000, unread: true
     },
     {
         id: 14, type: 'reminder', icon: 'bi-stars',
-        title: 'Nursery Count Ready',
-        message: 'Box A juveniles are 30 days old. Ready for actual counting.',
+        title: 'Sampling Reminder',
+        message: 'Grow-out Tank is due for sampling. Weigh 10 random samples.',
         timestamp: Date.now() - 1 * 3600000, unread: true
     },
     {
@@ -105,7 +105,7 @@ const NOTIFS = [
     {
         id: 17, type: 'reminder', icon: 'bi-journal-plus',
         title: 'Weekly Report Pending',
-        message: 'Weekly growth report for Tank 3 has not been submitted.',
+        message: 'Weekly growth report for Grow-out Tank has not been submitted.',
         timestamp: Date.now() - 86400000 * 2, unread: false
     }
 ];

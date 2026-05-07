@@ -16,12 +16,13 @@ function generateData(points, min, max) {
 function getLabels(range) {
     const now = new Date();
     if (range === '24h') {
-        return Array.from({ length: 12 }, (_, i) => {
-            const d = new Date(now - (11 - i) * 2 * 3600000);
+        return Array.from({ length: 144 }, (_, i) => {
+            const d = new Date(now - (143 - i) * 10 * 60000);
             let h = d.getHours();
             const ampm = h >= 12 ? 'PM' : 'AM';
             h = h % 12 || 12;
-            return h + ':00 ' + ampm;
+            const m = String(d.getMinutes()).padStart(2, '0');
+            return h + ':' + m + ' ' + ampm;
         });
     }
     if (range === '7d') {
@@ -49,9 +50,11 @@ function makeChartConfig(label, data, labels, color, unit) {
                 borderColor: color,
                 backgroundColor: color + '18',
                 borderWidth: 2.5,
-                pointRadius: 4,
-                pointHoverRadius: 7,
+                pointRadius: 2,
+                pointHoverRadius: 4,
                 pointBackgroundColor: color,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 1.5,
                 pointHoverBackgroundColor: '#fff',
                 pointHoverBorderColor: color,
                 pointHoverBorderWidth: 2.5,
@@ -109,7 +112,7 @@ function makeChartConfig(label, data, labels, color, unit) {
                     ticks: {
                         font: { family: 'Poppins', size: 8 },
                         color: '#0B3C4988',
-                        maxTicksLimit: 4,
+                        maxTicksLimit: 5,
                         callback: val => `${val}${unit}`
                     },
                     grid: { color: 'rgba(0,0,0,0.05)' }
@@ -191,26 +194,6 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 
 document.getElementById('apply-custom').addEventListener('click', () => {
     buildCharts('custom');
-});
-
-// CSV Export
-document.getElementById('export-btn').addEventListener('click', () => {
-    const labels = getLabels('24h');
-    const rows = [['Time', 'Temperature (°C)', 'pH', 'DO (mg/L)', 'Turbidity (NTU)']];
-    labels.forEach((l, i) => {
-        rows.push([
-            l,
-            charts.temp?.data.datasets[0].data[i] ?? '',
-            charts.ph?.data.datasets[0].data[i] ?? '',
-            charts.do?.data.datasets[0].data[i] ?? '',
-            charts.turb?.data.datasets[0].data[i] ?? ''
-        ]);
-    });
-    const csv = rows.map(r => r.join(',')).join('\n');
-    const a = document.createElement('a');
-    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-    a.download = 'craycare_data.csv';
-    a.click();
 });
 
 // Init on analytics tab shown

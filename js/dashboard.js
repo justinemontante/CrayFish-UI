@@ -83,7 +83,7 @@ const LEGENDS = {
         items: [
             { state: 'optimal', label: 'Normal', range: '24.0°C – 30.0°C', desc: 'Optimal range for crayfish growth and molting.' },
             { state: 'warning', label: 'Too Hot / Too Cold', range: '21.0°C – 23.9°C or 30.1°C – 32.0°C', desc: 'May slow metabolism and cause stress to crayfish.' },
-            { state: 'critical', label: 'Danger', range: 'Below 20.0°C or Above 32.0°C', desc: 'Can cause death. Triggers cooling fans automatically.' }
+            { state: 'critical', label: 'Danger', range: 'Below 20.0°C or Above 32.0°C', desc: 'Can cause death. Alert notification will be sent.' }
         ]
     },
     ph: {
@@ -214,30 +214,6 @@ Object.keys(SENSORS).forEach(key => {
 
 // QUICK ACTIONS
 
-document.getElementById('quick-tank-1')?.addEventListener('click', () => {
-    window.showNavSection('tanks');
-    setTimeout(() => {
-        const tankTab = document.querySelector('.tank-tab[data-tank="1"]');
-        if (tankTab) tankTab.click();
-    }, 100);
-});
-
-document.getElementById('quick-tank-2')?.addEventListener('click', () => {
-    window.showNavSection('tanks');
-    setTimeout(() => {
-        const tankTab = document.querySelector('.tank-tab[data-tank="2"]');
-        if (tankTab) tankTab.click();
-    }, 100);
-});
-
-document.getElementById('quick-tank-3')?.addEventListener('click', () => {
-    window.showNavSection('tanks');
-    setTimeout(() => {
-        const tankTab = document.querySelector('.tank-tab[data-tank="3"]');
-        if (tankTab) tankTab.click();
-    }, 100);
-});
-
 document.getElementById('quick-aerator')?.addEventListener('click', () => {
     window.showNavSection('controls');
     setTimeout(() => {
@@ -259,4 +235,4 @@ document.getElementById('quick-feed-now')?.addEventListener('click', () => {
 });
 
 simulateSensors();
-setInterval(simulateSensors, 5000);
+setInterval(simulateSensors, 300000);

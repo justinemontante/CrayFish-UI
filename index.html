@@ -415,18 +415,6 @@
                   <i class="bi bi-egg-fried"></i>
                   <span>Feed Now</span>
                 </button>
-                <button class="quick-action-btn" id="quick-tank-3">
-                  <i class="bi bi-box-seam-fill"></i>
-                  <span>Tank 3</span>
-                </button>
-                <button class="quick-action-btn" id="quick-tank-2">
-                  <i class="bi bi-box-seam-fill"></i>
-                  <span>Tank 2</span>
-                </button>
-                <button class="quick-action-btn" id="quick-tank-1">
-                  <i class="bi bi-box-seam-fill"></i>
-                  <span>Tank 1</span>
-                </button>
               </div>
             </div>
 
@@ -446,9 +434,6 @@
               <button class="filter-btn" data-range="7d">7 Days</button>
               <button class="filter-btn" data-range="30d">30 Days</button>
               <button class="filter-btn" data-range="custom">Custom</button>
-              <button class="export-btn" id="export-btn">
-                <i class="bi bi-download"></i>
-              </button>
             </div>
 
             <!-- CUSTOM DATE ROW -->
@@ -464,7 +449,12 @@
 
               <div class="chart-card" data-chart="temp">
                 <div class="chart-card-header">
-                  <span class="chart-card-title">Temperature</span>
+                  <div class="chart-card-title-row">
+                    <span class="chart-card-icon">
+                      <img src="resources/images/temperature.png" alt="Temperature" />
+                    </span>
+                    <span class="chart-card-title">Temperature</span>
+                  </div>
                   <div class="chart-card-right">
                     <span class="chart-stat" id="min-temp">Min: --</span>
                     <span class="chart-stat" id="avg-temp">Avg: --</span>
@@ -476,7 +466,12 @@
 
               <div class="chart-card" data-chart="ph">
                 <div class="chart-card-header">
-                  <span class="chart-card-title">pH Level</span>
+                  <div class="chart-card-title-row">
+                    <span class="chart-card-icon">
+                      <img src="resources/images/pH.png" alt="pH" />
+                    </span>
+                    <span class="chart-card-title">pH Level</span>
+                  </div>
                   <div class="chart-card-right">
                     <span class="chart-stat" id="min-ph">Min: --</span>
                     <span class="chart-stat" id="avg-ph">Avg: --</span>
@@ -488,7 +483,12 @@
 
               <div class="chart-card" data-chart="do">
                 <div class="chart-card-header">
-                  <span class="chart-card-title">Dissolved O₂</span>
+                  <div class="chart-card-title-row">
+                    <span class="chart-card-icon">
+                      <img src="resources/images/DO.png" alt="Dissolved O2" />
+                    </span>
+                    <span class="chart-card-title">Dissolved O₂</span>
+                  </div>
                   <div class="chart-card-right">
                     <span class="chart-stat" id="min-do">Min: --</span>
                     <span class="chart-stat" id="avg-do">Avg: --</span>
@@ -500,7 +500,12 @@
 
               <div class="chart-card" data-chart="turb">
                 <div class="chart-card-header">
-                  <span class="chart-card-title">Turbidity</span>
+                  <div class="chart-card-title-row">
+                    <span class="chart-card-icon">
+                      <img src="resources/images/Turbidity.png" alt="Turbidity" />
+                    </span>
+                    <span class="chart-card-title">Turbidity</span>
+                  </div>
                   <div class="chart-card-right">
                     <span class="chart-stat" id="min-turb">Min: --</span>
                     <span class="chart-stat" id="avg-turb">Avg: --</span>
@@ -535,399 +540,217 @@
 
           <section id="tanks" class="nav-section hidden">
 
-            <!-- TANK SELECTOR TABS -->
-            <div class="tank-tabs">
-              <button class="tank-tab active" data-tank="1">Tank 1</button>
-              <button class="tank-tab" data-tank="2">Tank 2</button>
-              <button class="tank-tab" data-tank="3">Tank 3</button>
-            </div>
-
-            <!-- TANK 1 -->
-            <div class="tank-panel active" id="tank-panel-1">
-              <div class="tank-panel-header teal">
-                <div class="tank-panel-icon"><i class="bi bi-heart-fill"></i></div>
-                <div>
-                  <p class="tank-panel-title">Breeding & Maternity</p>
-                  <p class="tank-panel-sub">Mating pairs & egg isolation</p>
-                </div>
-              </div>
-
-              <!-- INNER TABS -->
-                <div class="breed-tabs">
-                <button class="breed-tab active" data-breed="stock">Crayfish</button>
-                <button class="breed-tab" data-breed="groups">Groups</button>
-                <button class="breed-tab" data-breed="isolation">Isolation</button>
-              </div>
-
-              <!-- ── STOCK POOL ── -->
-              <div class="breed-panel active" id="breed-stock">
-                <div class="breed-section-header">
-                  <span class="breed-section-title">Crayfish Members</span>
-                </div>
-                <p class="breed-section-sub">Manage males and females for breeding pair creation</p>
-                <div class="stock-quick-add">
-                  <button class="stock-add-btn male" id="stock-add-male"><i class="bi bi-gender-male"></i> Add Male</button>
-                  <button class="stock-add-btn female" id="stock-add-female"><i class="bi bi-gender-female"></i> Add Female</button>
-                </div>
-                <div class="stock-pool-grid" id="stock-pool-grid"></div>
-              </div>
-
-              <!-- ── BREEDING GROUPS ── -->
-              <div class="breed-panel" id="breed-groups">
-                <div class="breed-section-header">
-                  <span class="breed-section-title">Breeding Groups</span>
-                  <button class="breed-add-btn" id="add-group-btn"><i class="bi bi-plus"></i> Create Group</button>
-                </div>
-                <div class="breed-group-list" id="breed-group-list"></div>
-              </div>
-
-              <!-- ── ISOLATION BOXES ── -->
-              <div class="breed-panel" id="breed-isolation">
-                <div class="breed-section-header">
-                  <span class="breed-section-title">Isolation Boxes</span>
-                  <button class="breed-add-btn" id="add-box-btn"><i class="bi bi-plus"></i> Add Box</button>
-                </div>
-
-                <div class="iso-box-grid" id="iso-box-grid"></div>
-
-                <!-- GENERAL AI INSIGHTS -->
-                <div class="iso-ai-panel">
-                  <p class="iso-ai-title"><i class="bi bi-robot"></i> AI Insights</p>
-                  <div class="ai-message-card">
-                    <div class="ai-message-icon"><i class="bi bi-robot"></i></div>
-                    <p class="ai-message-text" id="iso-ai-msg">AI insights will show here</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- hidden containers for hatch data -->
-              <div id="hatch-card-list" style="display:none"></div>
-              <div id="hatch-transfer-banner" style="display:none"></div>
-
-            </div>
-
-            <!-- TANK 2 -->
-            <div class="tank-panel" id="tank-panel-2">
-              <div class="tank-panel-header green">
-                <div class="tank-panel-icon green"><i class="bi bi-stars"></i></div>
-                <div>
-                  <p class="tank-panel-title">Tank 2 — Nursery</p>
-                  <p class="tank-panel-sub" id="nursery-source">Juveniles from isolation</p>
-                </div>
-              </div>
-
-              <div id="nursery-entries" class="nursery-entries-list"></div>
-
-              <div class="nursery-locked-card" id="nursery-empty">
-                <div class="nursery-locked-icon"><i class="bi bi-inbox"></i></div>
-                <p class="nursery-locked-text">No juveniles added yet.</p>
-                <p class="nursery-locked-text">Tap "+ Add Entry" to create a nursery record.</p>
-              </div>
-
-              <button class="nursery-add-btn" id="nursery-add-btn">
-                <i class="bi bi-plus-circle-fill"></i> Add Entry
-              </button>
-            </div>
-
-            <!-- TANK 3 -->
-            <div class="tank-panel" id="tank-panel-3">
+            <!-- TANK 3: GROW-OUT -->
+            <div class="tank-panel active" id="tank-panel-3">
               <div class="tank-panel-header amber">
                 <div class="tank-panel-icon amber"><i class="bi bi-graph-up-arrow"></i></div>
                 <div>
-                  <p class="tank-panel-title">Grow-out Tank</p>
-                  <p class="tank-panel-sub">Research & data collection hub</p>
+                  <p class="tank-panel-title">Tank — Grow-out</p>
+                  <p class="tank-panel-sub">System Intelligence Hub</p>
                 </div>
               </div>
 
-              <div class="tank-block">
-                <p class="tank-block-label">Initial Stock</p>
-                <div class="tank-counter">
-                  <button class="counter-btn" data-target="stock" data-action="dec"><i class="bi bi-dash"></i></button>
-                  <span class="counter-val" id="stock-count">100</span>
-                  <button class="counter-btn" data-target="stock" data-action="inc"><i class="bi bi-plus"></i></button>
-                </div>
+              <!-- SUB-TABS -->
+              <div class="growout-sub-tabs">
+                <button class="growout-tab-btn active" data-tab="tab-inventory">
+                  <i class="bi bi-box-seam"></i> Inventory
+                </button>
+                <button class="growout-tab-btn" data-tab="tab-growth">
+                  <i class="bi bi-speedometer"></i> Growth & Feed
+                </button>
+                <button class="growout-tab-btn" data-tab="tab-trends">
+                  <i class="bi bi-graph-up"></i> Trends
+                </button>
               </div>
 
-              <div class="tank-stat-row">
-                <div class="tank-stat green">
-                  <span class="tank-stat-val" id="live-count">100</span>
-                  <span class="tank-stat-label">Live Count</span>
-                </div>
-                <div class="tank-stat red">
-                  <span class="tank-stat-val" id="mortality-count">0</span>
-                  <span class="tank-stat-label">Mortality</span>
-                </div>
-                <div class="tank-stat teal">
-                  <span class="tank-stat-val" id="biomass-val">--</span>
-                  <span class="tank-stat-label">Biomass (g)</span>
-                </div>
-              </div>
-
-              <button class="log-mortality-btn" id="log-mortality-btn">
-                <i class="bi bi-dash-circle-fill"></i> Log Mortality
-              </button>
-
-              <div class="tank-divider"></div>
-
-              <div class="tank-block">
-                <div class="tank-progress-label">
-                  <span>Next Bi-weekly Sampling</span>
-                  <span id="sampling-days" class="tank-progress-value">7 days left</span>
-                </div>
-                <div class="tank-progress-bar"><div class="tank-progress-fill amber" id="sampling-fill"></div></div>
-              </div>
-
-              <div class="sampling-box">
-                <p class="sampling-prompt">Catch <strong id="sample-size">10</strong> random samples (10% of live count)</p>
-                <div class="tank-block">
-                  <p class="tank-block-label">Total Weight of Samples (g)</p>
-                  <input type="number" class="tank-number-input" id="sample-weight" placeholder="e.g. 85" />
-                </div>
-                <button class="compute-btn" id="compute-btn">Compute ABW & Biomass</button>
-                <div class="abw-result hidden" id="abw-result">
-                  <div class="tank-stat-row">
-                    <div class="tank-stat teal">
-                      <span class="tank-stat-val" id="abw-val">--</span>
-                      <span class="tank-stat-label">ABW (g)</span>
-                    </div>
-                    <div class="tank-stat green">
-                      <span class="tank-stat-val" id="feed-ration-val">--</span>
-                      <span class="tank-stat-label">Daily Feed (g)</span>
+              <!-- TAB 1: INVENTORY -->
+              <div class="growout-tab-content active" id="tab-inventory">
+                <!-- DONUT HERO -->
+                <div class="growout-donut-card">
+                  <div class="growout-donut-wrap">
+                    <svg viewBox="0 0 120 120" class="growout-donut-svg">
+                      <circle class="donut-bg" cx="60" cy="60" r="50" />
+                      <circle class="donut-fill" id="go-donut-fill" cx="60" cy="60" r="50" />
+                    </svg>
+                    <div class="growout-donut-center">
+                      <span class="donut-pct" id="go-survival-pct">100.0%</span>
+                      <span class="donut-label">Survival</span>
                     </div>
                   </div>
+                    <div class="growout-donut-stats">
+                      <div class="donut-stat">
+                        <span class="donut-stat-val" id="go-live-count">68</span>
+                        <span class="donut-stat-label">Current</span>
+                      </div>
+                      <div class="donut-stat">
+                        <span class="donut-stat-val" id="go-mortality">0</span>
+                        <span class="donut-stat-label">Mortality</span>
+                      </div>
+                      <div class="donut-stat">
+                        <span class="donut-stat-val" id="go-initial-stock">68</span>
+                        <span class="donut-stat-label">Initial</span>
+                      </div>
+                    </div>
+                </div>
+
+                <!-- LOG MORTALITY BUTTON -->
+                <button class="growout-log-mortality-btn" id="go-log-mortality">
+                  <i class="bi bi-heart-broken"></i> Log Mortality
+                </button>
+
+                <!-- VIEW LOG BUTTON -->
+                <button class="growout-inv-pill-btn outline" id="go-view-mort-log">
+                  <i class="bi bi-journal-text"></i> View Log
+                </button>
+
+                <!-- STOCKING INFO (Text only, NO buttons) -->
+                <div class="growout-inv-info">
+                  <div class="inv-info-row">
+                    <span class="inv-info-label">Stocking Date</span>
+                    <span class="inv-info-val" id="go-stock-date-display">May 6, 2026</span>
+                  </div>
+                  <div class="inv-info-row">
+                    <span class="inv-info-label">Days in Culture</span>
+                    <span class="inv-info-val highlight" id="go-days-culture">0 days</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB 2: GROWTH & FEED -->
+              <div class="growout-tab-content" id="tab-growth">
+                <!-- WEEKLY SAMPLING STEP TRACKER -->
+                <div class="growout-step-card">
+                  <div class="growout-step-header">
+                    <span class="growout-step-label">Next Sampling</span>
+                    <span class="growout-step-countdown" id="go-sampling-countdown">-- days left</span>
+                  </div>
+                  <div class="growout-step-dots" id="go-step-dots">
+                    <div class="step-dot done"><span>1</span></div>
+                    <div class="step-dot done"><span>2</span></div>
+                    <div class="step-dot current"><span>3</span></div>
+                    <div class="step-dot"><span>4</span></div>
+                    <div class="step-dot"><span>5</span></div>
+                    <div class="step-dot"><span>6</span></div>
+                    <div class="step-dot"><span>7</span></div>
+                  </div>
+                  <p class="growout-step-date" id="go-next-sampling-date">Set up sampling to begin</p>
+                </div>
+
+                <!-- COHESIVE SAMPLING CARD -->
+                <div class="growout-sampling-cohesive" id="go-sampling-cohesive">
+                  <div class="growout-sampling-prompt">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <span id="go-sampling-prompt">Target: Catch at least <strong id="go-suggested-samples">10</strong> random samples (10%). Actual count may vary.</span>
+                  </div>
+                  <div class="growout-sampling-input-row">
+                    <label>Actual Samples Caught</label>
+                    <input type="number" inputmode="numeric" class="growout-input" id="go-sample-count" placeholder="e.g. 10" min="1" />
+                  </div>
+                  <div class="growout-sampling-input-row">
+                    <label>Total Weight of Samples (g)</label>
+                    <input type="number" inputmode="numeric" class="growout-input" id="go-sample-weight" placeholder="e.g. 450" min="1" />
+                  </div>
+                  <button class="growout-compute-btn" id="go-compute-btn">
+                    <i class="bi bi-calculator-fill"></i> Compute
+                  </button>
+                  <div class="growout-sampling-warning hidden" id="go-sampling-warning">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span>Premature sampling detected. Wait until next cycle to prevent handling stress.</span>
+                  </div>
+
+                  <!-- RESULTS INLINE (appears below compute) -->
+                  <div class="growout-results-inline hidden" id="go-results-inline">
+                    <div class="results-arrow-divider">
+                      <i class="bi bi-chevron-double-down"></i>
+                    </div>
+                    <div class="growout-result-row-inline">
+                      <div class="growout-result-mini teal">
+                        <span class="result-mini-val" id="go-abw-val">--</span>
+                        <span class="result-mini-label">ABW</span>
+                        <span class="result-mini-unit">grams</span>
+                      </div>
+                      <div class="growout-result-mini green">
+                        <span class="result-mini-val" id="go-total-biomass">--</span>
+                        <span class="result-mini-label">Biomass</span>
+                        <span class="result-mini-unit">grams</span>
+                      </div>
+                      <div class="growout-result-mini amber">
+                        <span class="result-mini-val" id="go-feed-ration">--</span>
+                        <span class="result-mini-label">Feed/day</span>
+                        <span class="result-mini-unit">grams</span>
+                      </div>
+                    </div>
+
+                    <!-- GROWTH STAGE -->
+                    <div class="growout-growth-stage" id="go-growth-stage">
+                      <div class="growout-stage-header">
+                        <span class="growout-stage-label">Growth Stage</span>
+                        <span class="growout-stage-name" id="go-stage-name">--</span>
+                      </div>
+                      <div class="growout-stage-bar">
+                        <div class="growout-stage-fill" id="go-stage-fill" style="width:0%"></div>
+                      </div>
+                      <div class="growout-stage-markers">
+                        <span class="growout-stage-marker active">Postlarvae</span>
+                        <span class="growout-stage-marker">Juvenile</span>
+                        <span class="growout-stage-marker">Sub-adult</span>
+                        <span class="growout-stage-marker">Harvest</span>
+                      </div>
+                      <p class="growout-stage-hint" id="go-stage-hint">Harvest-ready at ~60g ABW</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB 3: TRENDS -->
+              <div class="growout-tab-content" id="tab-trends">
+                <!-- SPARKLINES -->
+                <div class="growout-sparkline-wrap hidden" id="go-sparkline-section">
+                  <div class="growout-spark-card">
+                    <span class="sparkline-title">Growth Trend</span>
+                    <canvas id="go-spark-abw" height="80"></canvas>
+                  </div>
+                  <div class="growout-spark-card">
+                    <span class="sparkline-title">Population</span>
+                    <canvas id="go-spark-pop" height="80"></canvas>
+                  </div>
+                </div>
+
+                <!-- SPARKLINE EMPTY STATE -->
+                <div class="growout-spark-empty hidden" id="go-spark-empty">
+                  <div class="spark-empty-icon">
+                    <i class="bi bi-bar-chart-line"></i>
+                    <i class="bi bi-clock-fill"></i>
+                  </div>
+                  <p class="spark-empty-text">Charts will unlock after your first sampling routine. Keep logging data!</p>
+                </div>
+
+                <!-- VIEW FULL ANALYTICS -->
+                <button class="growout-full-analytics-btn hidden" id="go-full-analytics-btn">
+                  <i class="bi bi-box-arrow-up-right"></i> View Full Analytics
+                </button>
+
+                <!-- SYSTEM INSIGHTS -->
+                <p class="growout-section-title"><i class="bi bi-lightbulb-fill"></i> System Insights</p>
+                <div class="growout-insights-list" id="go-insights-list"></div>
+
+                <!-- SAMPLING HISTORY -->
+                <div class="growout-history-section hidden" id="go-history-section">
+                  <p class="growout-section-title"><i class="bi bi-clock-history"></i> History</p>
+                  <div class="growout-history-list" id="go-history-list"></div>
                 </div>
               </div>
             </div>
 
-            <!-- GROUP DETAIL MODAL -->
-            <div class="breed-modal-overlay" id="grp-detail-overlay"></div>
-            <div class="breed-modal" id="grp-detail-modal" style="max-height:85%;overflow-y:auto">
+            <!-- STOCK DATE MODAL -->
+            <div class="stock-date-overlay" id="stock-date-overlay"></div>
+            <div class="stock-date-modal" id="stock-date-modal">
               <div class="legend-handle"></div>
-              <div class="grp-detail-header">
-                <div class="grp-detail-photo" id="grp-detail-photo"></div>
-                <div>
-                  <p class="breed-modal-title" id="grp-detail-name" style="margin:0;text-align:left"></p>
-                  <div id="grp-detail-status" style="margin-top:4px"></div>
-                  <div class="breed-group-members" id="grp-detail-members" style="margin-top:6px"></div>
-                  <div class="breed-group-meta" id="grp-detail-date" style="margin-top:4px"></div>
-                </div>
-              </div>
-
-              <!-- BERRIED FEMALES -->
-              <div class="grp-detail-section" id="grp-detail-berried-wrap">
-                <p class="grp-detail-section-title"><i class="bi bi-egg-fill"></i> Berried Females</p>
-                <div id="grp-detail-berried"></div>
-              </div>
-
-              <!-- HATCHING STATUS -->
-              <div class="grp-detail-section" id="grp-detail-hatch-wrap">
-                <p class="grp-detail-section-title"><i class="bi bi-clock-history"></i> Hatching Status</p>
-                <div id="grp-detail-hatch"></div>
-              </div>
-
-              <!-- AI INSIGHTS -->
-              <div class="grp-detail-section">
-                <p class="grp-detail-section-title"><i class="bi bi-robot"></i> AI Insights</p>
-                <div class="ai-status-grid" style="margin-bottom:10px">
-                  <div class="ai-param-card ideal">
-                    <span class="ai-param-label">Temp</span>
-                    <span class="ai-param-val" id="grp-ai-temp">--</span>
-                    <span class="ai-param-badge ideal" id="grp-ai-temp-badge">--</span>
-                  </div>
-                  <div class="ai-param-card ideal">
-                    <span class="ai-param-label">pH</span>
-                    <span class="ai-param-val" id="grp-ai-ph">--</span>
-                    <span class="ai-param-badge ideal" id="grp-ai-ph-badge">--</span>
-                  </div>
-                  <div class="ai-param-card ideal">
-                    <span class="ai-param-label">DO</span>
-                    <span class="ai-param-val" id="grp-ai-do">--</span>
-                    <span class="ai-param-badge ideal" id="grp-ai-do-badge">--</span>
-                  </div>
-                </div>
-                <div class="ai-message-card">
-                  <div class="ai-message-icon"><i class="bi bi-robot"></i></div>
-                  <p class="ai-message-text" id="grp-ai-msg">Analyzing conditions...</p>
-                </div>
-              </div>
-
-              <button class="compute-btn" id="grp-detail-new-cycle" style="background:linear-gradient(135deg, var(--primary-teal), #2d9e5f); margin-bottom:8px">
-                <i class="bi bi-arrow-repeat"></i> Start New Cycle
-              </button>
-              <button class="mortality-cancel" id="grp-detail-close">Close</button>
-            </div>
-
-            <!-- BERRIED ASSIGN MODAL -->
-            <div class="breed-modal-overlay" id="berried-overlay"></div>
-            <div class="breed-modal" id="berried-modal">
-              <div class="legend-handle"></div>
-              <p class="breed-modal-title" id="berried-modal-title"><i class="bi bi-egg-fill"></i> Mark as Berried</p>
-              <p class="mortality-sub" id="berried-modal-sub">Select an available isolation box for this female.</p>
-              <div class="berried-box-list" id="berried-box-list"></div>
-              <button class="mortality-cancel" id="berried-cancel-btn" style="margin-top:10px">Cancel</button>
-            </div>
-
-            <!-- ISOLATION BOX DETAIL MODAL -->
-            <div class="breed-modal-overlay" id="iso-detail-overlay"></div>
-            <div class="breed-modal" id="iso-detail-modal">
-              <div class="legend-handle"></div>
-              <p class="breed-modal-title" id="iso-detail-name">Box A</p>
-              <div class="iso-detail-body">
-                <div class="iso-detail-row">
-                  <span class="iso-detail-label">Status</span>
-                  <span class="iso-detail-val" id="iso-detail-status"></span>
-                </div>
-                <div class="iso-detail-row">
-                  <span class="iso-detail-label">Occupant</span>
-                  <span class="iso-detail-val" id="iso-detail-occupant"></span>
-                </div>
-                <div class="iso-detail-row">
-                  <span class="iso-detail-label">Date Placed</span>
-                  <span class="iso-detail-val" id="iso-detail-date"></span>
-                </div>
-              </div>
-              <div id="iso-detail-hatch-section"></div>
-              <div id="iso-detail-ai-section"></div>
-              <button class="mortality-cancel" id="iso-detail-close">Close</button>
-            </div>
-
-            <!-- ISOLATION ADD/EDIT MODAL -->
-            <div class="breed-modal-overlay" id="iso-modal-overlay"></div>
-            <div class="breed-modal" id="iso-modal">
-              <div class="legend-handle"></div>
-              <p class="breed-modal-title" id="iso-modal-title">Add Box</p>
-              <div class="breed-modal-body">
-                <div class="input-group">
-                  <label class="input-label">Box Name</label>
-                  <input type="text" class="login-input" id="iso-name" placeholder="e.g. Box A" />
-                </div>
-              </div>
-              <input type="hidden" id="iso-edit-index" value="" />
-              <button class="compute-btn" id="iso-save-btn">Save Box</button>
-              <button class="mortality-cancel" id="iso-cancel-btn">Cancel</button>
-            </div>
-
-            <!-- ISOLATION UNLOCK CONFIRM MODAL -->
-            <div class="breed-delete-overlay" id="iso-unlock-overlay"></div>
-            <div class="breed-delete-modal" id="iso-unlock-modal">
-              <div class="legend-handle"></div>
-              <p class="mortality-title">Release Female</p>
-              <p class="mortality-sub" id="iso-unlock-sub">Release occupant from this box?</p>
-              <input type="hidden" id="iso-unlock-index" value="" />
-              <button class="compute-btn" id="iso-unlock-confirm">Yes, Release</button>
-              <button class="mortality-cancel" id="iso-unlock-cancel">Cancel</button>
-            </div>
-
-            <!-- STOCK ADD MODAL -->
-            <div class="breed-modal-overlay" id="stock-overlay"></div>
-            <div class="breed-modal" id="stock-modal">
-              <div class="legend-handle"></div>
-              <p class="breed-modal-title" id="stock-modal-title">Add Crayfish</p>
-              <div class="breed-modal-body">
-                <!-- PHOTO PICKER -->
-                <div class="stock-photo-picker">
-                  <div class="stock-photo-preview" id="stock-photo-preview">
-                    <i class="bi bi-camera" id="stock-photo-icon"></i>
-                    <img id="stock-photo-img" src="" alt="" style="display:none" />
-                  </div>
-                  <div class="stock-photo-actions">
-                    <button type="button" class="stock-photo-btn" id="stock-photo-btn"><i class="bi bi-upload"></i> Upload Photo</button>
-                    <button type="button" class="stock-photo-btn camera" id="stock-camera-btn"><i class="bi bi-camera-fill"></i> Take Photo</button>
-                    <button type="button" class="stock-photo-remove" id="stock-photo-remove" style="display:none"><i class="bi bi-x"></i> Remove</button>
-                  </div>
-                  <input type="file" id="stock-photo-input" accept="image/*" style="display:none" />
-                </div>
-                <div class="input-group">
-                  <label class="input-label" id="stock-id-label">ID</label>
-                  <input type="text" class="login-input" id="stock-id-field" placeholder="e.g. M1" />
-                </div>
-              </div>
-              <button class="compute-btn" id="stock-save-btn">Add to Stock</button>
-              <button class="mortality-cancel" id="stock-cancel-btn">Cancel</button>
-            </div>
-
-            <!-- BREEDING GROUP MODAL -->
-            <div class="breed-modal-overlay" id="breed-modal-overlay"></div>
-            <div class="breed-modal" id="breed-modal">
-              <div class="legend-handle"></div>
-              <p class="breed-modal-title" id="breed-modal-title">Create Group</p>
-              <div class="breed-modal-body">
-                <!-- PHOTO PICKER -->
-                <div class="bm-photo-picker" id="bm-photo-picker">
-                  <div class="bm-photo-preview" id="bm-photo-preview">
-                    <i class="bi bi-camera" id="bm-photo-icon"></i>
-                    <img id="bm-photo-img" src="" alt="" style="display:none" />
-                  </div>
-                  <div class="bm-photo-actions">
-                    <p class="bm-photo-label">Group Photo</p>
-                    <p class="bm-photo-hint">Tap to upload an image</p>
-                    <button type="button" class="bm-photo-btn" id="bm-photo-btn"><i class="bi bi-upload"></i> Choose Photo</button>
-                    <button type="button" class="bm-photo-remove" id="bm-photo-remove" style="display:none"><i class="bi bi-x"></i> Remove</button>
-                  </div>
-                  <input type="file" id="bm-photo-input" accept="image/*" style="display:none" />
-                </div>
-                <div class="input-group">
-                  <label class="input-label">Group Name</label>
-                  <input type="text" class="login-input" id="bm-name" placeholder="e.g. Group A" />
-                </div>
-                <div class="input-group">
-                  <label class="input-label">Pick Male</label>
-                  <select class="login-input" id="bm-male-select">
-                    <option value="">— Select male —</option>
-                  </select>
-                </div>
-                <div class="input-group">
-                  <label class="input-label">Pick Females</label>
-                  <div class="stock-checkbox-list" id="bm-female-checks"></div>
-                </div>
-                <div class="input-group">
-                  <label class="input-label">Mating Date</label>
-                  <input type="date" class="login-input" id="bm-date" />
-                </div>
-              </div>
-              <input type="hidden" id="bm-edit-index" value="" />
-              <button class="compute-btn" id="bm-save-btn">Save Group</button>
-              <button class="mortality-cancel" id="bm-cancel-btn">Cancel</button>
-            </div>
-
-            <!-- DELETE CONFIRM MODAL -->
-            <div class="breed-delete-overlay" id="breed-delete-overlay"></div>
-            <div class="breed-delete-modal" id="breed-delete-modal">
-              <div class="legend-handle"></div>
-              <p class="mortality-title">Delete Group</p>
-              <p class="mortality-sub">Are you sure you want to delete this group?</p>
-              <input type="hidden" id="bd-index" value="" />
-              <button class="compute-btn" id="bd-confirm-btn">Yes, Delete</button>
-              <button class="mortality-cancel" id="bd-cancel-btn">Cancel</button>
-            </div>
-
-            <!-- NURSERY ADD ENTRY MODAL -->
-            <div class="breed-modal-overlay" id="nursery-add-overlay"></div>
-            <div class="breed-modal" id="nursery-add-modal">
-              <div class="legend-handle"></div>
-              <p class="breed-modal-title">Add Nursery Entry</p>
-              <div class="breed-modal-body">
-                <div class="breed-modal-row">
-                  <div style="flex:1">
-                    <label style="font-size:11px;font-weight:700;color:var(--dark-text);opacity:0.6;display:block;margin-bottom:6px">Source Box</label>
-                    <input type="text" class="login-input" id="nursery-add-source" placeholder="e.g. Box A" />
-                  </div>
-                  <div style="flex:1">
-                    <label style="font-size:11px;font-weight:700;color:var(--dark-text);opacity:0.6;display:block;margin-bottom:6px">Female Tag</label>
-                    <input type="text" class="login-input" id="nursery-add-female" placeholder="e.g. F1" />
-                  </div>
-                </div>
-                <div>
-                  <label style="font-size:11px;font-weight:700;color:var(--dark-text);opacity:0.6;display:block;margin-bottom:6px">Date Transferred</label>
-                  <input type="date" class="login-input" id="nursery-add-date" />
-                </div>
-                <div>
-                  <label style="font-size:11px;font-weight:700;color:var(--dark-text);opacity:0.6;display:block;margin-bottom:6px">Estimated Count</label>
-                  <input type="text" class="login-input" id="nursery-add-est" placeholder="e.g. 200–300" value="200–300" />
-                </div>
-              </div>
-              <button class="compute-btn" id="nursery-add-confirm" style="background:linear-gradient(135deg,#52c283,#3ba56a)">Add Entry</button>
-              <button class="mortality-cancel" id="nursery-add-cancel">Cancel</button>
+              <p class="mortality-title">Set Stocking Date</p>
+              <p class="mortality-sub">When did you stock the tank?</p>
+              <input type="date" class="growout-input" id="stock-date-input" style="margin-top:12px" />
+              <button class="compute-btn" id="stock-date-confirm" style="margin-top:12px">Confirm</button>
+              <button class="mortality-cancel" id="stock-date-cancel">Cancel</button>
             </div>
 
             <!-- MORTALITY MODAL -->
@@ -936,13 +759,26 @@
               <div class="legend-handle"></div>
               <p class="mortality-title">Log Mortality</p>
               <p class="mortality-sub">How many crayfish died?</p>
-              <div class="tank-counter" style="justify-content:center; margin: 12px 0">
-                <button class="counter-btn" id="mort-dec"><i class="bi bi-dash"></i></button>
-                <span class="counter-val" id="mort-input-val">1</span>
-                <button class="counter-btn" id="mort-inc"><i class="bi bi-plus"></i></button>
+              <div class="mort-input-section">
+                <div class="mort-counter-row">
+                  <button class="mort-counter-btn" id="mort-dec"><i class="bi bi-dash-lg"></i></button>
+                  <input type="number" class="mort-number-input" id="mort-number-input" value="1" min="1" inputmode="numeric" />
+                  <button class="mort-counter-btn" id="mort-inc"><i class="bi bi-plus-lg"></i></button>
+                </div>
+                <p class="mort-hint">Max: <span id="mort-max-hint">100</span> | Live: <span id="mort-live-hint">100</span></p>
               </div>
-              <button class="compute-btn" id="mort-confirm">Confirm</button>
+              <button class="compute-btn mort-confirm-btn" id="mort-confirm">Confirm</button>
               <button class="mortality-cancel" id="mort-cancel">Cancel</button>
+            </div>
+
+            <!-- MORTALITY LOG SHEET -->
+            <div class="mort-log-overlay" id="mort-log-overlay"></div>
+            <div class="mort-log-sheet" id="mort-log-sheet">
+              <div class="legend-handle"></div>
+              <p class="mortality-title"><i class="bi bi-journal-text" style="color:#E63946"></i> Mortality Log</p>
+              <p class="mortality-sub" id="mort-log-summary">Total: 0 dead</p>
+              <div class="mort-log-list" id="mort-log-list"></div>
+              <button class="mortality-cancel" id="mort-log-close">Close</button>
             </div>
 
           </section>
@@ -1169,7 +1005,7 @@
           </button>
           <button type="button" class="nav-btn" data-target="tanks">
             <span class="nav-icon"><i class="bi bi-box-seam-fill"></i></span>
-            <span class="nav-label">Tanks</span>
+            <span class="nav-label">Tank</span>
           </button>
           <button type="button" class="nav-btn" data-target="notifications">
             <span class="nav-icon"><i class="bi bi-bell-fill"></i></span>
@@ -1272,22 +1108,6 @@
             <span>Notifications</span>
             <i class="bi bi-chevron-right settings-chevron"></i>
           </div>
-          <div class="settings-menu-item" id="menu-sound">
-            <div class="settings-menu-icon amber"><i class="bi bi-volume-up-fill"></i></div>
-            <span>Sound & Vibration</span>
-            <i class="bi bi-chevron-right settings-chevron"></i>
-          </div>
-          <p class="settings-menu-label">Support</p>
-          <div class="settings-menu-item" id="menu-help">
-            <div class="settings-menu-icon green"><i class="bi bi-question-circle-fill"></i></div>
-            <span>Help & Manual</span>
-            <i class="bi bi-chevron-right settings-chevron"></i>
-          </div>
-          <div class="settings-menu-item" id="menu-about">
-            <div class="settings-menu-icon green"><i class="bi bi-info-circle-fill"></i></div>
-            <span>About CrayCare</span>
-            <i class="bi bi-chevron-right settings-chevron"></i>
-          </div>
           <div class="settings-menu-item logout" id="logout-btn">
             <div class="settings-menu-icon red"><i class="bi bi-box-arrow-right"></i></div>
             <span>Logout</span>
@@ -1305,7 +1125,6 @@
       </div>
     </div>
     <script src="app.js"></script>
-    <script src="js/main-app.js"></script>
     <script src="js/dashboard.js"></script>
     <script src="js/analytics.js"></script>
     <script src="js/controls.js"></script>
