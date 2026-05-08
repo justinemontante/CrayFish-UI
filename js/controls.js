@@ -2,8 +2,6 @@
 
 // ─── FEEDER ACTIVITY LOG ─────────────────────────────────────
 const feederLogs = [
-    { action: 'Dispensed 44.1g feed (Scheduled)', type: 'auto', time: '8:00 AM', date: 'Today' },
-    { action: 'Manual feed triggered', type: 'manual', time: '7:45 AM', date: 'Today' },
     { action: 'Dispensed 44.1g feed (Scheduled)', type: 'auto', time: '6:00 AM', date: 'Today' }
 ];
 
@@ -26,23 +24,36 @@ function addFeederLog(action, type) {
 function updateDashboardFeeding() {
     const lastFedEl = document.getElementById('dash-last-fed');
     const nextFeedEl = document.getElementById('dash-next-feed');
+    const lastFedDateEl = document.getElementById('dash-last-fed-date');
+    const nextFeedTimeEl = document.getElementById('dash-next-feed-time');
+    const progressFill = document.getElementById('feed-progress-fill');
+    const progressText = document.getElementById('feed-progress-text');
     if (!lastFedEl || !nextFeedEl) return;
+    
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
     
     // Get last feed time
     const feedLogs = feederLogs.filter(l => l.type === 'auto' || l.type === 'manual');
     if (feedLogs.length > 0) {
         lastFedEl.textContent = feedLogs[0].time;
+        if (lastFedDateEl) lastFedDateEl.textContent = 'Today';
     } else {
         lastFedEl.textContent = '--';
+        if (lastFedDateEl) lastFedDateEl.textContent = '';
     }
     
+    // Count completed feedings today
+    const todayFeedings = feedLogs.filter(l => {
+        const logDate = new Date(l.timestamp || Date.now());
+        return logDate.toDateString() === now.toDateString();
+    });
+    
     // Calculate next feeding time (check schedules)
-    const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
     let nextTime = null;
     
     document.querySelectorAll('.schedule-item').forEach(item => {
-        const timeStr = item.querySelector('.schedule-time')?.textContent;
+        const timeStr = item.querySelector('.schedule-time-text')?.textContent;
         if (!timeStr) return;
         const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
         if (!match) return;
@@ -64,9 +75,18 @@ function updateDashboardFeeding() {
         const ampm = h >= 12 ? 'PM' : 'AM';
         const hour12 = h % 12 || 12;
         nextFeedEl.textContent = `${hour12}:${String(m).padStart(2, '0')} ${ampm}`;
+        if (nextFeedTimeEl) nextFeedTimeEl.textContent = 'Today';
     } else {
         nextFeedEl.textContent = 'Tomorrow';
+        if (nextFeedTimeEl) nextFeedTimeEl.textContent = '8:00 AM';
     }
+    
+    // Update progress
+    const totalFeedings = document.querySelectorAll('.schedule-item').length || 2;
+    const completed = Math.min(todayFeedings.length, totalFeedings);
+    const pct = totalFeedings > 0 ? (completed / totalFeedings) * 100 : 0;
+    if (progressFill) progressFill.style.width = `${pct}%`;
+    if (progressText) progressText.textContent = `${completed} of ${totalFeedings} feedings today completed`;
 }
 
 // Initial dashboard update
@@ -311,9 +331,8 @@ function updateSchedule() {
 }
 
 let schedules = [
-    { time: '6:00 AM', display: '6:00 AM', hour: 6, minute: 0, isPM: false, grams: 15 },
-    { time: '8:00 AM', display: '8:00 AM', hour: 8, minute: 0, isPM: false, grams: 22 },
-    { time: '5:00 PM', display: '5:00 PM', hour: 17, minute: 0, isPM: true, grams: 22 }
+    { time: '6:00 AM', display: '6:00 AM', hour: 6, minute: 0, isPM: false, grams: 22 },
+    { time: '6:00 PM', display: '6:00 PM', hour: 18, minute: 0, isPM: true, grams: 22 }
 ];
 
 function loadSchedules() {

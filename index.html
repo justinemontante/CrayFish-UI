@@ -479,21 +479,37 @@
                </div>
              </div>
 
-             <!-- FEEDING STATUS CARD -->
+             <!-- FEEDING SCHEDULE CARD -->
               <div class="dash-card" id="dash-feeding">
                 <div class="dash-card-header">
-                  <i class="bi bi-egg-fried"></i>
+                  <span class="feed-header-icon"><i class="bi bi-egg-fried"></i></span>
                   <span class="dash-card-title">Feeding Schedule</span>
                 </div>
-                <div class="dash-card-body">
-                  <div class="dash-feed-info">
-                    <span class="dash-feed-label">Last Fed</span>
-                    <span class="dash-feed-value" id="dash-last-fed">--</span>
+                <div class="feed-body">
+                  <div class="feed-section">
+                    <div class="feed-icon-wrap">
+                      <i class="bi bi-clock"></i>
+                    </div>
+                    <span class="feed-label">LAST FED</span>
+                    <span class="feed-value" id="dash-last-fed">--</span>
+                    <span class="feed-sub" id="dash-last-fed-date">Today</span>
                   </div>
-                  <div class="dash-feed-info">
-                    <span class="dash-feed-label">Next Feeding</span>
-                    <span class="dash-feed-value" id="dash-next-feed">--</span>
+                  <div class="feed-divider"></div>
+                  <div class="feed-section">
+                    <div class="feed-icon-wrap">
+                      <i class="bi bi-calendar3"></i>
+                    </div>
+                    <span class="feed-label">NEXT FEEDING</span>
+                    <span class="feed-value" id="dash-next-feed">--</span>
+                    <span class="feed-sub" id="dash-next-feed-time">--</span>
                   </div>
+                </div>
+                <div class="feed-progress-wrap">
+                  <div class="feed-progress-bar">
+                    <div class="feed-progress-fill" id="feed-progress-fill" style="width: 50%"></div>
+                    <div class="feed-progress-dot"></div>
+                  </div>
+                  <span class="feed-progress-text" id="feed-progress-text">1 of 2 feedings today completed</span>
                 </div>
               </div>
 

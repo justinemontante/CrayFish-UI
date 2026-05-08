@@ -1,11 +1,37 @@
 /* GREETING */
 .dashboard-greeting {
+    position: relative;
+    overflow: hidden;
     display: flex;
-    background: #ffffff;
+    background: linear-gradient(135deg, #f8ffff 0%, #f2fdfd 30%, #e8fafa 70%, #daf4f5 100%);
     border-radius: 16px;
-    padding: 16px 20px 16px 12px;
+    padding: 23px 20px 23px 12px;
     margin: 12px 12px 8px;
     box-shadow: 0 2px 12px rgba(11, 60, 73, 0.08);
+}
+
+.dashboard-greeting::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 200px;
+    height: 150px;
+    background: radial-gradient(ellipse at bottom right, rgba(31, 165, 165, 0.15), transparent 70%);
+    pointer-events: none;
+}
+
+.dashboard-greeting::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 190px;
+    height: 100%;
+    background: url('../resources/images/seaweedImage.png') no-repeat bottom right;
+    background-size: contain;
+    opacity: 1;
+    pointer-events: none;
 }
 
 .greeting-accent-bar {
@@ -586,12 +612,12 @@
     gap: 8px;
     padding: 10px 10px 10px 6px;
     background: rgba(31, 165, 165, 0.08);
-    border: 1px solid rgba(11, 60, 73, 0.12);
+    border: 1px solid rgba(11, 60, 73, 0.06);
     border-radius: 10px;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     font-family: inherit;
-    box-shadow: 0 1px 6px rgba(11, 60, 73, 0.06);
+    box-shadow: 0 4px 12px rgba(11, 60, 73, 0.15);
     min-width: 0;
 }
 
