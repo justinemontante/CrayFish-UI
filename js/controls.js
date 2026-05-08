@@ -335,20 +335,9 @@ let schedules = [
     { time: '6:00 PM', display: '6:00 PM', hour: 18, minute: 0, isPM: true, grams: 22 }
 ];
 
-function loadSchedules() {
-    const saved = localStorage.getItem('crayfish_feeder_schedules');
-    if (saved) {
-        try {
-            schedules = JSON.parse(saved);
-        } catch (e) {}
-    }
-}
+function loadSchedules() {}
+function saveSchedules() {}
 
-function saveSchedules() {
-    localStorage.setItem('crayfish_feeder_schedules', JSON.stringify(schedules));
-}
-
-loadSchedules();
 renderSchedules();
 
 const addBtn = document.getElementById('schedule-add-btn');

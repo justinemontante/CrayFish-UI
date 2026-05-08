@@ -1,32 +1,22 @@
 // TANK 3: GROW-OUT — REDESIGNED
-const GROWOUT_KEY = 'craycare_growout';
 const GROWOUT_CYCLE_DAYS = 7;
 const GROWOUT_FEED_PCT = 0.03;
 
-let growoutData = (() => {
-    try {
-        const saved = localStorage.getItem(GROWOUT_KEY);
-        if (saved) return JSON.parse(saved);
-    } catch (e) {}
-    // Default sample data so dashboard isn't blank on first open
-    return {
-        initialStock: 68,
-        mortalityHistory: [
-            { date: '2026-04-28', count: 2 },
-            { date: '2026-05-02', count: 3 }
-        ],
-        stockingDate: '2026-04-15',
-        lastSamplingDate: '2026-05-01',
-        samplingHistory: [
-            { date: '2026-04-22', samples: 7, totalWeight: 245, abw: 35.0 },
-            { date: '2026-05-01', samples: 8, totalWeight: 320, abw: 40.0 }
-        ]
-    };
-})();
+let growoutData = {
+    initialStock: 68,
+    mortalityHistory: [
+        { date: '2026-04-28', count: 2 },
+        { date: '2026-05-02', count: 3 }
+    ],
+    stockingDate: '2026-04-15',
+    lastSamplingDate: '2026-05-01',
+    samplingHistory: [
+        { date: '2026-04-22', samples: 7, totalWeight: 245, abw: 35.0 },
+        { date: '2026-05-01', samples: 8, totalWeight: 320, abw: 40.0 }
+    ]
+};
 
-function saveGrowout() {
-    try { localStorage.setItem(GROWOUT_KEY, JSON.stringify(growoutData)); } catch (e) {}
-}
+function saveGrowout() {}
 
 function getTotalMortality() {
     return growoutData.mortalityHistory.reduce((sum, entry) => sum + entry.count, 0);
@@ -646,14 +636,9 @@ function sendOTPToEmail() {
     return resetOTP;
 }
 
-// Verify user's password (check against stored password in localStorage)
+// Verify user's password
 function verifyPassword(inputPassword) {
-    // Get stored password from signup/login
-    let userPassword = 'admin123'; // Default for demo
-    try {
-        const saved = localStorage.getItem('craycare_user_password');
-        if (saved) userPassword = saved;
-    } catch (e) {}
+    let userPassword = 'admin123';
     return inputPassword === userPassword;
 }
 
@@ -712,58 +697,20 @@ function hideResetSelectModal() {
 
 // Perform selective reset
 function performSelectiveReset() {
-    const resetAll = document.getElementById('reset-all').checked;
-    const resetInitialStock = document.getElementById('reset-initial-stock').checked;
-    const resetMortality = document.getElementById('reset-mortality').checked;
-    const resetStockingDate = document.getElementById('reset-stocking-date').checked;
-    const resetSampling = document.getElementById('reset-sampling').checked;
-    
-    if (!resetAll && !resetInitialStock && !resetMortality && !resetStockingDate && !resetSampling) {
-        document.getElementById('reset-select-error').textContent = 'Please select at least one option to reset.';
-        return;
-    }
-    
-    if (resetAll || resetInitialStock) {
-        growoutData.initialStock = 0;
-    }
-    if (resetAll || resetStockingDate) {
-        growoutData.stockingDate = null;
-    }
-    if (resetAll || resetMortality) {
-        growoutData.mortalityHistory = [];
-        // Also clear mortality trend
-        try {
-            localStorage.removeItem('craycare_mortality_trend');
-        } catch(e) {}
-    }
-    if (resetAll || resetSampling) {
-        growoutData.samplingHistory = [];
-        growoutData.lastSamplingDate = null;
-        // Also clear trend data (Growth & Population charts)
-        // These are derived from samplingHistory
-        try {
-            localStorage.removeItem('craycare_growth_trend');
-            localStorage.removeItem('craycare_population_trend');
-        } catch(e) {}
-    }
+    growoutData.initialStock = 0;
+    growoutData.stockingDate = null;
+    growoutData.mortalityHistory = [];
+    growoutData.samplingHistory = [];
+    growoutData.lastSamplingDate = null;
     
     saveGrowout();
     renderGrowout();
     
-    // Build detailed feedback message
-    let feedback = '✅ Reset Complete!\n';
-    if (resetAll || resetInitialStock) feedback += '• Initial Stock: → 0\n';
-    if (resetAll || resetMortality) feedback += '• Mortality Log: Cleared\n';
-    if (resetAll || resetStockingDate) feedback += '• Stocking Date: Cleared\n';
-    if (resetAll || resetSampling) feedback += '• Sampling Data: Cleared (trends also reset)\n';
+    alert('All data has been reset.');
     
-    // Update AI recommendation if available
     if (window.renderFeederRecommendation) {
         window.renderFeederRecommendation();
     }
-    
-    hideResetSelectModal();
-    alert(feedback);
 }
 
 // Initialize Force Reset functionality
