@@ -70,7 +70,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px 16px;
-    background: #ffffff;
+    background: linear-gradient(135deg, #f8ffff 0%, #f2fdfd 30%, #e8fafa 70%, #daf4f5 100%);
     border-bottom: 1px solid rgba(0,0,0,0.06);
 }
 

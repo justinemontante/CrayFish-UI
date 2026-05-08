@@ -25,7 +25,6 @@ body {
     max-width: 380px;
     aspect-ratio: 380 / 820;
 
-    background-color: #f0f7fa;
     background-image: url('../resources/images/background.jpg');
     background-size: cover;
     background-position: center;
@@ -569,8 +568,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 8px 20px;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
+    background: linear-gradient(135deg, #f8ffff 0%, #f2fdfd 30%, #e8fafa 70%, #daf4f5 100%);
 }
 
 .profile-avatar {
