@@ -295,6 +295,10 @@
     text-align: center;
 }
 
+#gauge-water-level {
+    margin: 0 10px;
+}
+
 /* TURBIDITY CRITICAL CARD STYLING */
 #gauge-turb.critical .gauge-header {
     background: rgba(230, 57, 70, 0.18);
