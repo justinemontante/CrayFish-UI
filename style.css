@@ -581,6 +581,119 @@ body {
     letter-spacing: 0.5px;
 }
 
+/* TANK STATUS CARD */
+.tank-card {
+    overflow: hidden;
+}
+
+.tank-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.tank-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tank-header-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1.5px solid var(--primary-teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: rgba(31, 165, 165, 0.06);
+}
+
+.tank-header-icon i {
+    font-size: 14px;
+    color: var(--primary-teal);
+}
+
+.tank-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dark-text);
+}
+
+.tank-card-art {
+    width: 40px;
+    height: 28px;
+    background: url('../resources/images/Crayfish_Group.webp') no-repeat center;
+    background-size: contain;
+    opacity: 0.15;
+}
+
+.tank-stats {
+    display: flex;
+    align-items: stretch;
+}
+
+.tank-stat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.tank-stat-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid rgba(31, 165, 165, 0.15);
+    box-shadow: 0 2px 6px rgba(11, 60, 73, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+
+.tank-stat-icon i {
+    font-size: 14px;
+    color: var(--primary-teal);
+}
+
+.tank-stat-value {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--dark-text);
+    line-height: 1.1;
+}
+
+.tank-stat-label {
+    font-size: 7px;
+    font-weight: 700;
+    color: var(--primary-teal);
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.tank-stat-status {
+    font-size: 8px;
+    font-weight: 600;
+    color: rgba(11, 60, 73, 0.4);
+    margin-top: 1px;
+}
+
+.tank-stat-status.green {
+    color: #2d9e5f;
+}
+
+.tank-stat-divider {
+    width: 1px;
+    background: rgba(11, 60, 73, 0.08);
+    margin: 4px 0;
+    flex-shrink: 0;
+}
+
 /* FEEDING SCHEDULE CARD */
 .feed-header-icon {
     width: 28px;

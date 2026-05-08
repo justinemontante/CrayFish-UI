@@ -454,30 +454,44 @@
               </div>
 
              <!-- TANK STATUS CARD -->
-             <div class="dash-card" id="dash-inventory">
-               <div class="dash-card-header">
-                 <i class="bi bi-box-seam"></i>
-                 <span class="dash-card-title">Tank Status</span>
-               </div>
-               <div class="dash-card-body">
-                 <div class="dash-stat">
-                   <span class="dash-stat-value" id="dash-live-count">--</span>
-                   <span class="dash-stat-label">Live Count</span>
-                 </div>
-                 <div class="dash-stat">
-                   <span class="dash-stat-value" id="dash-survival">--%</span>
-                   <span class="dash-stat-label">Survival</span>
-                 </div>
-                 <div class="dash-stat">
-                   <span class="dash-stat-value" id="dash-initial">--</span>
-                   <span class="dash-stat-label">Initial</span>
-                 </div>
-                 <div class="dash-stat">
-                   <span class="dash-stat-value" id="dash-mortality">--</span>
-                   <span class="dash-stat-label">Mortality</span>
-                 </div>
-               </div>
-             </div>
+              <div class="dash-card tank-card" id="dash-inventory">
+                <div class="tank-card-top">
+                  <div class="tank-card-header">
+                    <span class="tank-header-icon"><i class="bi bi-box-seam"></i></span>
+                    <span class="tank-card-title">Tank Status</span>
+                  </div>
+                  <div class="tank-card-art"></div>
+                </div>
+                <div class="tank-stats">
+                  <div class="tank-stat">
+                    <div class="tank-stat-icon"><i class="bi bi-wifi"></i></div>
+                    <span class="tank-stat-value" id="dash-live-count">--</span>
+                    <span class="tank-stat-label">LIVE COUNT</span>
+                    <span class="tank-stat-status green">Healthy</span>
+                  </div>
+                  <div class="tank-stat-divider"></div>
+                  <div class="tank-stat">
+                    <div class="tank-stat-icon"><i class="bi bi-shield-check"></i></div>
+                    <span class="tank-stat-value" id="dash-survival">--%</span>
+                    <span class="tank-stat-label">SURVIVAL</span>
+                    <span class="tank-stat-status green">Good</span>
+                  </div>
+                  <div class="tank-stat-divider"></div>
+                  <div class="tank-stat">
+                    <div class="tank-stat-icon"><i class="bi bi-pie-chart"></i></div>
+                    <span class="tank-stat-value" id="dash-initial">--</span>
+                    <span class="tank-stat-label">INITIAL</span>
+                    <span class="tank-stat-status">Stocked</span>
+                  </div>
+                  <div class="tank-stat-divider"></div>
+                  <div class="tank-stat">
+                    <div class="tank-stat-icon"><i class="bi bi-heart-pulse"></i></div>
+                    <span class="tank-stat-value" id="dash-mortality">--</span>
+                    <span class="tank-stat-label">MORTALITY</span>
+                    <span class="tank-stat-status green">Low</span>
+                  </div>
+                </div>
+              </div>
 
              <!-- FEEDING SCHEDULE CARD -->
               <div class="dash-card" id="dash-feeding">
