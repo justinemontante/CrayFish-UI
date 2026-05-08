@@ -8,13 +8,19 @@ let growoutData = (() => {
         const saved = localStorage.getItem(GROWOUT_KEY);
         if (saved) return JSON.parse(saved);
     } catch (e) {}
-    // Default: No data (first open)
+    // Default sample data so dashboard isn't blank on first open
     return {
-        initialStock: 0,
-        mortalityHistory: [],
-        stockingDate: null,
-        lastSamplingDate: null,
-        samplingHistory: []
+        initialStock: 68,
+        mortalityHistory: [
+            { date: '2026-04-28', count: 2 },
+            { date: '2026-05-02', count: 3 }
+        ],
+        stockingDate: '2026-04-15',
+        lastSamplingDate: '2026-05-01',
+        samplingHistory: [
+            { date: '2026-04-22', samples: 7, totalWeight: 245, abw: 35.0 },
+            { date: '2026-05-01', samples: 8, totalWeight: 320, abw: 40.0 }
+        ]
     };
 })();
 
@@ -78,25 +84,6 @@ function renderGrowout() {
     document.getElementById('go-live-count').textContent = live;
     document.getElementById('go-mortality').textContent = getTotalMortality();
     document.getElementById('go-initial-stock').textContent = growoutData.initialStock;
-    
-    // Update dashboard inventory card
-    const dashLive = document.getElementById('dash-live-count');
-    const dashSurvival = document.getElementById('dash-survival');
-    const dashInitial = document.getElementById('dash-initial');
-    const dashMortality = document.getElementById('dash-mortality');
-    if (dashLive) dashLive.textContent = live;
-    if (dashSurvival) dashSurvival.textContent = survival.toFixed(1) + '%';
-    if (dashInitial) dashInitial.textContent = growoutData.initialStock;
-    if (dashMortality) dashMortality.textContent = getTotalMortality();
-    
-    // Update dashboard next action card
-    const dashDays = document.getElementById('dash-days-culture');
-    const dashSampling = document.getElementById('dash-sampling-due');
-    if (dashDays) dashDays.textContent = days + ' day' + (days !== 1 ? 's' : '');
-    if (dashSampling) {
-        const daysLeft = getDaysUntilSampling();
-        dashSampling.textContent = daysLeft > 0 ? `Due in ${daysLeft} day${daysLeft !== 1 ? 's' : ''}` : 'Due today!';
-    }
     
     // Update donut - circumference = 2 * PI * r = 2 * 3.1416 * 50 = 314.16
     const circumference = 2 * Math.PI * 50;

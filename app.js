@@ -69,8 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateTime, 1000);
 
     setTimeout(() => {
-        showScreen('login');
-    }, 3000);
+        showMainApp();
+    }, 2000);
 
     // Login Screen Toggle Password
     const toggleBtn = document.getElementById('toggle-pass');

@@ -78,7 +78,7 @@ function updateDashboardFeeding() {
         if (nextFeedTimeEl) nextFeedTimeEl.textContent = 'Today';
     } else {
         nextFeedEl.textContent = 'Tomorrow';
-        if (nextFeedTimeEl) nextFeedTimeEl.textContent = '8:00 AM';
+        if (nextFeedTimeEl) nextFeedTimeEl.textContent = '6:00 PM';
     }
     
     // Update progress

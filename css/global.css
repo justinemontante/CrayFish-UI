@@ -25,6 +25,7 @@ body {
     max-width: 380px;
     aspect-ratio: 380 / 820;
 
+    background-color: #f0f7fa;
     background-image: url('../resources/images/background.jpg');
     background-size: cover;
     background-position: center;
