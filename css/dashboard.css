@@ -10,7 +10,7 @@
 
 .greeting-accent-bar {
     width: 3px;
-    height: 45px;
+    height: 50px;
     background: #1FA5A5;
     border-radius: 2px;
     margin-left: 0;
@@ -27,7 +27,7 @@
 }
 
 .greeting-text {
-    font-size: 17px;
+    font-size: 14px;
     font-weight: 700;
     color: #1e293b;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -35,12 +35,18 @@
 }
 
 .greeting-date {
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 400;
     color: #94a3b8;
-    margin: 0;
+    margin: 0 0 2px;
 }
 
+.greeting-sub {
+    font-size: 10px;
+    font-weight: 500;
+    color: #64748b;
+    margin: 0;
+}
 
 .dashboard-header {
     display: flex;
@@ -561,58 +567,75 @@
 .gauge-modal-view-btn i { font-size: 12px; }
 
 /* QUICK ACTIONS */
-.quick-actions {
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 14px 14px 10px;
-    margin: 8px 12px;
-    box-shadow: 0 2px 12px rgba(11, 60, 73, 0.08);
-}
 
-.quick-actions-header {
-    margin-bottom: 12px;
-}
-
-.quick-actions-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--primary-teal);
+#quick-actions-header {
+    margin-top: 6px;
 }
 
 .quick-actions-grid {
     display: flex;
-    justify-content: center;
+    flex-direction: row;
     gap: 8px;
-    padding-bottom: 0;
+    padding: 4px 10px;
 }
 
-.quick-action-btn {
+.quick-action-card {
+    flex: 1;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 10px 10px 6px;
+    background: rgba(31, 165, 165, 0.08);
+    border: 1px solid rgba(11, 60, 73, 0.12);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+    box-shadow: 0 1px 6px rgba(11, 60, 73, 0.06);
+    min-width: 0;
+}
+
+.quick-action-card:active {
+    transform: scale(0.98);
+}
+
+.quick-action-icon-wrap {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1.5px solid rgba(31, 165, 165, 0.2);
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    padding: 8px 6px;
-    background: rgba(31, 165, 165, 0.08);
-    border: 1.5px solid rgba(31, 165, 165, 0.15);
-    border-radius: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: inherit;
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--dark-text);
     flex-shrink: 0;
-    width: 65px;
-    height: 65px;
 }
 
-.quick-action-btn i {
-    font-size: 18px;
+.quick-action-icon-wrap i {
+    font-size: 12px;
     color: var(--primary-teal);
 }
 
-.quick-action-btn:active {
-    transform: scale(0.95);
-    background: rgba(31, 165, 165, 0.15);
+.quick-action-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+
+.quick-action-name {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--dark-text);
+}
+
+.quick-action-status {
+    font-size: 6px;
+    font-weight: 600;
+    color: var(--primary-teal);
+    opacity: 0.8;
+}
+
+#qs-feed {
+    color: var(--dark-text);
 }

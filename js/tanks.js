@@ -83,9 +83,11 @@ function renderGrowout() {
     const dashLive = document.getElementById('dash-live-count');
     const dashSurvival = document.getElementById('dash-survival');
     const dashInitial = document.getElementById('dash-initial');
+    const dashMortality = document.getElementById('dash-mortality');
     if (dashLive) dashLive.textContent = live;
     if (dashSurvival) dashSurvival.textContent = survival.toFixed(1) + '%';
     if (dashInitial) dashInitial.textContent = growoutData.initialStock;
+    if (dashMortality) dashMortality.textContent = getTotalMortality();
     
     // Update dashboard next action card
     const dashDays = document.getElementById('dash-days-culture');

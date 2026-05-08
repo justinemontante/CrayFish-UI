@@ -393,10 +393,16 @@ setInterval(() => {
 
 // ─── HARDWARE ACTIVITY LOGS ───────────────────────────────────
 const hwActivityLogs = {
-    aerator: [
+    aerator1: [
         { mode: 'auto', action: 'Set to AUTO', time: '8:05 AM', date: 'Today' },
         { mode: 'on',   action: 'Switched ON',  time: '7:50 AM', date: 'Today' },
         { mode: 'off',  action: 'Switched OFF', time: '7:30 AM', date: 'Today' },
+        { mode: 'auto', action: 'Set to AUTO', time: '6:00 AM', date: 'Today' },
+    ],
+    aerator2: [
+        { mode: 'auto', action: 'Set to AUTO', time: '8:10 AM', date: 'Today' },
+        { mode: 'on',   action: 'Switched ON',  time: '7:45 AM', date: 'Today' },
+        { mode: 'off',  action: 'Switched OFF', time: '7:20 AM', date: 'Today' },
         { mode: 'auto', action: 'Set to AUTO', time: '6:00 AM', date: 'Today' },
     ],
     pump: [
@@ -420,7 +426,7 @@ const hwActivityLogs = {
         { mode: 'auto', action: 'Set to AUTO', time: '6:00 AM', date: 'Today' },
     ],
 };
-const hwLastActivity  = { aerator: '8:05 AM', pump: '8:10 AM', fan: '8:00 AM', heater: '8:00 AM' };
+const hwLastActivity  = { aerator1: '8:05 AM', aerator2: '8:10 AM', pump: '8:10 AM', fan: '8:00 AM', heater: '8:00 AM' };
 
 function addHwLog(device, mode) {
     const { time, date } = getTs();
@@ -432,10 +438,11 @@ function addHwLog(device, mode) {
 
 // ─── HARDWARE DEVICE INFO ────────────────────────────────────
 const hwDeviceInfo = {
-    aerator: { title: 'Aerator',     subtitle: 'Air Pump',           icon: 'bi-wind',         sensor: 'do',   sensorLabel: 'Dissolved O₂', unit: 'mg/L' },
-    pump:    { title: 'Water Pump',  subtitle: 'Filtration System',  icon: 'bi-droplet-half', sensor: 'turb', sensorLabel: 'Turbidity',     unit: 'NTU'  },
-    fan:     { title: 'Cooling Fan', subtitle: 'Temp Control',       icon: 'bi-fan',          sensor: 'temp', sensorLabel: 'Temperature',   unit: '°C'   },
-    heater:  { title: 'Heater',      subtitle: 'Temp Control',       icon: 'bi-fire',         sensor: 'temp', sensorLabel: 'Temperature',   unit: '°C'   },
+    aerator1: { title: 'Aerator 1', subtitle: 'Air Pump',           icon: 'bi-wind',         sensor: 'do',   sensorLabel: 'Dissolved O₂', unit: 'mg/L' },
+    aerator2: { title: 'Aerator 2', subtitle: 'Air Pump',           icon: 'bi-wind',         sensor: 'do',   sensorLabel: 'Dissolved O₂', unit: 'mg/L' },
+    pump:     { title: 'Water Pump',  subtitle: 'Filtration System',  icon: 'bi-droplet-half', sensor: 'turb', sensorLabel: 'Turbidity',     unit: 'NTU'  },
+    fan:      { title: 'Cooling Fan', subtitle: 'Temp Control',       icon: 'bi-fan',          sensor: 'temp', sensorLabel: 'Temperature',   unit: '°C'   },
+    heater:   { title: 'Heater',      subtitle: 'Temp Control',       icon: 'bi-fire',         sensor: 'temp', sensorLabel: 'Temperature',   unit: '°C'   },
 };
 
 // ─── HARDWARE 3-STATE MODE ────────────────────────────────────

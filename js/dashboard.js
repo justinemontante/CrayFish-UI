@@ -239,7 +239,7 @@ Object.keys(SENSORS).forEach(key => {
 document.getElementById('quick-aerator')?.addEventListener('click', () => {
     window.showNavSection('controls');
     setTimeout(() => {
-        const card = document.getElementById('hw-aerator');
+        const card = document.getElementById('hw-aerator1');
         if (card) card.click();
     }, 100);
 });

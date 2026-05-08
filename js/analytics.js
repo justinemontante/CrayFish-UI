@@ -5,7 +5,8 @@ const CHART_COLORS = {
     temp: '#f59e0b',
     ph:   '#1FA5A5',
     do:   '#52c283',
-    turb: '#E63946'
+    turb: '#E63946',
+    waterlevel: '#1FA5A5'
 };
 
 // Generate simulated historical data
@@ -37,7 +38,7 @@ function getLabels(range) {
     });
 }
 
-const UNITS = { temp: '°C', ph: '', do: ' mg/L', turb: ' NTU' };
+const UNITS = { temp: '°C', ph: '', do: ' mg/L', turb: ' NTU', waterlevel: ' cm' };
 
 function makeChartConfig(label, data, labels, color, unit) {
     return {
@@ -78,7 +79,7 @@ function makeChartConfig(label, data, labels, color, unit) {
                     displayColors: false,
                     callbacks: {
                         title: ctx => ctx[0].label,
-                        label: ctx => `${ctx.parsed.y} ${label.includes('Temp') ? '°C' : label.includes('pH') ? 'pH' : label.includes('O') ? 'mg/L' : 'NTU'}`,
+                        label: ctx => `${ctx.parsed.y} ${label.includes('Temp') ? '°C' : label.includes('pH') ? 'pH' : label.includes('O') ? 'mg/L' : label.includes('Water') ? 'cm' : 'NTU'}`,
                         footer: ctx => {
                             const v = ctx[0].parsed.y;
                             if (label.includes('Temp')) {
@@ -95,6 +96,11 @@ function makeChartConfig(label, data, labels, color, unit) {
                                 if (v > 5.0) return 'Status: Oxygen Rich';
                                 if (v >= 3.1) return 'Status: Low Oxygen';
                                 return 'Status: Suffocation Risk';
+                            }
+                            if (label.includes('Water')) {
+                                if (v >= 80 && v <= 120) return 'Status: Normal';
+                                if (v >= 60 && v <= 140) return 'Status: Warning';
+                                return 'Status: Danger';
                             }
                             if (v <= 25) return 'Status: Crystal Clear';
                             if (v <= 50) return 'Status: Moderate Cloud';
@@ -132,14 +138,16 @@ function buildCharts(range) {
         temp: generateData(pts, 22, 32),
         ph:   generateData(pts, 6.5, 9.0),
         do:   generateData(pts, 2.5, 7.0),
-        turb: generateData(pts, 10, 70)
+        turb: generateData(pts, 10, 70),
+        waterlevel: generateData(pts, 60, 140)
     };
 
     const configs = {
         temp: makeChartConfig('Temperature', datasets.temp, labels, CHART_COLORS.temp, UNITS.temp),
         ph:   makeChartConfig('pH Level',    datasets.ph,   labels, CHART_COLORS.ph,   UNITS.ph),
         do:   makeChartConfig('Dissolved O₂',datasets.do,   labels, CHART_COLORS.do,   UNITS.do),
-        turb: makeChartConfig('Turbidity',   datasets.turb, labels, CHART_COLORS.turb, UNITS.turb)
+        turb: makeChartConfig('Turbidity',   datasets.turb, labels, CHART_COLORS.turb, UNITS.turb),
+        waterlevel: makeChartConfig('Water Level', datasets.waterlevel, labels, CHART_COLORS.waterlevel, UNITS.waterlevel)
     };
 
     Object.keys(configs).forEach(key => {
@@ -167,13 +175,21 @@ function buildCharts(range) {
     document.getElementById('min-turb').textContent  = `Min: ${min(datasets.turb)}`;
     document.getElementById('max-turb').textContent  = `Max: ${max(datasets.turb)}`;
 
+    document.getElementById('avg-waterlevel').textContent  = `Avg: ${avg(datasets.waterlevel)}`;
+    document.getElementById('min-waterlevel').textContent  = `Min: ${min(datasets.waterlevel)}`;
+    document.getElementById('max-waterlevel').textContent  = `Max: ${max(datasets.waterlevel)}`;
+
     // System Insights
     const peakTemp = Math.max(...datasets.temp);
     const peakTurb = Math.max(...datasets.turb);
     const minDo    = Math.min(...datasets.do);
+    const minWl    = Math.min(...datasets.waterlevel);
+    const maxWl    = Math.max(...datasets.waterlevel);
     let insight = `Peak temperature reached ${peakTemp}°C. `;
     if (peakTurb > 50) insight += `Turbidity spiked to ${peakTurb} NTU — check filtration. `;
     if (minDo < 3.5)   insight += `DO dropped to ${minDo} mg/L — aerator may have triggered.`;
+    if (minWl < 60)    insight += `Water level dropped to ${minWl} cm — low water warning. `;
+    if (maxWl > 140)   insight += `Water level peaked at ${maxWl} cm — flood risk.`;
     document.getElementById('insight-text').textContent = insight;
 }
 
@@ -215,7 +231,8 @@ const CHART_TITLES = {
     temp: 'Temperature (°C)',
     ph:   'pH Level',
     do:   'Dissolved O₂ (mg/L)',
-    turb: 'Turbidity (NTU)'
+    turb: 'Turbidity (NTU)',
+    waterlevel: 'Water Level (cm)'
 };
 
 let modalChart = null;
@@ -224,10 +241,11 @@ const CHART_KEYS = {
     temp: { label: 'Temperature', unit: '°C' },
     ph:   { label: 'pH Level',    unit: 'pH' },
     do:   { label: 'Dissolved O₂', unit: 'mg/L' },
-    turb: { label: 'Turbidity',   unit: 'NTU' }
+    turb: { label: 'Turbidity',   unit: 'NTU' },
+    waterlevel: { label: 'Water Level', unit: 'cm' }
 };
 
-const SENSOR_IDS = { temp: 'val-temp', ph: 'val-ph', do: 'val-do', turb: 'val-turb' };
+const SENSOR_IDS = { temp: 'val-temp', ph: 'val-ph', do: 'val-do', turb: 'val-turb', waterlevel: 'val-water-level' };
 let liveValInterval = null;
 
 function openChartModal(key) {

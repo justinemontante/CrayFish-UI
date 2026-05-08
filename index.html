@@ -327,10 +327,11 @@
               <div class="greeting-content">
                 <p class="greeting-text" id="greeting-text">Good Afternoon, Justine!</p>
                 <p class="greeting-date" id="greeting-date">Monday, May 4, 2026</p>
+                <p class="greeting-sub" id="greeting-sub">Here's what's happening in your tank today.</p>
               </div>
             </div>
             <div class="dashboard-header">
-              <span class="dashboard-label">Water Quality Overview</span>
+              <span class="dashboard-label"><i class="bi bi-water"></i> Water Quality Overview</span>
               <span class="dashboard-live"><span class="live-dot"></span>Live Data</span>
             </div>
             <div class="dashboard-grid">
@@ -398,7 +399,7 @@
               </div>
 
              <div class="dashboard-header">
-               <span class="dashboard-label">Physical Parameters</span>
+               <span class="dashboard-label"><i class="bi bi-sliders"></i> Physical Parameters</span>
                <span class="dashboard-live"><span class="live-dot"></span>Live Data</span>
              </div>
 
@@ -407,7 +408,7 @@
                <div class="gauge-header">
                  <span class="gauge-title">Water Level</span>
                  <span class="gauge-icon">
-                   <img src="resources/images/water-level.png" alt="Water Level" />
+                   <img src="resources/images/waterLevel.png" alt="Water Level" />
                  </span>
                </div>
                <div class="gauge-body">
@@ -418,32 +419,45 @@
                <span class="gauge-ideal">Ideal: 80 – 120 cm</span>
              </div>
 
-             <!-- QUICK ACTIONS -->
-            <div class="quick-actions">
-              <div class="quick-actions-header">
-                <span class="quick-actions-title">Quick Actions</span>
-              </div>
-              <div class="quick-actions-grid">
-                <button class="quick-action-btn" id="quick-aerator">
-                  <i class="bi bi-wind"></i>
-                  <span>Aerator</span>
-                </button>
-                <button class="quick-action-btn" id="quick-pump">
-                  <i class="bi bi-droplet-half"></i>
-                  <span>Pump</span>
-                </button>
-                <button class="quick-action-btn" id="quick-feed-now">
-                  <i class="bi bi-egg-fried"></i>
-                  <span>Feed Now</span>
-                </button>
-              </div>
+              <!-- QUICK ACTIONS -->
+             <div class="dashboard-header" id="quick-actions-header">
+               <span class="dashboard-label"><i class="bi bi-lightning-fill"></i> Quick Actions</span>
              </div>
+              <div class="quick-actions-grid">
+                <div class="quick-action-card" id="quick-aerator">
+                  <div class="quick-action-icon-wrap">
+                    <i class="bi bi-wind"></i>
+                  </div>
+                  <div class="quick-action-info">
+                    <span class="quick-action-name">Aerator</span>
+                    <span class="quick-action-status" id="qs-aerator1">Auto</span>
+                  </div>
+                </div>
+                <div class="quick-action-card" id="quick-pump">
+                  <div class="quick-action-icon-wrap">
+                    <i class="bi bi-droplet-half"></i>
+                  </div>
+                  <div class="quick-action-info">
+                    <span class="quick-action-name">Pump</span>
+                    <span class="quick-action-status" id="qs-pump">Auto</span>
+                  </div>
+                </div>
+                <div class="quick-action-card" id="quick-feed-now">
+                  <div class="quick-action-icon-wrap">
+                    <i class="bi bi-egg-fried"></i>
+                  </div>
+                  <div class="quick-action-info">
+                    <span class="quick-action-name">Feed Now</span>
+                    <span class="quick-action-status" id="qs-feed">45g Recommendation</span>
+                  </div>
+                </div>
+              </div>
 
-             <!-- INVENTORY STATUS CARD -->
+             <!-- TANK STATUS CARD -->
              <div class="dash-card" id="dash-inventory">
                <div class="dash-card-header">
                  <i class="bi bi-box-seam"></i>
-                 <span class="dash-card-title">Inventory Status</span>
+                 <span class="dash-card-title">Tank Status</span>
                </div>
                <div class="dash-card-body">
                  <div class="dash-stat">
@@ -457,6 +471,10 @@
                  <div class="dash-stat">
                    <span class="dash-stat-value" id="dash-initial">--</span>
                    <span class="dash-stat-label">Initial</span>
+                 </div>
+                 <div class="dash-stat">
+                   <span class="dash-stat-value" id="dash-mortality">--</span>
+                   <span class="dash-stat-label">Mortality</span>
                  </div>
                </div>
              </div>
@@ -598,6 +616,23 @@
                   </div>
                 </div>
                 <canvas id="chart-turb"></canvas>
+              </div>
+
+              <div class="chart-card" data-chart="waterlevel">
+                <div class="chart-card-header">
+                  <div class="chart-card-title-row">
+                    <span class="chart-card-icon">
+                      <img src="resources/images/waterLevel.png" alt="Water Level" />
+                    </span>
+                    <span class="chart-card-title">Water Level</span>
+                  </div>
+                  <div class="chart-card-right">
+                    <span class="chart-stat" id="min-waterlevel">Min: --</span>
+                    <span class="chart-stat" id="avg-waterlevel">Avg: --</span>
+                    <span class="chart-stat" id="max-waterlevel">Max: --</span>
+                  </div>
+                </div>
+                <canvas id="chart-waterlevel"></canvas>
               </div>
 
             </div>
@@ -1018,18 +1053,34 @@
               <div class="hw-temp-group">
                 <div class="hw-temp-header">
                   <span class="hw-temp-label"><i class="bi bi-wind"></i> Aeration</span>
-                  <button class="hw-log-btn" data-device="aerator"><i class="bi bi-journal-text"></i> Log</button>
+                  <button class="hw-log-btn" data-device="aerator1"><i class="bi bi-journal-text"></i> Log</button>
                 </div>
-                <div class="hardware-card" id="hw-aerator" style="margin-top:8px" data-device="aerator">
+                <div class="hardware-card" id="hw-aerator1" style="margin-top:8px" data-device="aerator1">
                   <div class="hw-card-left">
                     <div class="hw-icon-wrap"><i class="bi bi-wind"></i></div>
                     <div>
-                      <span class="hw-title">Aerator</span>
+                      <span class="hw-title">Aerator 1</span>
                       <span class="hw-subtitle">Air Pump</span>
                     </div>
                   </div>
                   <div class="hw-card-right">
-                    <div class="hw-mode-group" data-device="aerator">
+                    <div class="hw-mode-group" data-device="aerator1">
+                      <button class="hw-mode-btn" data-mode="off">OFF</button>
+                      <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
+                      <button class="hw-mode-btn" data-mode="on">ON</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="hardware-card" id="hw-aerator2" style="margin-top:8px" data-device="aerator2">
+                  <div class="hw-card-left">
+                    <div class="hw-icon-wrap"><i class="bi bi-wind"></i></div>
+                    <div>
+                      <span class="hw-title">Aerator 2</span>
+                      <span class="hw-subtitle">Air Pump</span>
+                    </div>
+                  </div>
+                  <div class="hw-card-right">
+                    <div class="hw-mode-group" data-device="aerator2">
                       <button class="hw-mode-btn" data-mode="off">OFF</button>
                       <button class="hw-mode-btn active" data-mode="auto">AUTO</button>
                       <button class="hw-mode-btn" data-mode="on">ON</button>
