@@ -12,8 +12,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 5px 16px;
-    background: #000;
-    color: #fff;
+    background: transparent;
+    color: #000;
     flex-shrink: 0;
 }
 
@@ -21,6 +21,7 @@
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.3px;
+    color: #0B3C49;
 }
 
 .status-icons {
@@ -32,7 +33,7 @@
 .status-icons svg {
     width: 13px;
     height: 13px;
-    stroke: #fff;
+    stroke: #0B3C49;
     fill: none;
 }
 
@@ -45,7 +46,7 @@
 .battery-body {
     width: 18px;
     height: 9px;
-    border: 1.5px solid #fff;
+    border: 1.5px solid #0B3C49;
     border-radius: 2px;
     padding: 1.5px;
 }
@@ -53,14 +54,14 @@
 .battery-fill {
     width: 70%;
     height: 100%;
-    background: #fff;
+    background: #0B3C49;
     border-radius: 1px;
 }
 
 .battery-tip {
     width: 2px;
     height: 4px;
-    background: #fff;
+    background: #0B3C49;
     border-radius: 0 1px 1px 0;
 }
 
