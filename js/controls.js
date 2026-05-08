@@ -699,7 +699,7 @@ function renderRecommendation() {
             <i class="bi bi-exclamation-circle" style="font-size:24px;opacity:0.5;margin-bottom:8px;display:block;"></i>
             <strong>No stock data</strong><br>
             <span style="font-size:12px;opacity:0.6;">Set initial stock to get AI feeding recommendations.</span><br>
-            <button class="compute-btn" style="margin-top:12px;font-size:13px;padding:8px 16px;" onclick="document.getElementById('go-set-initial-stock').click()">Set Initial Stock</button>
+            <button class="compute-btn" style="margin-top:12px;font-size:13px;padding:8px 16px;" onclick="document.getElementById('go-setup-btn').click()">Set Initial Stock</button>
         </div>`;
         if (applyBtn) applyBtn.disabled = true;
         return;

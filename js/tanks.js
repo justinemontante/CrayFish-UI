@@ -1,22 +1,20 @@
-// TANK 3: GROW-OUT — REDESIGNED
 const GROWOUT_CYCLE_DAYS = 7;
 const GROWOUT_FEED_PCT = 0.03;
 
 let growoutData = {
-    initialStock: 68,
-    mortalityHistory: [
-        { date: '2026-04-28', count: 2 },
-        { date: '2026-05-02', count: 3 }
-    ],
-    stockingDate: '2026-04-15',
-    lastSamplingDate: '2026-05-01',
-    samplingHistory: [
-        { date: '2026-04-22', samples: 7, totalWeight: 245, abw: 35.0 },
-        { date: '2026-05-01', samples: 8, totalWeight: 320, abw: 40.0 }
-    ]
+    initialStock: 0,
+    stockingDate: null,
+    mortalityHistory: [],
+    lastSamplingDate: null,
+    samplingHistory: [],
+    initialEdits: []
 };
 
 function saveGrowout() {}
+
+function isSetupComplete() {
+    return growoutData.initialStock > 0 && growoutData.stockingDate != null;
+}
 
 function getTotalMortality() {
     return growoutData.mortalityHistory.reduce((sum, entry) => sum + entry.count, 0);
@@ -31,12 +29,11 @@ function getDaysInCulture() {
     return Math.max(Math.floor((now - stock) / 86400000), 0);
 }
 
-// Auto-update days in culture daily
 setInterval(() => {
     const days = getDaysInCulture();
     const daysEl = document.getElementById('go-days-culture');
     if (daysEl) daysEl.textContent = days + ' day' + (days !== 1 ? 's' : '');
-}, 60000); // Check every minute
+}, 60000);
 
 function getDaysUntilSampling() {
     if (!growoutData.lastSamplingDate) return GROWOUT_CYCLE_DAYS;
@@ -62,27 +59,64 @@ function getGrowthStage(abw) {
     return { name: 'Harvest-ready', index: 3, pct: 100 };
 }
 
-/* ═══════════════════════════════════════════
-   RENDERING
-  ═══════════════════════════════════════════ */
+function renderWarningBanner() {
+    const banner = document.getElementById('go-warning-banner');
+    const text = document.getElementById('go-warning-text');
+    const survival = getSurvivalRate();
+    const live = getLiveCount();
+    const totalMort = getTotalMortality();
+
+    if (survival < 85 && survival > 0) {
+        banner.classList.remove('hidden');
+        if (survival < 70) {
+            text.textContent = `Critical: Only ${survival.toFixed(1)}% survival (${totalMort} lost). Check water quality immediately.`;
+            banner.className = 'growout-warning-banner critical';
+        } else {
+            text.textContent = `Warning: ${survival.toFixed(1)}% survival — ${totalMort} crayfish lost. Monitor tank conditions.`;
+            banner.className = 'growout-warning-banner warning';
+        }
+    } else {
+        banner.classList.add('hidden');
+    }
+}
+
 function renderGrowout() {
+    const isEmpty = !isSetupComplete();
+    document.getElementById('go-empty-state').classList.toggle('hidden', !isEmpty);
+    document.getElementById('go-donut-stats').classList.toggle('hidden', isEmpty);
+    document.getElementById('go-dashboard').classList.toggle('hidden', isEmpty);
+    if (isEmpty) return;
+
     const live = getLiveCount();
     const survival = getSurvivalRate();
     const days = getDaysInCulture();
-    
+
     document.getElementById('go-survival-pct').textContent = survival.toFixed(1) + '%';
     document.getElementById('go-live-count').textContent = live;
     document.getElementById('go-mortality').textContent = getTotalMortality();
     document.getElementById('go-initial-stock').textContent = growoutData.initialStock;
-    
-    // Update donut - circumference = 2 * PI * r = 2 * 3.1416 * 50 = 314.16
-    const circumference = 2 * Math.PI * 50;
+
+    const lastEditedRow = document.getElementById('go-last-edited-row');
+    const lastEditedEl = document.getElementById('go-last-edited');
+    const edits = growoutData.initialEdits;
+    if (edits.length > 0) {
+        const last = edits[edits.length - 1];
+        const d = new Date(last.date + 'T' + last.time);
+        const formatted = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ', ' +
+            d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        lastEditedEl.textContent = formatted + (last.reason ? ' · ' + last.reason : '');
+        lastEditedRow.classList.remove('hidden');
+    } else {
+        lastEditedRow.classList.add('hidden');
+    }
+
+    const circumference = 2 * Math.PI * 52;
     const offset = circumference - (survival / 100) * circumference;
     const fillEl = document.getElementById('go-donut-fill');
     fillEl.style.strokeDashoffset = offset;
     const donutColor = survival >= 95 ? '#52c283' : survival >= 85 ? '#f59e0b' : '#E63946';
     fillEl.setAttribute('stroke', donutColor);
-    
+
     const pctEl = document.getElementById('go-survival-pct');
     pctEl.style.color = donutColor;
 
@@ -105,6 +139,7 @@ function renderGrowout() {
         dateEl.textContent = 'Not set';
     }
 
+    renderWarningBanner();
     renderStepTracker();
     renderGrowthStage();
     renderSparklines();
@@ -112,9 +147,6 @@ function renderGrowout() {
     renderGrowoutHistory();
 }
 
-/* ═══════════════════════════════════════════
-   STEP TRACKER
-  ═══════════════════════════════════════════ */
 function renderStepTracker() {
     const daysLeft = getDaysUntilSampling();
     const countdownEl = document.getElementById('go-sampling-countdown');
@@ -157,9 +189,6 @@ function renderStepTracker() {
     });
 }
 
-/* ═══════════════════════════════════════════
-   GROWTH STAGE
-  ═══════════════════════════════════════════ */
 function renderGrowthStage() {
     const history = growoutData.samplingHistory;
     const stageEl = document.getElementById('go-growth-stage');
@@ -185,9 +214,6 @@ function renderGrowthStage() {
     markers.forEach((m, i) => m.classList.toggle('active', i <= stage.index));
 }
 
-/* ═══════════════════════════════════════════
-   SPARKLINES
-  ═══════════════════════════════════════════ */
 let sparkAbwChart = null;
 let sparkPopChart = null;
 
@@ -279,9 +305,6 @@ function renderSparklines() {
     });
 }
 
-/* ═══════════════════════════════════════════
-   AI INSIGHTS
-  ═══════════════════════════════════════════ */
 function renderAIInsights() {
     const list = document.getElementById('go-insights-list');
     const history = growoutData.samplingHistory;
@@ -315,11 +338,11 @@ function renderAIInsights() {
     }
 
     if (survival >= 95) {
-        insights.push({ type: 'good', icon: 'bi-shield-check', title: 'Excellent Survival', desc: `${survival.toFixed(1)}% survival rate — Health management optimal. Your crayfish are thriving!` });
+        insights.push({ type: 'good', icon: 'bi-shield-check', title: 'Excellent Survival', desc: `${survival.toFixed(1)}% survival rate — Health management optimal.` });
     } else if (survival >= 85) {
-        insights.push({ type: 'warning', icon: 'bi-shield-exclamation', title: 'Moderate Mortality', desc: `${survival.toFixed(1)}% survival. ${getTotalMortality()} crayfish lost. Check water quality parameters soon.` });
+        insights.push({ type: 'warning', icon: 'bi-shield-exclamation', title: 'Moderate Mortality', desc: `${survival.toFixed(1)}% survival. ${getTotalMortality()} crayfish lost. Check water quality soon.` });
     } else {
-        insights.push({ type: 'critical', icon: 'bi-shield-x', title: 'High Mortality', desc: `Only ${survival.toFixed(1)}% survival! ${getTotalMortality()} lost. Urgent water check needed — act now.` });
+        insights.push({ type: 'critical', icon: 'bi-shield-x', title: 'High Mortality', desc: `Only ${survival.toFixed(1)}% survival! ${getTotalMortality()} lost. Urgent water check needed.` });
     }
 
     if (last.abw >= 50 && last.abw < 60) {
@@ -345,9 +368,6 @@ function renderAIInsights() {
     `).join('');
 }
 
-/* ═══════════════════════════════════════════
-   HISTORY
-  ═══════════════════════════════════════════ */
 function renderGrowoutHistory() {
     const section = document.getElementById('go-history-section');
     const list = document.getElementById('go-history-list');
@@ -375,12 +395,8 @@ function renderGrowoutHistory() {
     }).join('');
 }
 
-/* ═══════════════════════════════════════════
-   INIT ON DOM READY
-  ═══════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Tab switching
     document.querySelectorAll('.growout-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.growout-tab-btn').forEach(b => b.classList.remove('active'));
@@ -390,114 +406,152 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // View full analytics
     document.getElementById('go-full-analytics-btn').addEventListener('click', () => {
         window.showNavSection('analytics');
     });
 
-    // Stock date modal
-    const stockDateOverlay = document.getElementById('stock-date-overlay');
-    const stockDateModal   = document.getElementById('stock-date-modal');
+    // Setup Modal
+    const setupOverlay = document.getElementById('setup-overlay');
+    const setupModal = document.getElementById('setup-modal');
 
-    function openStockDateModal() {
-        const input = document.getElementById('stock-date-input');
-        input.value = growoutData.stockingDate || new Date().toISOString().split('T')[0];
-        stockDateOverlay.classList.add('show');
-        stockDateModal.classList.add('show');
+    function openSetupModal() {
+        document.getElementById('setup-stock-input').value = '';
+        document.getElementById('setup-date-input').value = new Date().toISOString().split('T')[0];
+        setupOverlay.classList.add('show');
+        setupModal.classList.add('show');
+        setTimeout(() => document.getElementById('setup-stock-input').focus(), 100);
     }
 
-    document.getElementById('stock-date-confirm').addEventListener('click', () => {
-        const val = document.getElementById('stock-date-input').value;
-        if (val) {
-            growoutData.stockingDate = val;
-            saveGrowout();
-            renderGrowout();
+    document.getElementById('go-setup-btn').addEventListener('click', openSetupModal);
+
+    document.getElementById('setup-confirm').addEventListener('click', () => {
+        const stock = parseInt(document.getElementById('setup-stock-input').value);
+        const date = document.getElementById('setup-date-input').value;
+        if (!stock || stock <= 0 || !date) return;
+        growoutData.initialStock = stock;
+        growoutData.stockingDate = date;
+        saveGrowout();
+        setupOverlay.classList.remove('show');
+        setupModal.classList.remove('show');
+        renderGrowout();
+    });
+
+    document.getElementById('setup-cancel').addEventListener('click', () => {
+        setupOverlay.classList.remove('show');
+        setupModal.classList.remove('show');
+    });
+
+    setupOverlay.addEventListener('click', (e) => {
+        if (e.target === setupOverlay) {
+            setupOverlay.classList.remove('show');
+            setupModal.classList.remove('show');
         }
-        stockDateOverlay.classList.remove('show');
-        stockDateModal.classList.remove('show');
     });
 
-    document.getElementById('stock-date-cancel').addEventListener('click', () => {
-        stockDateOverlay.classList.remove('show');
-        stockDateModal.classList.remove('show');
+    // Edit initial stock modal
+    const editInitialOverlay = document.getElementById('edit-initial-overlay');
+    const editInitialModal = document.getElementById('edit-initial-modal');
+
+    document.getElementById('go-edit-initial-btn').addEventListener('click', () => {
+        if (!isSetupComplete()) return;
+        document.getElementById('edit-initial-current-display').textContent = growoutData.initialStock;
+        document.getElementById('edit-initial-input').value = growoutData.initialStock;
+        document.getElementById('edit-initial-reason').value = '';
+        document.getElementById('edit-initial-new-live').textContent = getLiveCount();
+        document.getElementById('edit-initial-mort-display').textContent = getTotalMortality();
+        editInitialOverlay.classList.add('show');
+        editInitialModal.classList.add('show');
+        setTimeout(() => document.getElementById('edit-initial-input').focus(), 100);
     });
 
-    stockDateOverlay.addEventListener('click', (e) => {
-        if (e.target === stockDateOverlay) {
-            stockDateOverlay.classList.remove('show');
-            stockDateModal.classList.remove('show');
+    document.getElementById('edit-initial-input').addEventListener('input', () => {
+        const newStock = parseInt(document.getElementById('edit-initial-input').value);
+        const mortality = getTotalMortality();
+        if (newStock > 0) {
+            document.getElementById('edit-initial-new-live').textContent = Math.max(newStock - mortality, 0);
+        } else {
+            document.getElementById('edit-initial-new-live').textContent = getLiveCount();
         }
     });
 
-    if (!growoutData.stockingDate) {
-        setTimeout(openStockDateModal, 800);
-    }
+    document.getElementById('edit-initial-save').addEventListener('click', () => {
+        const newStock = parseInt(document.getElementById('edit-initial-input').value);
+        if (!newStock || newStock <= 0) return;
+        const reason = document.getElementById('edit-initial-reason').value.trim();
+        const now = new Date();
+        growoutData.initialEdits.push({
+            from: growoutData.initialStock,
+            to: newStock,
+            date: now.toISOString().split('T')[0],
+            time: now.toTimeString().split(' ')[0],
+            reason: reason || ''
+        });
+        growoutData.initialStock = newStock;
+        saveGrowout();
+        editInitialOverlay.classList.remove('show');
+        editInitialModal.classList.remove('show');
+        renderGrowout();
+    });
 
-    // Click on date display to change it
+    document.getElementById('edit-initial-cancel').addEventListener('click', () => {
+        editInitialOverlay.classList.remove('show');
+        editInitialModal.classList.remove('show');
+    });
+
+    editInitialOverlay.addEventListener('click', (e) => {
+        if (e.target === editInitialOverlay) {
+            editInitialOverlay.classList.remove('show');
+            editInitialModal.classList.remove('show');
+        }
+    });
+
+    // Stocking date click to edit
     const stockDateDisplay = document.getElementById('go-stock-date-display');
     if (stockDateDisplay) {
-        stockDateDisplay.addEventListener('click', openStockDateModal);
+        stockDateDisplay.addEventListener('click', () => {
+            if (!isSetupComplete()) return;
+            const input = document.createElement('input');
+            input.type = 'date';
+            input.value = growoutData.stockingDate || new Date().toISOString().split('T')[0];
+            input.style.cssText = 'border:1px solid rgba(31,165,165,0.3);border-radius:8px;padding:4px 8px;font-size:11px;font-family:Poppins,sans-serif;width:auto';
+            stockDateDisplay.textContent = '';
+            stockDateDisplay.appendChild(input);
+            input.focus();
+            input.addEventListener('blur', () => {
+                if (input.value) {
+                    growoutData.stockingDate = input.value;
+                    saveGrowout();
+                    renderGrowout();
+                }
+            });
+            input.addEventListener('change', () => {
+                if (input.value) {
+                    growoutData.stockingDate = input.value;
+                    saveGrowout();
+                    renderGrowout();
+                }
+            });
+        });
         stockDateDisplay.style.cursor = 'pointer';
     }
 
-    // Initial stock modal
-    const initialStockOverlay = document.getElementById('initial-stock-overlay');
-    const initialStockModal   = document.getElementById('initial-stock-modal');
-
-    function openInitialStockModal() {
-        const input = document.getElementById('initial-stock-input');
-        input.value = growoutData.initialStock > 0 ? growoutData.initialStock : '';
-        initialStockOverlay.classList.add('show');
-        initialStockModal.classList.add('show');
-        setTimeout(() => input.focus(), 100);
-    }
-
-    const setInitialStockBtn = document.getElementById('go-set-initial-stock');
-    if (setInitialStockBtn) {
-        setInitialStockBtn.addEventListener('click', openInitialStockModal);
-    }
-
-    document.getElementById('initial-stock-confirm').addEventListener('click', () => {
-        const val = parseInt(document.getElementById('initial-stock-input').value);
-        if (!val || val <= 0) {
-            return;
-        }
-        growoutData.initialStock = val;
-        saveGrowout();
-        renderGrowout();
-        initialStockOverlay.classList.remove('show');
-        initialStockModal.classList.remove('show');
-    });
-
-    document.getElementById('initial-stock-cancel').addEventListener('click', () => {
-        initialStockOverlay.classList.remove('show');
-        initialStockModal.classList.remove('show');
-    });
-
-    initialStockOverlay.addEventListener('click', (e) => {
-        if (e.target === initialStockOverlay) {
-            initialStockOverlay.classList.remove('show');
-            initialStockModal.classList.remove('show');
-        }
-    });
-
     // Mortality modal
     const goMortOverlay = document.getElementById('mortality-overlay');
-    const goMortModal   = document.getElementById('mortality-modal');
+    const goMortModal = document.getElementById('mortality-modal');
     let goMortVal = 1;
 
     function updateMortInput(val) {
         const live = getLiveCount();
-        // No negative or zero, max is current count
         goMortVal = Math.max(1, Math.min(Math.max(1, val), live));
         document.getElementById('mort-number-input').value = goMortVal;
         document.getElementById('mort-max-hint').textContent = live;
         document.getElementById('mort-live-hint').textContent = live;
     }
 
-    document.getElementById('go-log-mortality').addEventListener('click', () => {
+    document.getElementById('go-action-mortality').addEventListener('click', () => {
         if (getLiveCount() <= 0) return;
         updateMortInput(1);
+        document.getElementById('mort-notes-input').value = '';
         goMortOverlay.classList.add('show');
         goMortModal.classList.add('show');
     });
@@ -508,7 +562,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('mort-confirm').addEventListener('click', () => {
         const today = new Date().toISOString().split('T')[0];
-        growoutData.mortalityHistory.push({ date: today, count: goMortVal });
+        const notes = document.getElementById('mort-notes-input').value.trim();
+        growoutData.mortalityHistory.push({ date: today, count: goMortVal, notes: notes || '' });
         saveGrowout();
         goMortOverlay.classList.remove('show');
         goMortModal.classList.remove('show');
@@ -529,7 +584,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mortality log sheet
     const mortLogOverlay = document.getElementById('mort-log-overlay');
-    const mortLogSheet   = document.getElementById('mort-log-sheet');
+    const mortLogSheet = document.getElementById('mort-log-sheet');
 
     function openMortLogSheet() {
         const total = getTotalMortality();
@@ -547,7 +602,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="mort-log-item-date">${d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                         <span class="mort-log-item-day">${dayNames[d.getDay()]}</span>
                     </div>
-                    <span class="mort-log-item-count">−${entry.count}</span>
+                    <div class="mort-log-item-right">
+                        <span class="mort-log-item-count">−${entry.count}</span>
+                        ${entry.notes ? `<span class="mort-log-item-notes">${entry.notes}</span>` : ''}
+                    </div>
                 </div>`;
             }).join('');
         }
@@ -555,7 +613,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mortLogSheet.classList.add('show');
     }
 
-    document.getElementById('go-view-mort-log').addEventListener('click', openMortLogSheet);
+    document.getElementById('go-action-logs').addEventListener('click', openMortLogSheet);
 
     document.getElementById('mort-log-close').addEventListener('click', () => {
         mortLogOverlay.classList.remove('show');
@@ -599,8 +657,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('go-sample-weight').value = '';
 
         renderGrowout();
-        
-        // Update AI recommendation in feeder
+
         if (window.renderFeederRecommendation) {
             window.renderFeederRecommendation();
         }
@@ -609,221 +666,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderGrowout();
 });
 
-// Expose functions globally for controls.js
 window.growoutData = growoutData;
 window.getLiveCount = getLiveCount;
 window.getTotalMortality = getTotalMortality;
 window.getDaysInCulture = getDaysInCulture;
-
-// ═════════════════════════════════════════
-//   FORCE RESET - PASSWORD + OTP
-// ═════════════════════════════════════════
-
-let resetOTP = null;
-let resetOTPIssuedAt = null;
-
-// Generate 6-digit OTP
-function generateOTP() {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-// Simulate sending OTP to email (in real app, this would call backend)
-function sendOTPToEmail() {
-    resetOTP = generateOTP();
-    resetOTPIssuedAt = Date.now();
-    console.log('OTP sent to email:', resetOTP); // For demo/debug
-    alert(`OTP (demo): ${resetOTP}`); // Show OTP for demo
-    return resetOTP;
-}
-
-// Verify user's password
-function verifyPassword(inputPassword) {
-    let userPassword = 'admin123';
-    return inputPassword === userPassword;
-}
-
-// Show Password Modal
-function showResetPasswordModal() {
-    document.getElementById('reset-password-overlay').classList.add('show');
-    document.getElementById('reset-password-modal').classList.add('show');
-    document.getElementById('reset-password-input').value = '';
-    document.getElementById('reset-password-error').textContent = '';
-    document.getElementById('reset-password-input').focus();
-}
-
-// Hide Password Modal
-function hideResetPasswordModal() {
-    document.getElementById('reset-password-overlay').classList.remove('show');
-    document.getElementById('reset-password-modal').classList.remove('show');
-}
-
-// Show OTP Modal
-function showResetOtpModal() {
-    hideResetPasswordModal();
-    sendOTPToEmail(); // "Send" OTP
-    document.getElementById('reset-otp-overlay').classList.add('show');
-    document.getElementById('reset-otp-modal').classList.add('show');
-    const otpInputs = document.querySelectorAll('#reset-otp-container .otp-input');
-    otpInputs.forEach(input => {
-        input.value = '';
-    });
-    if (otpInputs[0]) otpInputs[0].focus();
-    document.getElementById('reset-otp-error').textContent = '';
-}
-
-// Hide OTP Modal
-function hideResetOtpModal() {
-    document.getElementById('reset-otp-overlay').classList.remove('show');
-    document.getElementById('reset-otp-modal').classList.remove('show');
-}
-
-// Show Selective Reset Modal
-function showResetSelectModal() {
-    hideResetOtpModal();
-    document.getElementById('reset-select-overlay').classList.add('show');
-    document.getElementById('reset-select-modal').classList.add('show');
-    document.getElementById('reset-select-error').textContent = '';
-    // Uncheck all by default
-    ['reset-initial-stock', 'reset-mortality', 'reset-stocking-date', 'reset-sampling', 'reset-all'].forEach(id => {
-        document.getElementById(id).checked = false;
-    });
-}
-
-// Hide Selective Reset Modal
-function hideResetSelectModal() {
-    document.getElementById('reset-select-overlay').classList.remove('show');
-    document.getElementById('reset-select-modal').classList.remove('show');
-}
-
-// Perform selective reset
-function performSelectiveReset() {
-    growoutData.initialStock = 0;
-    growoutData.stockingDate = null;
-    growoutData.mortalityHistory = [];
-    growoutData.samplingHistory = [];
-    growoutData.lastSamplingDate = null;
-    
-    saveGrowout();
-    renderGrowout();
-    
-    alert('All data has been reset.');
-    
-    if (window.renderFeederRecommendation) {
-        window.renderFeederRecommendation();
-    }
-}
-
-// Initialize Force Reset functionality
-function initForceReset() {
-    // Force Reset button
-    const forceResetBtn = document.getElementById('go-force-reset-btn');
-    if (forceResetBtn) {
-        forceResetBtn.addEventListener('click', () => {
-            showResetPasswordModal();
-        });
-    }
-    
-    // Password Modal - Confirm
-    const passwordConfirm = document.getElementById('reset-password-confirm');
-    if (passwordConfirm) {
-        passwordConfirm.addEventListener('click', () => {
-            const password = document.getElementById('reset-password-input').value;
-            if (!password) {
-                document.getElementById('reset-password-error').textContent = 'Please enter your password.';
-                return;
-            }
-            if (!verifyPassword(password)) {
-                document.getElementById('reset-password-error').textContent = 'Incorrect password.';
-                return;
-            }
-            showResetOtpModal();
-        });
-    }
-    
-    // Password Modal - Cancel
-    const passwordCancel = document.getElementById('reset-password-cancel');
-    if (passwordCancel) {
-        passwordCancel.addEventListener('click', hideResetPasswordModal);
-    }
-    
-    // OTP Modal - Confirm
-    const otpConfirm = document.getElementById('reset-otp-confirm');
-    if (otpConfirm) {
-        otpConfirm.addEventListener('click', () => {
-            const otpInputs = document.querySelectorAll('#reset-otp-container .otp-input');
-            const enteredOTP = Array.from(otpInputs).map(input => input.value).join('');
-            
-            if (enteredOTP.length < 6) {
-                document.getElementById('reset-otp-error').textContent = 'Please enter the complete 6-digit OTP.';
-                return;
-            }
-            
-            // Check if OTP is expired (5 minutes)
-            if (resetOTPIssuedAt && (Date.now() - resetOTPIssuedAt) > 300000) {
-                document.getElementById('reset-otp-error').textContent = 'OTP has expired. Please request a new one.';
-                return;
-            }
-            
-            if (enteredOTP !== resetOTP) {
-                document.getElementById('reset-otp-error').textContent = 'Incorrect OTP.';
-                return;
-            }
-            
-            showResetSelectModal();
-        });
-    }
-    
-    // OTP Modal - Cancel
-    const otpCancel = document.getElementById('reset-otp-cancel');
-    if (otpCancel) {
-        otpCancel.addEventListener('click', hideResetOtpModal);
-    }
-    
-    // OTP Input auto-tab
-    const otpContainer = document.getElementById('reset-otp-container');
-    if (otpContainer) {
-        otpContainer.addEventListener('input', (e) => {
-            if (e.target.classList.contains('otp-input')) {
-                const val = e.target.value.replace(/[^0-9]/g, '');
-                e.target.value = val;
-                if (val && e.target.nextElementSibling && e.target.nextElementSibling.classList.contains('otp-input')) {
-                    e.target.nextElementSibling.focus();
-                }
-            }
-        });
-        
-        otpContainer.addEventListener('keydown', (e) => {
-            if (e.target.classList.contains('otp-input')) {
-                if (e.key === 'Backspace' && !e.target.value && e.target.previousElementSibling) {
-                    e.target.previousElementSibling.focus();
-                }
-            }
-        });
-    }
-    
-    // Selective Reset Modal - Confirm
-    const selectConfirm = document.getElementById('reset-select-confirm');
-    if (selectConfirm) {
-        selectConfirm.addEventListener('click', performSelectiveReset);
-    }
-    
-    // Selective Reset Modal - Cancel
-    const selectCancel = document.getElementById('reset-select-cancel');
-    if (selectCancel) {
-        selectCancel.addEventListener('click', hideResetSelectModal);
-    }
-    
-    // "Reset All" checkbox logic
-    const resetAllCheckbox = document.getElementById('reset-all');
-    if (resetAllCheckbox) {
-        resetAllCheckbox.addEventListener('change', () => {
-            const checkboxes = ['reset-initial-stock', 'reset-mortality', 'reset-stocking-date', 'reset-sampling'];
-            checkboxes.forEach(id => {
-                document.getElementById(id).checked = resetAllCheckbox.checked;
-            });
-        });
-    }
-}
-
-// Run on load
-setTimeout(initForceReset, 500);

@@ -678,8 +678,7 @@
               <div class="chart-modal-body">
                 <canvas id="chart-modal-canvas"></canvas>
               </div>
-            </div>
-          </section>
+            </section>
 
           <section id="tanks" class="nav-section hidden">
 
@@ -708,66 +707,114 @@
 
               <!-- TAB 1: INVENTORY -->
               <div class="growout-tab-content active" id="tab-inventory">
-                <!-- DONUT HERO -->
-                <div class="growout-donut-card">
-                  <div class="growout-donut-wrap">
-                    <svg viewBox="0 0 120 120" class="growout-donut-svg">
-                      <circle class="donut-bg" cx="60" cy="60" r="50" fill="none" stroke="rgba(11,60,73,0.08)" stroke-width="12" />
-                      <circle class="donut-fill" id="go-donut-fill" cx="60" cy="60" r="50" fill="none" stroke="#52c283" stroke-width="12" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16" transform="rotate(-90 60 60)" />
-                    </svg>
-                    <div class="growout-donut-center">
-                      <span class="donut-pct" id="go-survival-pct">0.0%</span>
-                      <span class="donut-label">Survival</span>
-                    </div>
-                  </div>
-                    <div class="growout-donut-stats">
-                      <div class="donut-stat">
-                        <span class="donut-stat-val" id="go-live-count">68</span>
-                        <span class="donut-stat-label">Current</span>
-                      </div>
-                      <div class="donut-stat">
-                        <span class="donut-stat-val" id="go-mortality">0</span>
-                        <span class="donut-stat-label">Mortality</span>
-                      </div>
-                      <div class="donut-stat">
-                        <span class="donut-stat-val" id="go-initial-stock">68</span>
-                        <span class="donut-stat-label">Initial</span>
-                      </div>
-                    </div>
+
+                <!-- WARNING BANNER -->
+                <div class="growout-warning-banner hidden" id="go-warning-banner">
+                  <i class="bi bi-exclamation-triangle-fill"></i>
+                  <span id="go-warning-text"></span>
                 </div>
 
-                <!-- LOG MORTALITY BUTTON -->
-                <button class="growout-log-mortality-btn" id="go-log-mortality">
-                  <i class="bi bi-heart-broken"></i> Log Mortality
-                </button>
-
-                <!-- SET INITIAL STOCK BUTTON -->
-                <button class="growout-inv-pill-btn primary" id="go-set-initial-stock">
-                  <i class="bi bi-plus-circle-fill"></i> Set Initial Stock
-                </button>
-
-                <!-- VIEW LOG BUTTON -->
-                <button class="growout-inv-pill-btn outline" id="go-view-mort-log">
-                  <i class="bi bi-journal-text"></i> View Log
-                </button>
-
-                <!-- FORCE RESET BUTTON -->
-                <button class="growout-inv-pill-btn danger" id="go-force-reset-btn">
-                  <i class="bi bi-exclamation-triangle"></i> Force Reset
-                </button>
-
-                <!-- STOCKING INFO (Text only, NO buttons) -->
-                <div class="growout-inv-info">
-                  <div class="inv-info-row">
-                    <span class="inv-info-label">Stocking Date</span>
-                    <span class="inv-info-val" id="go-stock-date-display">May 6, 2026</span>
+                <!-- OVERVIEW HEADER -->
+                <div class="tank-overview-header">
+                  <div class="tank-overview-icon">
+                    <i class="bi bi-box-seam"></i>
                   </div>
-                  <div class="inv-info-row">
-                    <span class="inv-info-label">Days in Culture</span>
-                    <span class="inv-info-val highlight" id="go-days-culture">0 days</span>
+                  <div>
+                    <h2 class="tank-overview-title">Grow-out Overview</h2>
+                    <p class="tank-overview-sub">Real-time crayfish monitoring</p>
                   </div>
                 </div>
-              </div>
+
+                <!-- SURVIVAL CARD (donut + stats) -->
+                <div class="tank-survival-card" id="go-donut-card">
+                  <div class="survival-glow"></div>
+                  <div class="survival-bubble survival-bubble-1"></div>
+                  <div class="survival-bubble survival-bubble-2"></div>
+                  <div class="survival-bubble survival-bubble-3"></div>
+
+                  <!-- DONUT + STATS (hidden when no setup) -->
+                  <div id="go-donut-stats">
+                    <div class="survival-ring-wrap">
+                      <svg viewBox="0 0 130 130" class="survival-ring-svg">
+                        <defs>
+                          <filter id="ringGlow">
+                            <feGaussianBlur stdDeviation="4" result="blur" />
+                            <feMerge>
+                              <feMergeNode in="blur" />
+                              <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                          </filter>
+                        </defs>
+                        <circle cx="65" cy="65" r="52" fill="none" stroke="rgba(31,165,165,0.08)" stroke-width="14" />
+                        <circle class="survival-ring-fill" id="go-donut-fill" cx="65" cy="65" r="52" fill="none" stroke="#52c283" stroke-width="14" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="326.73" transform="rotate(-90 65 65)" />
+                      </svg>
+                      <div class="survival-ring-center">
+                        <span class="survival-pct" id="go-survival-pct">0.0%</span>
+                        <span class="survival-label">Survival</span>
+                      </div>
+                    </div>
+
+                    <!-- STATS ROW -->
+                    <div class="tank-survival-stats">
+                      <div class="tank-survival-stat">
+                        <span class="tank-survival-val" id="go-initial-stock">0</span>
+                        <span class="tank-survival-label">Initial</span>
+                      </div>
+                      <div class="tank-survival-divider"></div>
+                      <div class="tank-survival-stat">
+                        <span class="tank-survival-val" id="go-mortality">0</span>
+                        <span class="tank-survival-label">Mortality</span>
+                      </div>
+                      <div class="tank-survival-divider"></div>
+                      <div class="tank-survival-stat">
+                        <span class="tank-survival-val" id="go-live-count">0</span>
+                        <span class="tank-survival-label">Current</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- EMPTY STATE (shown when no setup) -->
+                  <div class="growout-empty-state" id="go-empty-state">
+                    <h3 class="growout-empty-title">No Grow-Out Setup Yet</h3>
+                    <p class="growout-empty-desc">Set up your grow-out to start tracking population, survival, and growth performance.</p>
+                    <button class="growout-setup-btn" id="go-setup-btn">
+                      <i class="bi bi-plus-circle-fill"></i> Initialize Grow-Out Setup
+                    </button>
+                  </div>
+
+                </div>
+
+                <!-- DASHBOARD CONTROLS (hidden when no setup) -->
+                <div id="go-dashboard" class="hidden">
+                  <div class="tank-action-row">
+                    <button class="tank-action-btn tank-action-red" id="go-action-mortality">
+                      <i class="bi bi-heart-broken"></i> Log Mortality
+                    </button>
+                    <button class="tank-action-btn tank-action-aqua" id="go-edit-initial-btn">
+                      <i class="bi bi-pencil-square"></i> Edit Stock
+                    </button>
+                    <button class="tank-action-btn tank-action-gray" id="go-action-logs">
+                      <i class="bi bi-journal-text"></i> View Logs
+                    </button>
+                  </div>
+
+                  <div class="tank-info-card">
+                    <div class="tank-info-row">
+                      <span class="tank-info-label"><i class="bi bi-calendar3"></i> Stocking Date</span>
+                      <span class="tank-info-val" id="go-stock-date-display">Not set</span>
+                    </div>
+                    <div class="tank-info-divider"></div>
+                    <div class="tank-info-row">
+                      <span class="tank-info-label"><i class="bi bi-clock-history"></i> Days in Culture</span>
+                      <span class="tank-info-val tank-info-highlight" id="go-days-culture">0 days</span>
+                    </div>
+                    <div class="tank-info-divider"></div>
+                    <div class="tank-info-row hidden" id="go-last-edited-row">
+                      <span class="tank-info-label"><i class="bi bi-pencil"></i> Last Edited</span>
+                      <span class="tank-info-val tank-info-muted" id="go-last-edited"></span>
+                    </div>
+                  </div>
+                </div>
 
               <!-- TAB 2: GROWTH & FEED -->
               <div class="growout-tab-content" id="tab-growth">
@@ -893,108 +940,95 @@
                   <div class="growout-history-list" id="go-history-list"></div>
                 </div>
               </div>
+
             </div>
 
-            <!-- STOCK DATE MODAL -->
-            <div class="stock-date-overlay" id="stock-date-overlay"></div>
-            <div class="stock-date-modal" id="stock-date-modal">
+            <!-- SETUP INITIALIZATION MODAL -->
+            <div class="stock-date-overlay" id="setup-overlay"></div>
+            <div class="stock-date-modal" id="setup-modal">
               <div class="legend-handle"></div>
-              <p class="mortality-title">Set Stocking Date</p>
-              <p class="mortality-sub">When did you stock the tank?</p>
-              <input type="date" class="growout-input" id="stock-date-input" style="margin-top:12px" />
-              <button class="compute-btn" id="stock-date-confirm" style="margin-top:12px">Confirm</button>
-              <button class="mortality-cancel" id="stock-date-cancel">Cancel</button>
+              <p class="mortality-title"><i class="bi bi-gear-fill" style="color:var(--primary-teal);margin-right:6px"></i>Initialize Grow-Out</p>
+              <p class="mortality-sub">Set your initial stock and stocking date</p>
+              <label class="modal-label">Initial Stock Count</label>
+              <input type="number" class="growout-input" id="setup-stock-input" placeholder="e.g. 100" min="1" />
+              <label class="modal-label">Stocking Date</label>
+              <input type="date" class="growout-input" id="setup-date-input" />
+              <button class="compute-btn" id="setup-confirm" style="margin-top:8px">Save Setup</button>
+              <button class="mortality-cancel" id="setup-cancel">Cancel</button>
             </div>
 
-            <!-- INITIAL STOCK MODAL -->
-            <div class="stock-date-overlay" id="initial-stock-overlay"></div>
-            <div class="stock-date-modal" id="initial-stock-modal">
+            <!-- EDIT INITIAL STOCK MODAL -->
+            <div class="stock-date-overlay" id="edit-initial-overlay"></div>
+            <div class="stock-date-modal" id="edit-initial-modal">
               <div class="legend-handle"></div>
-              <p class="mortality-title">Set Initial Stock</p>
-              <p class="mortality-sub">How many crayfish are in the tank?</p>
-              <input type="number" class="growout-input" id="initial-stock-input" style="margin-top:12px" placeholder="e.g. 100" min="0" />
-              <button class="compute-btn" id="initial-stock-confirm" style="margin-top:12px">Confirm</button>
-              <button class="mortality-cancel" id="initial-stock-cancel">Cancel</button>
+              <p class="mortality-title"><i class="bi bi-pencil-square" style="color:var(--primary-teal);margin-right:6px"></i>Edit Initial Stock</p>
+              <p class="mortality-sub">Update the initial stock count</p>
+
+              <div class="edit-initial-current">
+                <span class="edit-initial-current-label">Current Initial Stock</span>
+                <span class="edit-initial-current-val" id="edit-initial-current-display">0</span>
+              </div>
+
+              <div class="edit-initial-form-card">
+                <div class="edit-initial-field">
+                  <label class="modal-label">New Initial Stock</label>
+                  <input type="number" class="growout-input" id="edit-initial-input" placeholder="e.g. 70" min="1" />
+                </div>
+
+                <div class="edit-initial-preview" id="edit-initial-preview">
+                  <div class="preview-item">
+                    <span class="preview-label">New Current</span>
+                    <span class="preview-val" id="edit-initial-new-live">0</span>
+                  </div>
+                  <div class="preview-divider"></div>
+                  <div class="preview-item">
+                    <span class="preview-label">Mortality</span>
+                    <span class="preview-val muted" id="edit-initial-mort-display">0</span>
+                  </div>
+                </div>
+
+                <div class="edit-initial-field">
+                  <label class="modal-label">Reason <span class="modal-label-opt">(optional)</span></label>
+                  <input type="text" class="growout-input" id="edit-initial-reason" placeholder="e.g. counting mistake, restocked..." />
+                </div>
+              </div>
+
+              <button class="compute-btn" id="edit-initial-save" style="margin-top:8px">Save Changes</button>
+              <button class="mortality-cancel" id="edit-initial-cancel">Cancel</button>
             </div>
 
-            <!-- MORTALITY MODAL -->
+            <!-- MORTALITY MODAL (with notes) -->
             <div class="mortality-overlay" id="mortality-overlay"></div>
             <div class="mortality-modal" id="mortality-modal">
               <div class="legend-handle"></div>
-              <p class="mortality-title">Log Mortality</p>
-              <p class="mortality-sub">How many crayfish died?</p>
+              <p class="mortality-title"><i class="bi bi-heart-broken" style="color:#E63946;margin-right:6px"></i>Log Mortality</p>
+              <p class="mortality-sub">Record any crayfish deaths below</p>
               <div class="mort-input-section">
+                <label class="modal-label">Number of Deaths</label>
                 <div class="mort-counter-row">
                   <button class="mort-counter-btn" id="mort-dec"><i class="bi bi-dash-lg"></i></button>
                   <input type="number" class="mort-number-input" id="mort-number-input" value="1" min="1" inputmode="numeric" />
                   <button class="mort-counter-btn" id="mort-inc"><i class="bi bi-plus-lg"></i></button>
                 </div>
-                <p class="mort-hint">Max: <span id="mort-max-hint">100</span> | Live: <span id="mort-live-hint">100</span></p>
+                <p class="mort-hint">Max: <span id="mort-max-hint">100</span> &nbsp;·&nbsp; Live: <span id="mort-live-hint">100</span></p>
               </div>
-              <button class="compute-btn mort-confirm-btn" id="mort-confirm">Confirm</button>
+              <label class="modal-label">Notes <span class="modal-label-opt">(optional)</span></label>
+              <input type="text" class="growout-input" id="mort-notes-input" placeholder="e.g. suspected disease, water quality issue..." />
+              <button class="compute-btn danger mort-confirm-btn" id="mort-confirm" style="margin-top:4px">Confirm</button>
               <button class="mortality-cancel" id="mort-cancel">Cancel</button>
             </div>
 
             <!-- MORTALITY LOG SHEET -->
               <div class="mort-log-overlay" id="mort-log-overlay"></div>
-             <div class="mort-log-sheet" id="mort-log-sheet">
+              <div class="mort-log-sheet" id="mort-log-sheet">
                <div class="legend-handle"></div>
                <p class="mortality-title"><i class="bi bi-journal-text" style="color:#E63946"></i> Mortality Log</p>
-               <p class="mortality-sub" id="mort-log-summary">Total: 0 dead</p>
+               <p class="mort-log-summary" id="mort-log-summary">Total: 0 dead</p>
                <div class="mort-log-list" id="mort-log-list"></div>
                <button class="mortality-cancel" id="mort-log-close">Close</button>
              </div>
 
-             <!-- FORCE RESET MODALS -->
-             <!-- Password Modal -->
-             <div class="reset-overlay" id="reset-password-overlay"></div>
-             <div class="reset-modal" id="reset-password-modal">
-               <div class="legend-handle"></div>
-               <p class="reset-title"><i class="bi bi-shield-lock"></i> Enter Password</p>
-               <p class="reset-sub">Enter your current password to continue</p>
-               <input type="password" class="reset-input" id="reset-password-input" placeholder="Password" />
-               <div class="reset-error" id="reset-password-error"></div>
-               <button class="compute-btn" id="reset-password-confirm">Verify</button>
-               <button class="mortality-cancel" id="reset-password-cancel">Cancel</button>
-             </div>
-
-             <!-- OTP Modal -->
-             <div class="reset-overlay" id="reset-otp-overlay"></div>
-             <div class="reset-modal" id="reset-otp-modal">
-               <div class="legend-handle"></div>
-               <p class="reset-title"><i class="bi bi-envelope"></i> Enter OTP</p>
-               <p class="reset-sub">A 6-digit code was sent to your email</p>
-               <div class="otp-container" id="reset-otp-container">
-                 <input type="text" class="otp-input" maxlength="1" inputmode="numeric" />
-                 <input type="text" class="otp-input" maxlength="1" inputmode="numeric" />
-                 <input type="text" class="otp-input" maxlength="1" inputmode="numeric" />
-                 <input type="text" class="otp-input" maxlength="1" inputmode="numeric" />
-                 <input type="text" class="otp-input" maxlength="1" inputmode="numeric" />
-                 <input type="text" class="otp-input" maxlength="1" inputmode="numeric" />
-               </div>
-               <div class="reset-error" id="reset-otp-error"></div>
-               <button class="compute-btn" id="reset-otp-confirm">Verify OTP</button>
-               <button class="mortality-cancel" id="reset-otp-cancel">Cancel</button>
-             </div>
-
-             <!-- Selective Reset Modal -->
-             <div class="reset-overlay" id="reset-select-overlay"></div>
-             <div class="reset-modal" id="reset-select-modal">
-               <div class="legend-handle"></div>
-               <p class="reset-title"><i class="bi bi-exclamation-triangle"></i> Select Data to Reset</p>
-               <p class="reset-sub">Choose which data to force reset</p>
-               <div class="reset-options">
-                 <label class="reset-checkbox"><input type="checkbox" id="reset-initial-stock" /> Reset Initial Stock (set to 0)</label>
-                 <label class="reset-checkbox"><input type="checkbox" id="reset-mortality" /> Reset Mortality Log</label>
-                 <label class="reset-checkbox"><input type="checkbox" id="reset-stocking-date" /> Reset Stocking Date</label>
-                 <label class="reset-checkbox"><input type="checkbox" id="reset-sampling" /> Reset Sampling Data</label>
-                 <label class="reset-checkbox"><input type="checkbox" id="reset-all" /> <strong>Reset All</strong></label>
-               </div>
-               <div class="reset-error" id="reset-select-error"></div>
-               <button class="compute-btn danger" id="reset-select-confirm">Reset Selected Data</button>
-               <button class="mortality-cancel" id="reset-select-cancel">Cancel</button>
-             </div>
-           </section>
+            </section>
 
           <section id="controls" class="nav-section hidden">
 
