@@ -606,6 +606,10 @@ body {
 }
 
 .nav-section {
+    display: block;
+    min-height: 100%;
+}
+.nav-section.hidden {
     display: none;
 }
 

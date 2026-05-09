@@ -11,7 +11,7 @@
 #tanks.hidden { display: none; }
 
 .tank-panel { display: none; flex-direction: column; gap: 0; }
-.tank-panel.active { display: flex; }
+.tank-panel.active { display: flex; flex: 1; }
 
 .tank-panel-header {
     display: none;
@@ -39,7 +39,12 @@
 }
 
 .growout-tab-content { display: none; }
-.growout-tab-content.active { display: block; animation: tabFadeIn 0.25s ease; }
+.growout-tab-content.active { 
+    display: block; 
+    flex: 1;
+    overflow-y: auto;
+    animation: tabFadeIn 0.25s ease;
+}
 @keyframes tabFadeIn {
     from { opacity: 0; transform: translateY(6px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -834,3 +839,9 @@
 #setup-stock-input { margin-top: 0; }
 #setup-date-input { margin-top: 0; }
 
+.growout-compute-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}

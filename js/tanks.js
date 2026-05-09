@@ -627,6 +627,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // -- BAGONG CODE PARA SA BUTTON VALIDATION --
+    const weightInput = document.getElementById('go-sample-weight');
+    const countInput = document.getElementById('go-sample-count');
+    const computeBtn = document.getElementById('go-compute-btn');
+
+    function checkSamplingInputs() {
+        // Kunin ang value at gawing number
+        const w = parseFloat(weightInput.value);
+        const c = parseInt(countInput.value);
+        
+        // I-enable lang ang button KUNG parehong may laman at higit sa 0
+        if (w > 0 && c > 0) {
+            computeBtn.disabled = false;
+        } else {
+            computeBtn.disabled = true;
+        }
+    }
+
+    // Pakinggan kapag nagta-type ang user
+    if(weightInput && countInput) {
+        weightInput.addEventListener('input', checkSamplingInputs);
+        countInput.addEventListener('input', checkSamplingInputs);
+    }
+    
     // Sampling compute
     document.getElementById('go-compute-btn').addEventListener('click', () => {
         const weight = parseFloat(document.getElementById('go-sample-weight').value);
