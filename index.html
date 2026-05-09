@@ -943,6 +943,22 @@
                         <span class="tank-survival-label">Current</span>
                       </div>
                     </div>
+
+                    <!-- SAMPLING STATS ROW -->
+                    <div class="tank-sampling-stats hidden" id="go-sampling-stats">
+                      <div class="tank-stats-separator"></div>
+                      <div class="tank-sampling-inner">
+                        <div class="tank-survival-stat">
+                          <span class="tank-survival-val" id="go-avg-weight-display" style="font-size:15px">-- g</span>
+                          <span class="tank-survival-label">Avg Weight</span>
+                        </div>
+                        <div class="tank-survival-divider"></div>
+                        <div class="tank-survival-stat">
+                          <span class="tank-survival-val" id="go-avg-length-display" style="font-size:15px">-- cm</span>
+                          <span class="tank-survival-label">Avg Length</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   <!-- EMPTY STATE (shown when no setup) -->
@@ -972,10 +988,10 @@
                       class="tank-action-btn tank-action-aqua"
                       id="go-edit-initial-btn"
                     >
-                      <i class="bi bi-pencil-square"></i> Edit Stock
+                      <i class="bi bi-pencil-square"></i> Edit Setup
                     </button>
                     <button
-                      class="tank-action-btn tank-action-gray"
+                      class="tank-action-btn tank-action-amber"
                       id="go-action-logs"
                     >
                       <i class="bi bi-journal-text"></i> View Logs
@@ -998,7 +1014,7 @@
                         Culture</span
                       >
                       <span
-                        class="tank-info-val tank-info-highlight"
+                        class="tank-info-val"
                         id="go-days-culture"
                         >0 days</span
                       >
@@ -1019,142 +1035,139 @@
 
               <!-- TAB 2: GROWTH & FEED -->
               <div class="growout-tab-content" id="tab-growth">
-                <!-- WEEKLY SAMPLING STEP TRACKER -->
-                <div class="growout-step-card">
-                  <div class="growout-step-header">
-                    <span class="growout-step-label">Next Sampling</span>
-                    <span
-                      class="growout-step-countdown"
-                      id="go-sampling-countdown"
-                      >-- days left</span
-                    >
+
+                <!-- 1. NEXT SAMPLING PANEL -->
+                <div class="gf-panel gf-next-sampling" id="gf-next-sampling">
+                  <div class="gf-ns-top">
+                    <div class="gf-ns-left">
+                      <div class="gf-ns-icon-wrap">
+                        <i class="bi bi-calendar3"></i>
+                      </div>
+                    </div>
+                    <div class="gf-ns-center">
+                      <span class="gf-ns-countdown" id="gf-ns-countdown">-- days remaining</span>
+                      <span class="gf-ns-due-date" id="gf-ns-due-date">Due on --</span>
+                    </div>
+                    <div class="gf-ns-right">
+                      <span class="gf-week-text" id="gf-week-text">Week --</span>
+                    </div>
                   </div>
-                  <div class="growout-step-dots" id="go-step-dots">
-                    <div class="step-dot done"><span>1</span></div>
-                    <div class="step-dot done"><span>2</span></div>
-                    <div class="step-dot current"><span>3</span></div>
-                    <div class="step-dot"><span>4</span></div>
-                    <div class="step-dot"><span>5</span></div>
-                    <div class="step-dot"><span>6</span></div>
-                    <div class="step-dot"><span>7</span></div>
+                  <div class="gf-ns-divider"></div>
+                  <div class="gf-step-track" id="gf-step-track">
+                    <div class="gf-step-dots" id="gf-step-dots">
+                      <div class="gf-step-dot" data-day="1"><span>1</span></div>
+                      <div class="gf-step-dot" data-day="2"><span>2</span></div>
+                      <div class="gf-step-dot" data-day="3"><span>3</span></div>
+                      <div class="gf-step-dot" data-day="4"><span>4</span></div>
+                      <div class="gf-step-dot" data-day="5"><span>5</span></div>
+                      <div class="gf-step-dot" data-day="6"><span>6</span></div>
+                      <div class="gf-step-dot" data-day="7"><span>7</span></div>
+                    </div>
+                    <span class="gf-step-label">Day <span id="gf-current-day">1</span></span>
                   </div>
-                  <p class="growout-step-date" id="go-next-sampling-date">
-                    Set up sampling to begin
-                  </p>
                 </div>
 
-                <!-- COHESIVE SAMPLING CARD -->
-                <div
-                  class="growout-sampling-cohesive"
-                  id="go-sampling-cohesive"
-                >
-                  <div class="growout-sampling-prompt">
-                    <i class="bi bi-info-circle-fill"></i>
-                    <span id="go-sampling-prompt"
-                      >Target: Catch at least
-                      <strong id="go-suggested-samples">10</strong> random
-                      samples (10%). Actual count may vary.</span
-                    >
+                <!-- 2. GROWTH OVERVIEW PANEL -->
+                <div class="gf-panel gf-overview hidden" id="gf-overview">
+                  <div class="gf-panel-header">
+                    <span class="gf-panel-title"><i class="bi bi-graph-up-arrow"></i> Growth Overview</span>
+                    <span class="gf-panel-link">View Details <i class="bi bi-chevron-right"></i></span>
                   </div>
-                  <div class="growout-sampling-input-row">
-                    <label>Actual Samples Caught</label>
-                    <input
-                      type="number"
-                      inputmode="numeric"
-                      class="growout-input"
-                      id="go-sample-count"
-                      placeholder="e.g. 10"
-                      min="1"
-                    />
+                  <div class="gf-overview-cards">
+                    <div class="gf-mini-card">
+                      <div class="gf-mini-header gf-mini-init">
+                        <span class="gf-mini-label">Initial Baseline</span>
+                      </div>
+                      <span class="gf-mini-date" id="gf-init-date">--</span>
+                      <div class="gf-mini-row">
+                        <span class="gf-mini-meta">Avg Weight</span>
+                        <span class="gf-mini-val" id="gf-init-abw">-- g</span>
+                      </div>
+                      <div class="gf-mini-row">
+                        <span class="gf-mini-meta">Avg Length</span>
+                        <span class="gf-mini-val" id="gf-init-length">-- cm</span>
+                      </div>
+                    </div>
+                    <div class="gf-mini-card">
+                      <div class="gf-mini-header gf-mini-latest">
+                        <span class="gf-mini-label">Latest Sampling</span>
+                      </div>
+                      <span class="gf-mini-date" id="gf-latest-date">--</span>
+                      <div class="gf-mini-row">
+                        <span class="gf-mini-meta">Avg Weight</span>
+                        <span class="gf-mini-val" id="gf-latest-abw">-- g</span>
+                      </div>
+                      <div class="gf-mini-row">
+                        <span class="gf-mini-meta">Avg Length</span>
+                        <span class="gf-mini-val" id="gf-latest-length">-- cm</span>
+                      </div>
+                    </div>
+                    <div class="gf-mini-card">
+                      <div class="gf-mini-header gf-mini-growth">
+                        <span class="gf-mini-label"><i class="bi bi-arrow-up-circle"></i> Growth</span>
+                      </div>
+                      <span class="gf-mini-date">From Initial</span>
+                      <div class="gf-mini-row gf-mini-growth-row">
+                        <span class="gf-mini-meta">Weight</span>
+                        <span class="gf-mini-val gf-mini-green" id="gf-growth-abw">-- g</span>
+                      </div>
+                      <div class="gf-mini-row gf-mini-growth-row">
+                        <span class="gf-mini-meta">Length</span>
+                        <span class="gf-mini-val gf-mini-green" id="gf-growth-length">-- cm</span>
+                      </div>
+                    </div>
                   </div>
-                  <div class="growout-sampling-input-row">
-                    <label>Total Weight of Samples (g)</label>
-                    <input
-                      type="number"
-                      inputmode="numeric"
-                      class="growout-input"
-                      id="go-sample-weight"
-                      placeholder="e.g. 450"
-                      min="1"
-                    />
+                </div>
+
+                <!-- 3. WEEKLY SAMPLING PANEL -->
+                <div class="gf-panel gf-sampling-panel hidden" id="gf-sampling-panel">
+                  <div class="gf-panel-header">
+                    <div class="gf-panel-header-left">
+                      <span class="gf-panel-title"><i class="bi bi-clipboard-data"></i> Weekly Sampling</span>
+                      <span class="gf-panel-sub">Enter sample data to compute growth.</span>
+                    </div>
+                    <span class="gf-due-badge" id="gf-due-badge">DUE NOW</span>
                   </div>
-                  <button
-                    class="growout-compute-btn"
-                    id="go-compute-btn"
-                    disabled
-                  >
-                    <i class="bi bi-calculator-fill"></i> Compute
+                  <div class="gf-input-cards">
+                    <div class="gf-input-card">
+                      <label class="gf-input-label"><i class="bi bi-people"></i> Sample Count</label>
+                      <input type="number" class="gf-input" id="gf-sample-count" placeholder="e.g. 10" min="1" />
+                    </div>
+                    <div class="gf-input-card">
+                      <label class="gf-input-label"><i class="bi bi-speedometer2"></i> Total Weight (g)</label>
+                      <input type="number" class="gf-input" id="gf-sample-weight" placeholder="e.g. 150" min="1" step="0.1" />
+                    </div>
+                    <div class="gf-input-card">
+                      <label class="gf-input-label"><i class="bi bi-rulers"></i> Total Length (cm)</label>
+                      <input type="number" class="gf-input" id="gf-sample-length" placeholder="e.g. 60" min="1" step="0.1" />
+                    </div>
+                  </div>
+                  <button class="gf-compute-btn" id="gf-compute-btn" disabled>
+                    <i class="bi bi-calculator-fill"></i> Compute Results
                   </button>
-                  <div
-                    class="growout-sampling-warning hidden"
-                    id="go-sampling-warning"
-                  >
-                    <i class="bi bi-exclamation-triangle-fill"></i>
-                    <span
-                      >Premature sampling detected. Wait until next cycle to
-                      prevent handling stress.</span
-                    >
-                  </div>
-
-                  <!-- RESULTS INLINE (appears below compute) -->
-                  <div
-                    class="growout-results-inline hidden"
-                    id="go-results-inline"
-                  >
-                    <div class="results-arrow-divider">
-                      <i class="bi bi-chevron-double-down"></i>
+                  <div class="gf-growth-stage hidden" id="gf-form-growth-stage">
+                    <div class="gf-stage-bar-wrap">
+                      <span class="gf-stage-label">Growth Stage</span>
+                      <span class="gf-stage-name" id="gf-stage-name">--</span>
                     </div>
-                    <div class="growout-result-row-inline">
-                      <div class="growout-result-mini teal">
-                        <span class="result-mini-val" id="go-abw-val">--</span>
-                        <span class="result-mini-label">ABW</span>
-                        <span class="result-mini-unit">grams</span>
-                      </div>
-                      <div class="growout-result-mini green">
-                        <span class="result-mini-val" id="go-total-biomass"
-                          >--</span
-                        >
-                        <span class="result-mini-label">Biomass</span>
-                        <span class="result-mini-unit">grams</span>
-                      </div>
-                      <div class="growout-result-mini amber">
-                        <span class="result-mini-val" id="go-feed-ration"
-                          >--</span
-                        >
-                        <span class="result-mini-label">Feed/day</span>
-                        <span class="result-mini-unit">grams</span>
-                      </div>
+                    <div class="gf-stage-bar">
+                      <div class="gf-stage-fill" id="gf-stage-fill" style="width:0%"></div>
                     </div>
-
-                    <!-- GROWTH STAGE -->
-                    <div class="growout-growth-stage" id="go-growth-stage">
-                      <div class="growout-stage-header">
-                        <span class="growout-stage-label">Growth Stage</span>
-                        <span class="growout-stage-name" id="go-stage-name"
-                          >--</span
-                        >
-                      </div>
-                      <div class="growout-stage-bar">
-                        <div
-                          class="growout-stage-fill"
-                          id="go-stage-fill"
-                          style="width: 0%"
-                        ></div>
-                      </div>
-                      <div class="growout-stage-markers">
-                        <span class="growout-stage-marker active"
-                          >Postlarvae</span
-                        >
-                        <span class="growout-stage-marker">Juvenile</span>
-                        <span class="growout-stage-marker">Sub-adult</span>
-                        <span class="growout-stage-marker">Harvest</span>
-                      </div>
-                      <p class="growout-stage-hint" id="go-stage-hint">
-                        Harvest-ready at ~60g ABW
-                      </p>
+                    <div class="gf-stage-markers">
+                      <span>Postlarvae</span><span>Juvenile</span><span>Sub-adult</span><span>Harvest</span>
                     </div>
                   </div>
                 </div>
+
+                <!-- 4. SAMPLING HISTORY PANEL -->
+                <div class="gf-panel gf-history-panel hidden" id="gf-history-panel">
+                  <div class="gf-panel-header">
+                    <span class="gf-panel-title"><i class="bi bi-clock-history"></i> Sampling History</span>
+                    <span class="gf-panel-link" id="gf-view-all-link">View All <i class="bi bi-chevron-right"></i></span>
+                  </div>
+                  <div class="gf-history-list" id="gf-history-list"></div>
+                </div>
+
               </div>
 
               <!-- TAB 3: TRENDS -->
@@ -1225,16 +1238,62 @@
                 >Initialize Grow-Out
               </p>
               <p class="mortality-sub">
-                Set your initial stock and stocking date
+                Set your initial population and first sampling data
               </p>
-              <label class="modal-label">Initial Stock Count</label>
+
+              <label class="modal-label">Initial Population</label>
               <input
                 type="number"
                 class="growout-input"
                 id="setup-stock-input"
-                placeholder="e.g. 100"
+                placeholder="e.g. 80"
                 min="1"
               />
+
+              <div class="setup-divider"></div>
+              <p class="modal-section-label">Initial Sampling</p>
+
+              <label class="modal-label">Sampling Count</label>
+              <input
+                type="number"
+                class="growout-input"
+                id="setup-sample-count"
+                placeholder="e.g. 10"
+                min="1"
+              />
+
+              <label class="modal-label">Total Sample Weight (g)</label>
+              <input
+                type="number"
+                class="growout-input"
+                id="setup-sample-weight"
+                placeholder="e.g. 120"
+                min="1"
+                step="0.1"
+              />
+
+              <div class="setup-auto-comp">
+                <span class="setup-auto-label">Average Weight</span>
+                <span class="setup-auto-val" id="setup-avg-weight">-- g</span>
+              </div>
+
+              <label class="modal-label">Total Sample Length (cm)</label>
+              <input
+                type="number"
+                class="growout-input"
+                id="setup-total-length"
+                placeholder="e.g. 85"
+                min="1"
+                step="0.1"
+              />
+
+              <div class="setup-auto-comp">
+                <span class="setup-auto-label">Average Length</span>
+                <span class="setup-auto-val" id="setup-avg-length">-- cm</span>
+              </div>
+
+              <div class="setup-divider"></div>
+
               <label class="modal-label">Stocking Date</label>
               <input type="date" class="growout-input" id="setup-date-input" />
               <button
@@ -1299,6 +1358,30 @@
                       >0</span
                     >
                   </div>
+                </div>
+
+                <div class="edit-initial-field">
+                  <label class="modal-label">Total Sample Weight (g)</label>
+                  <input
+                    type="number"
+                    class="growout-input"
+                    id="edit-total-weight"
+                    placeholder="e.g. 120"
+                    min="0"
+                    step="0.1"
+                  />
+                </div>
+
+                <div class="edit-initial-field">
+                  <label class="modal-label">Total Sample Length (cm)</label>
+                  <input
+                    type="number"
+                    class="growout-input"
+                    id="edit-total-length"
+                    placeholder="e.g. 85"
+                    min="0"
+                    step="0.1"
+                  />
                 </div>
 
                 <div class="edit-initial-field">

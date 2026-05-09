@@ -1,6 +1,8 @@
 const GROWOUT_CYCLE_DAYS = 7;
 const GROWOUT_FEED_PCT = 0.03;
 
+let gfFormVisible = false;
+
 let growoutData = {
     initialStock: 0,
     stockingDate: null,
@@ -48,6 +50,11 @@ function getNextSamplingDate() {
     const last = new Date(growoutData.lastSamplingDate + 'T00:00:00');
     last.setDate(last.getDate() + GROWOUT_CYCLE_DAYS);
     return last;
+}
+
+function getCurrentWeek() {
+    const days = getDaysInCulture();
+    return Math.floor(days / 7) + 1;
 }
 
 function getGrowthStage(abw) {
@@ -114,22 +121,28 @@ function renderGrowout() {
     const offset = circumference - (survival / 100) * circumference;
     const fillEl = document.getElementById('go-donut-fill');
     fillEl.style.strokeDashoffset = offset;
-    const donutColor = survival >= 95 ? '#52c283' : survival >= 85 ? '#f59e0b' : '#E63946';
+    const donutColor = survival >= 95 ? '#1FA5A5' : survival >= 85 ? '#f59e0b' : '#E63946';
     fillEl.setAttribute('stroke', donutColor);
 
     const pctEl = document.getElementById('go-survival-pct');
     pctEl.style.color = donutColor;
 
     const suggested = Math.ceil(live * 0.1);
-    const samplesEl = document.getElementById('go-suggested-samples');
-    if (samplesEl) samplesEl.textContent = suggested;
-    const promptEl = document.getElementById('go-sampling-prompt');
-    if (promptEl) promptEl.innerHTML = `Target: Catch at least <strong>${suggested}</strong> random samples (10%). Actual count may vary.`;
-
-    const countInput = document.getElementById('go-sample-count');
+    const countInput = document.getElementById('gf-sample-count');
     if (countInput && (countInput.value === '' || countInput.value === '0')) countInput.value = suggested;
 
     document.getElementById('go-days-culture').textContent = days + ' day' + (days !== 1 ? 's' : '');
+
+    const history = growoutData.samplingHistory;
+    const samplingStats = document.getElementById('go-sampling-stats');
+    if (history.length > 0) {
+        const last = history[history.length - 1];
+        document.getElementById('go-avg-weight-display').textContent = last.abw + ' g';
+        document.getElementById('go-avg-length-display').textContent = last.avgLength ? last.avgLength + ' cm' : '-- cm';
+        samplingStats.classList.remove('hidden');
+    } else {
+        samplingStats.classList.add('hidden');
+    }
 
     const dateEl = document.getElementById('go-stock-date-display');
     if (growoutData.stockingDate) {
@@ -140,62 +153,139 @@ function renderGrowout() {
     }
 
     renderWarningBanner();
-    renderStepTracker();
-    renderGrowthStage();
+    renderGrowthTab();
     renderSparklines();
     renderAIInsights();
     renderGrowoutHistory();
 }
 
-function renderStepTracker() {
+function renderGrowthTab() {
+    const setupDone = isSetupComplete();
+    const history = growoutData.samplingHistory;
     const daysLeft = getDaysUntilSampling();
-    const countdownEl = document.getElementById('go-sampling-countdown');
-    const dateEl = document.getElementById('go-next-sampling-date');
-    const dotsContainer = document.getElementById('go-step-dots');
+    const currentWeek = getCurrentWeek();
+    const today = new Date().toISOString().split('T')[0];
+    const sampledToday = growoutData.lastSamplingDate === today;
 
-    if (!growoutData.lastSamplingDate) {
-        countdownEl.textContent = `${GROWOUT_CYCLE_DAYS} days left`;
-        countdownEl.classList.remove('due');
-        dateEl.textContent = 'Complete first sampling to begin cycle';
-    } else if (daysLeft <= 0) {
-        countdownEl.textContent = 'Due today!';
-        countdownEl.classList.add('due');
-        const nextDate = getNextSamplingDate();
-        dateEl.textContent = `Sampling was due: ${nextDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-    } else {
-        countdownEl.textContent = `${daysLeft} day${daysLeft !== 1 ? 's' : ''} left`;
-        countdownEl.classList.remove('due');
-        const nextDate = getNextSamplingDate();
-        dateEl.textContent = `Next sampling: ${nextDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-    }
+    const panelsVisible = setupDone;
+    document.getElementById('gf-next-sampling').classList.toggle('hidden', !panelsVisible);
+    document.getElementById('gf-overview').classList.toggle('hidden', !panelsVisible || history.length === 0);
+    document.getElementById('gf-history-panel').classList.toggle('hidden', !panelsVisible || history.length === 0);
 
-    let currentDay = 1;
-    if (growoutData.lastSamplingDate) {
-        const last = new Date(growoutData.lastSamplingDate + 'T00:00:00');
-        const now = new Date(); now.setHours(0, 0, 0, 0);
-        const daysElapsed = Math.floor((now - last) / 86400000);
-        currentDay = Math.min(Math.max(daysElapsed + 1, 1), GROWOUT_CYCLE_DAYS);
-    }
+    // ── 1. NEXT SAMPLING PANEL ──
+    if (panelsVisible) {
+        const countdownEl = document.getElementById('gf-ns-countdown');
+        const dueDateEl = document.getElementById('gf-ns-due-date');
 
-    const dots = dotsContainer.querySelectorAll('.step-dot');
-    dots.forEach((dot, i) => {
-        dot.classList.remove('done', 'current', 'overdue');
-        const dayNum = i + 1;
-        if (dayNum < currentDay) dot.classList.add('done');
-        else if (dayNum === currentDay) {
-            if (daysLeft <= 0) dot.classList.add('overdue');
-            else dot.classList.add('current');
+        if (!growoutData.lastSamplingDate) {
+            countdownEl.textContent = `${GROWOUT_CYCLE_DAYS} days remaining`;
+            countdownEl.className = 'gf-ns-countdown';
+            dueDateEl.textContent = 'Complete first sampling to begin cycle';
+        } else if (sampledToday) {
+            const last = history[history.length - 1];
+            countdownEl.textContent = `${last.abw}g ABW · ${last.avgLength || '--'}cm · ${last.biomass}g biomass`;
+            countdownEl.className = 'gf-ns-countdown';
+            const nextDate = getNextSamplingDate();
+            dueDateEl.textContent = 'Sampling done — next: ' + (nextDate ? nextDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '--');
+        } else if (daysLeft <= 0) {
+            countdownEl.textContent = 'Due today!';
+            const nextDate = getNextSamplingDate();
+            dueDateEl.textContent = nextDate
+                ? 'Due: ' + nextDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                : 'Due now';
+        } else {
+            countdownEl.textContent = `${daysLeft} day${daysLeft !== 1 ? 's' : ''} remaining`;
+            const nextDate = getNextSamplingDate();
+            dueDateEl.textContent = nextDate
+                ? 'Due on ' + nextDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                : 'Due soon';
         }
-    });
+
+        document.getElementById('gf-week-text').textContent = `Week ${currentWeek}`;
+
+        // 7-day step tracker
+        renderStepTracker();
+    }
+
+    // ── 2. GROWTH OVERVIEW PANEL ──
+    if (setupDone && history.length > 0) {
+        const first = history[0];
+        const last = history[history.length - 1];
+
+        document.getElementById('gf-init-abw').textContent = first.abw + ' g';
+        document.getElementById('gf-init-length').textContent = first.avgLength ? first.avgLength + ' cm' : '-- cm';
+        document.getElementById('gf-init-date').textContent = formatDate(first.date);
+
+        document.getElementById('gf-latest-abw').textContent = last.abw + ' g';
+        document.getElementById('gf-latest-length').textContent = last.avgLength ? last.avgLength + ' cm' : '-- cm';
+        document.getElementById('gf-latest-date').textContent = formatDate(last.date);
+
+        const diffAbw = +(last.abw - first.abw).toFixed(2);
+        const diffLength = last.avgLength && first.avgLength ? +(last.avgLength - first.avgLength).toFixed(2) : null;
+
+        document.getElementById('gf-growth-abw').textContent = (diffAbw >= 0 ? '+' : '') + diffAbw + ' g';
+        document.getElementById('gf-growth-length').textContent = diffLength !== null ? (diffLength >= 0 ? '+' : '') + diffLength + ' cm' : '-- cm';
+    }
+
+    // ── 3. WEEKLY SAMPLING PANEL ──
+    const samplingPanel = document.getElementById('gf-sampling-panel');
+    const dueBadge = document.getElementById('gf-due-badge');
+    const gfWeightInput = document.getElementById('gf-sample-weight');
+    const gfCountInput = document.getElementById('gf-sample-count');
+    const gfLengthInput = document.getElementById('gf-sample-length');
+    const gfComputeBtn = document.getElementById('gf-compute-btn');
+    const canSample = daysLeft <= 0;
+
+    if (setupDone) {
+        samplingPanel.classList.remove('hidden');
+        dueBadge.classList.toggle('hidden', !canSample);
+        [gfWeightInput, gfCountInput, gfLengthInput].forEach(el => {
+            if (el) el.disabled = !canSample;
+        });
+        if (gfComputeBtn) {
+            const inputsValid = gfWeightInput && gfCountInput && gfLengthInput &&
+                parseFloat(gfWeightInput.value) > 0 && parseInt(gfCountInput.value) > 0 && parseFloat(gfLengthInput.value) > 0;
+            gfComputeBtn.disabled = !canSample || !inputsValid;
+        }
+    } else {
+        samplingPanel.classList.add('hidden');
+    }
+
+    renderGrowthStage();
+
+    // ── 4. SAMPLING HISTORY PANEL ──
+    if (history.length > 0) {
+        const list = document.getElementById('gf-history-list');
+        list.innerHTML = history.map((entry, idx) => {
+            const weekLabel = idx === 0 ? 'Initial' : `Week ${idx}`;
+            const badgeClass = idx === 0 ? 'init' : idx % 2 === 1 ? 'teal' : 'orange';
+            return `
+            <div class="gf-history-row">
+              <span class="gf-history-badge gf-badge-${badgeClass}">${weekLabel}</span>
+              <span class="gf-history-date">${formatDate(entry.date)}</span>
+              <div class="gf-history-metrics">
+                <span class="gf-history-metric"><strong>${entry.abw}</strong> g</span>
+                <span class="gf-history-metric"><strong>${entry.avgLength || '--'}</strong> cm</span>
+                <span class="gf-history-metric"><strong>${entry.sampleSize}</strong> samples</span>
+              </div>
+              <i class="bi bi-chevron-right gf-history-arrow"></i>
+            </div>`;
+        }).join('');
+    }
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '--';
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function renderGrowthStage() {
+    const stageEl = document.getElementById('gf-form-growth-stage');
+    const nameEl = document.getElementById('gf-stage-name');
+    const fillEl = document.getElementById('gf-stage-fill');
+    const markers = document.querySelectorAll('#gf-form-growth-stage .gf-stage-markers span');
     const history = growoutData.samplingHistory;
-    const stageEl = document.getElementById('go-growth-stage');
-    const nameEl = document.getElementById('go-stage-name');
-    const fillEl = document.getElementById('go-stage-fill');
-    const markers = document.querySelectorAll('.growout-stage-marker');
-    const hintEl = document.getElementById('go-stage-hint');
 
     if (history.length === 0) {
         stageEl.classList.add('hidden');
@@ -208,10 +298,76 @@ function renderGrowthStage() {
 
     nameEl.textContent = stage.name;
     fillEl.style.width = stage.pct + '%';
-    hintEl.textContent = last.abw >= 60 ? 'Ready for harvest!' : 'Harvest-ready at ~60g ABW';
-    nameEl.style.color = last.abw >= 60 ? '#f59e0b' : '#52c283';
+    nameEl.style.color = last.abw >= 60 ? '#f59e0b' : '#1FA5A5';
 
     markers.forEach((m, i) => m.classList.toggle('active', i <= stage.index));
+}
+
+function renderStepTracker() {
+    const track = document.getElementById('gf-step-track');
+    const dotsContainer = document.getElementById('gf-step-dots');
+    const dayLabel = document.getElementById('gf-current-day');
+    if (!track || !dotsContainer) return;
+
+    if (!growoutData.stockingDate) {
+        track.classList.add('hidden');
+        return;
+    }
+
+    track.classList.remove('hidden');
+
+    const today = new Date().toISOString().split('T')[0];
+    const sampledToday = growoutData.lastSamplingDate === today;
+    const daysLeft = getDaysUntilSampling();
+
+    if (sampledToday || daysLeft <= 0) {
+        if (dayLabel) dayLabel.textContent = 7;
+        const dots = dotsContainer.querySelectorAll('.gf-step-dot');
+        dots.forEach((dot, i) => {
+            dot.classList.remove('current');
+            dot.classList.add('done');
+            if (i === 6) {
+                dot.classList.remove('done');
+                dot.classList.add('red');
+            }
+        });
+        return;
+    }
+        });
+        return;
+    }
+
+    if (daysLeft <= 0) {
+        if (dayLabel) dayLabel.textContent = 7;
+        const dots = dotsContainer.querySelectorAll('.gf-step-dot');
+        dots.forEach(dot => {
+            dot.classList.remove('done', 'current');
+            dot.classList.add('red');
+        });
+        return;
+    }
+
+    const daysElapsed = GROWOUT_CYCLE_DAYS - daysLeft;
+
+    let dayWithinWeek;
+    if (daysElapsed <= 0) {
+        dayWithinWeek = 1;
+    } else {
+        dayWithinWeek = ((daysElapsed - 1) % 7) + 1;
+    }
+
+    if (dayLabel) dayLabel.textContent = dayWithinWeek;
+
+    const dots = dotsContainer.querySelectorAll('.gf-step-dot');
+    dots.forEach((dot, i) => {
+        const dayNum = i + 1;
+        dot.classList.remove('done', 'current', 'red');
+        if (dayNum < dayWithinWeek) {
+            dot.classList.add('done');
+        } else if (dayNum === dayWithinWeek) {
+            dot.classList.add('current');
+        }
+    });
 }
 
 let sparkAbwChart = null;
@@ -389,6 +545,7 @@ function renderGrowoutHistory() {
           </div>
           <div class="growout-history-right">
             <span class="growout-history-abw">${s.abw}g</span>
+            ${s.avgLength ? `<span class="growout-history-length">${s.avgLength}cm</span>` : ''}
             <span class="growout-history-biomass">${s.biomass}g</span>
           </div>
         </div>`;
@@ -413,10 +570,66 @@ document.addEventListener('DOMContentLoaded', () => {
     // Setup Modal
     const setupOverlay = document.getElementById('setup-overlay');
     const setupModal = document.getElementById('setup-modal');
+    const setupCountInput = document.getElementById('setup-sample-count');
+    const setupWeightInput = document.getElementById('setup-sample-weight');
+    const setupLengthInput = document.getElementById('setup-total-length');
+    const setupAvgWeightEl = document.getElementById('setup-avg-weight');
+    const setupAvgLengthEl = document.getElementById('setup-avg-length');
+
+    setupModal.querySelectorAll('input[type="number"]').forEach(inp => {
+        inp.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
+        });
+        inp.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
+        inp.addEventListener('input', () => {
+            const min = parseFloat(inp.getAttribute('min')) || 0;
+            if (inp.value !== '' && parseFloat(inp.value) < min) inp.value = min;
+        });
+    });
+
+    function updateSetupAverages() {
+        const count = parseFloat(setupCountInput.value);
+        const weight = parseFloat(setupWeightInput.value);
+        const length = parseFloat(setupLengthInput.value);
+        if (count > 0 && weight > 0) {
+            setupAvgWeightEl.textContent = (weight / count).toFixed(2) + ' g';
+            setupAvgWeightEl.classList.remove('empty');
+        } else {
+            setupAvgWeightEl.textContent = '-- g';
+            setupAvgWeightEl.classList.add('empty');
+        }
+        if (count > 0 && length > 0) {
+            setupAvgLengthEl.textContent = (length / count).toFixed(2) + ' cm';
+            setupAvgLengthEl.classList.remove('empty');
+        } else {
+            setupAvgLengthEl.textContent = '-- cm';
+            setupAvgLengthEl.classList.add('empty');
+        }
+    }
+
+    if (setupCountInput) setupCountInput.addEventListener('input', updateSetupAverages);
+    if (setupWeightInput) setupWeightInput.addEventListener('input', updateSetupAverages);
+    if (setupLengthInput) setupLengthInput.addEventListener('input', updateSetupAverages);
 
     function openSetupModal() {
-        document.getElementById('setup-stock-input').value = '';
-        document.getElementById('setup-date-input').value = new Date().toISOString().split('T')[0];
+        if (!growoutData.initialStock) {
+            document.getElementById('setup-stock-input').value = 50;
+            document.getElementById('setup-sample-count').value = 5;
+            document.getElementById('setup-sample-weight').value = 30;
+            document.getElementById('setup-total-length').value = 25;
+            document.getElementById('setup-date-input').value = new Date().toISOString().split('T')[0];
+            updateSetupAverages();
+        } else {
+            document.getElementById('setup-stock-input').value = growoutData.initialStock;
+            document.getElementById('setup-sample-count').value = '';
+            document.getElementById('setup-sample-weight').value = '';
+            document.getElementById('setup-total-length').value = '';
+            document.getElementById('setup-date-input').value = new Date().toISOString().split('T')[0];
+            setupAvgWeightEl.textContent = '-- g';
+            setupAvgWeightEl.classList.add('empty');
+            setupAvgLengthEl.textContent = '-- cm';
+            setupAvgLengthEl.classList.add('empty');
+        }
         setupOverlay.classList.add('show');
         setupModal.classList.add('show');
         setTimeout(() => document.getElementById('setup-stock-input').focus(), 100);
@@ -428,9 +641,42 @@ document.addEventListener('DOMContentLoaded', () => {
         const stock = parseInt(document.getElementById('setup-stock-input').value);
         const date = document.getElementById('setup-date-input').value;
         if (!stock || stock <= 0 || !date) return;
+
         growoutData.initialStock = stock;
         growoutData.stockingDate = date;
+
+        const sampleCount = parseInt(setupCountInput.value);
+        const totalWeight = parseFloat(setupWeightInput.value);
+        const totalLength = parseFloat(setupLengthInput.value);
+
+        if (sampleCount > 0 && totalWeight > 0) {
+            const abw = +(totalWeight / sampleCount).toFixed(2);
+            const biomass = +(stock * abw).toFixed(1);
+            const feedRation = +(biomass * GROWOUT_FEED_PCT).toFixed(1);
+            const avgLength = totalLength > 0 && sampleCount > 0 ? +(totalLength / sampleCount).toFixed(2) : null;
+            growoutData.samplingHistory.push({
+                date: date,
+                abw,
+                biomass,
+                feedRation,
+                sampleSize: sampleCount,
+                totalWeight,
+                totalLength: totalLength > 0 ? totalLength : null,
+                avgLength,
+                liveCount: stock,
+                mortalityAt: 0
+            });
+            // Offset lastSamplingDate so the first compute is due immediately
+            const offset = new Date(date);
+            offset.setDate(offset.getDate() - GROWOUT_CYCLE_DAYS);
+            growoutData.lastSamplingDate = offset.toISOString().split('T')[0];
+        }
+
         saveGrowout();
+        // Pre-fill sampling panel with setup values
+        document.getElementById('gf-sample-count').value = sampleCount || '';
+        document.getElementById('gf-sample-weight').value = totalWeight || '';
+        document.getElementById('gf-sample-length').value = totalLength || '';
         setupOverlay.classList.remove('show');
         setupModal.classList.remove('show');
         renderGrowout();
@@ -451,6 +697,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Edit initial stock modal
     const editInitialOverlay = document.getElementById('edit-initial-overlay');
     const editInitialModal = document.getElementById('edit-initial-modal');
+    const editWeightInput = document.getElementById('edit-total-weight');
+    const editLengthInput = document.getElementById('edit-total-length');
+
+    function getFirstSampling() {
+        return growoutData.samplingHistory.length > 0 ? growoutData.samplingHistory[0] : null;
+    }
 
     document.getElementById('go-edit-initial-btn').addEventListener('click', () => {
         if (!isSetupComplete()) return;
@@ -459,6 +711,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('edit-initial-reason').value = '';
         document.getElementById('edit-initial-new-live').textContent = getLiveCount();
         document.getElementById('edit-initial-mort-display').textContent = getTotalMortality();
+        const first = getFirstSampling();
+        if (editWeightInput) editWeightInput.value = first && first.totalWeight ? first.totalWeight : '';
+        if (editLengthInput) editLengthInput.value = first && first.totalLength ? first.totalLength : '';
         editInitialOverlay.classList.add('show');
         editInitialModal.classList.add('show');
         setTimeout(() => document.getElementById('edit-initial-input').focus(), 100);
@@ -487,6 +742,23 @@ document.addEventListener('DOMContentLoaded', () => {
             reason: reason || ''
         });
         growoutData.initialStock = newStock;
+
+        const first = getFirstSampling();
+        if (first) {
+            const newWeight = parseFloat(editWeightInput.value);
+            const newLength = parseFloat(editLengthInput.value);
+            if (newWeight > 0) {
+                first.totalWeight = newWeight;
+                first.abw = +(newWeight / first.sampleSize).toFixed(2);
+                first.biomass = +(newStock * first.abw).toFixed(1);
+                first.feedRation = +(first.biomass * GROWOUT_FEED_PCT).toFixed(1);
+            }
+            if (newLength > 0) {
+                first.totalLength = newLength;
+                first.avgLength = +(newLength / first.sampleSize).toFixed(2);
+            }
+        }
+
         saveGrowout();
         editInitialOverlay.classList.remove('show');
         editInitialModal.classList.remove('show');
@@ -627,65 +899,73 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // -- BAGONG CODE PARA SA BUTTON VALIDATION --
-    const weightInput = document.getElementById('go-sample-weight');
-    const countInput = document.getElementById('go-sample-count');
-    const computeBtn = document.getElementById('go-compute-btn');
-
-    function checkSamplingInputs() {
-        // Kunin ang value at gawing number
-        const w = parseFloat(weightInput.value);
-        const c = parseInt(countInput.value);
-        
-        // I-enable lang ang button KUNG parehong may laman at higit sa 0
-        if (w > 0 && c > 0) {
-            computeBtn.disabled = false;
-        } else {
-            computeBtn.disabled = true;
-        }
-    }
-
-    // Pakinggan kapag nagta-type ang user
-    if(weightInput && countInput) {
-        weightInput.addEventListener('input', checkSamplingInputs);
-        countInput.addEventListener('input', checkSamplingInputs);
-    }
-    
-    // Sampling compute
-    document.getElementById('go-compute-btn').addEventListener('click', () => {
-        const weight = parseFloat(document.getElementById('go-sample-weight').value);
-        const sampleCount = parseInt(document.getElementById('go-sample-count').value);
-        if (!weight || weight <= 0) return;
-        if (!sampleCount || sampleCount <= 0) return;
-
-        const live = getLiveCount();
-        const abw = +(weight / sampleCount).toFixed(2);
-        const biomass = +(live * abw).toFixed(1);
-        const feedRation = +(biomass * GROWOUT_FEED_PCT).toFixed(1);
-
-        const today = new Date().toISOString().split('T')[0];
-
-        growoutData.samplingHistory.push({
-            date: today, abw, biomass, feedRation, sampleSize: sampleCount, totalWeight: weight,
-            liveCount: live, mortalityAt: getTotalMortality()
+    // -- Growth tab number input controls --
+    document.querySelectorAll('.gf-input[type="number"]').forEach(inp => {
+        inp.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
         });
-
-        growoutData.lastSamplingDate = today;
-        saveGrowout();
-
-        document.getElementById('go-abw-val').textContent = abw + 'g';
-        document.getElementById('go-total-biomass').textContent = biomass + 'g';
-        document.getElementById('go-feed-ration').textContent = feedRation + 'g/day';
-
-        document.getElementById('go-results-inline').classList.remove('hidden');
-        document.getElementById('go-sample-weight').value = '';
-
-        renderGrowout();
-
-        if (window.renderFeederRecommendation) {
-            window.renderFeederRecommendation();
-        }
+        inp.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
+        inp.addEventListener('input', () => {
+            const min = parseFloat(inp.getAttribute('min')) || 0;
+            if (inp.value !== '' && parseFloat(inp.value) < min) inp.value = min;
+        });
     });
+
+    // -- Growth tab form validation --
+    const gfWeightInput = document.getElementById('gf-sample-weight');
+    const gfCountInput = document.getElementById('gf-sample-count');
+    const gfLengthInput = document.getElementById('gf-sample-length');
+    const gfComputeBtn = document.getElementById('gf-compute-btn');
+
+    function checkGfSamplingInputs() {
+        if (getDaysUntilSampling() > 0) return;
+        const w = parseFloat(gfWeightInput.value);
+        const c = parseInt(gfCountInput.value);
+        const l = parseFloat(gfLengthInput.value);
+        gfComputeBtn.disabled = !(w > 0 && c > 0 && l > 0);
+    }
+
+    if (gfWeightInput && gfCountInput && gfLengthInput && gfComputeBtn) {
+        gfWeightInput.addEventListener('input', checkGfSamplingInputs);
+        gfCountInput.addEventListener('input', checkGfSamplingInputs);
+        gfLengthInput.addEventListener('input', checkGfSamplingInputs);
+
+        gfComputeBtn.addEventListener('click', () => {
+            if (getDaysUntilSampling() > 0) return;
+            const weight = parseFloat(gfWeightInput.value);
+            const sampleCount = parseInt(gfCountInput.value);
+            const totalLength = parseFloat(gfLengthInput.value);
+            if (!weight || weight <= 0 || !sampleCount || sampleCount <= 0 || !totalLength || totalLength <= 0) return;
+
+            const live = getLiveCount();
+            const abw = +(weight / sampleCount).toFixed(2);
+            const avgLength = +(totalLength / sampleCount).toFixed(2);
+            const biomass = +(live * abw).toFixed(1);
+            const feedRation = +(biomass * GROWOUT_FEED_PCT).toFixed(1);
+
+            const today = new Date().toISOString().split('T')[0];
+
+            growoutData.samplingHistory.push({
+                date: today, abw, biomass, feedRation, sampleSize: sampleCount,
+                totalWeight: weight, totalLength, avgLength,
+                liveCount: live, mortalityAt: getTotalMortality()
+            });
+
+            growoutData.lastSamplingDate = today;
+            saveGrowout();
+            gfFormVisible = false;
+            renderGrowout();
+
+            if (window.renderFeederRecommendation) {
+                window.renderFeederRecommendation();
+            }
+
+            gfWeightInput.value = '';
+            gfCountInput.value = '';
+            gfLengthInput.value = '';
+            gfComputeBtn.disabled = true;
+        });
+    }
 
     renderGrowout();
 });
