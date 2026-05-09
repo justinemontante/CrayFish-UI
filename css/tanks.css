@@ -1091,6 +1091,14 @@
     scrollbar-width: none;
 }
 #setup-modal::-webkit-scrollbar { display: none; }
+
+#edit-initial-modal {
+    max-height: 55%;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+#edit-initial-modal::-webkit-scrollbar { display: none; }
+
 #setup-modal .growout-input {
     font-size: 13px; padding: 10px;
 }
@@ -1152,6 +1160,13 @@
 .growout-input::placeholder { font-size: 12px; font-weight: 500; opacity: 0.5; }
 .growout-input:focus { outline: none; border-color: var(--primary-teal); background: #fff; }
 .growout-input.action-required { border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.1); }
+.growout-input[type="number"]::-webkit-outer-spin-button,
+.growout-input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none; margin: 0;
+}
+.growout-input[type="number"] {
+    -moz-appearance: textfield;
+}
 
 /* Tank Header Card Styling */
 .tank-header-card {

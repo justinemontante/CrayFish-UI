@@ -1154,7 +1154,7 @@
                       <div class="gf-stage-fill" id="gf-stage-fill" style="width:0%"></div>
                     </div>
                     <div class="gf-stage-markers">
-                      <span>Postlarvae</span><span>Juvenile</span><span>Sub-adult</span><span>Harvest</span>
+                      <span>Juvenile</span><span>Early Grow-out</span><span>Mid Grow-out</span><span>Late Grow-out</span><span>Market Size</span>
                     </div>
                   </div>
                 </div>
@@ -1311,103 +1311,42 @@
             <div class="stock-date-modal" id="edit-initial-modal">
               <div class="legend-handle"></div>
               <p class="mortality-title">
-                <i
-                  class="bi bi-pencil-square"
-                  style="color: var(--primary-teal); margin-right: 6px"
-                ></i
-                >Edit Initial Stock
+                <i class="bi bi-pencil-square" style="color: var(--primary-teal); margin-right: 6px"></i>Edit Initial Stock
               </p>
-              <p class="mortality-sub">Update the initial stock count</p>
+              <p class="mortality-sub">Update initial population and sampling data</p>
 
-              <div class="edit-initial-current">
-                <span class="edit-initial-current-label"
-                  >Current Initial Stock</span
-                >
-                <span
-                  class="edit-initial-current-val"
-                  id="edit-initial-current-display"
-                  >0</span
-                >
+              <label class="modal-label">Initial Population</label>
+              <input type="number" class="growout-input" id="edit-initial-input" placeholder="e.g. 80" min="1" />
+
+              <div class="setup-divider"></div>
+              <p class="modal-section-label">Sampling Data</p>
+
+              <label class="modal-label">Sampling Count</label>
+              <input type="number" class="growout-input" id="edit-sample-count" placeholder="e.g. 10" min="1" />
+
+              <label class="modal-label">Total Sample Weight (g)</label>
+              <input type="number" class="growout-input" id="edit-total-weight" placeholder="e.g. 120" min="0" step="0.1" />
+
+              <div class="setup-auto-comp">
+                <span class="setup-auto-label">Average Weight</span>
+                <span class="setup-auto-val" id="edit-avg-weight">-- g</span>
               </div>
 
-              <div class="edit-initial-form-card">
-                <div class="edit-initial-field">
-                  <label class="modal-label">New Initial Stock</label>
-                  <input
-                    type="number"
-                    class="growout-input"
-                    id="edit-initial-input"
-                    placeholder="e.g. 70"
-                    min="1"
-                  />
-                </div>
+              <label class="modal-label">Total Sample Length (cm)</label>
+              <input type="number" class="growout-input" id="edit-total-length" placeholder="e.g. 85" min="0" step="0.1" />
 
-                <div class="edit-initial-preview" id="edit-initial-preview">
-                  <div class="preview-item">
-                    <span class="preview-label">New Current</span>
-                    <span class="preview-val" id="edit-initial-new-live"
-                      >0</span
-                    >
-                  </div>
-                  <div class="preview-divider"></div>
-                  <div class="preview-item">
-                    <span class="preview-label">Mortality</span>
-                    <span
-                      class="preview-val muted"
-                      id="edit-initial-mort-display"
-                      >0</span
-                    >
-                  </div>
-                </div>
-
-                <div class="edit-initial-field">
-                  <label class="modal-label">Total Sample Weight (g)</label>
-                  <input
-                    type="number"
-                    class="growout-input"
-                    id="edit-total-weight"
-                    placeholder="e.g. 120"
-                    min="0"
-                    step="0.1"
-                  />
-                </div>
-
-                <div class="edit-initial-field">
-                  <label class="modal-label">Total Sample Length (cm)</label>
-                  <input
-                    type="number"
-                    class="growout-input"
-                    id="edit-total-length"
-                    placeholder="e.g. 85"
-                    min="0"
-                    step="0.1"
-                  />
-                </div>
-
-                <div class="edit-initial-field">
-                  <label class="modal-label"
-                    >Reason
-                    <span class="modal-label-opt">(optional)</span></label
-                  >
-                  <input
-                    type="text"
-                    class="growout-input"
-                    id="edit-initial-reason"
-                    placeholder="e.g. counting mistake, restocked..."
-                  />
-                </div>
+              <div class="setup-auto-comp">
+                <span class="setup-auto-label">Average Length</span>
+                <span class="setup-auto-val" id="edit-avg-length">-- cm</span>
               </div>
 
-              <button
-                class="compute-btn"
-                id="edit-initial-save"
-                style="margin-top: 8px"
-              >
-                Save Changes
-              </button>
-              <button class="mortality-cancel" id="edit-initial-cancel">
-                Cancel
-              </button>
+              <div class="setup-divider"></div>
+
+              <label class="modal-label">Reason <span class="modal-label-opt">(optional)</span></label>
+              <input type="text" class="growout-input" id="edit-initial-reason" placeholder="e.g. counting mistake, restocked..." />
+
+              <button class="compute-btn" id="edit-initial-save" style="margin-top: 8px">Save Changes</button>
+              <button class="mortality-cancel" id="edit-initial-cancel">Cancel</button>
             </div>
 
             <!-- MORTALITY MODAL (with notes) -->

@@ -59,11 +59,11 @@ function getCurrentWeek() {
 
 function getGrowthStage(abw) {
     if (abw == null) return { name: '--', index: 0, pct: 0 };
-    if (abw <= 5)  return { name: 'Postlarvae', index: 0, pct: (abw / 5) * 25 };
-    if (abw <= 20) return { name: 'Juvenile',   index: 1, pct: 25 + ((abw - 5) / 15) * 25 };
-    if (abw <= 40) return { name: 'Sub-adult',  index: 2, pct: 50 + ((abw - 20) / 20) * 25 };
-    if (abw < 60)  return { name: 'Sub-adult',  index: 2, pct: 75 + ((abw - 40) / 20) * 25 };
-    return { name: 'Harvest-ready', index: 3, pct: 100 };
+    if (abw <= 5)   return { name: 'Juvenile',       index: 0, pct: (abw / 5) * 20 };
+    if (abw <= 15)  return { name: 'Early Grow-out', index: 1, pct: 20 + ((abw - 5) / 10) * 20 };
+    if (abw <= 30)  return { name: 'Mid Grow-out',   index: 2, pct: 40 + ((abw - 15) / 15) * 20 };
+    if (abw < 50)   return { name: 'Late Grow-out',  index: 3, pct: 60 + ((abw - 30) / 20) * 20 };
+    return { name: 'Market Size', index: 4, pct: 100 };
 }
 
 function renderWarningBanner() {
@@ -111,7 +111,8 @@ function renderGrowout() {
         const d = new Date(last.date + 'T' + last.time);
         const formatted = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ', ' +
             d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-        lastEditedEl.textContent = formatted + (last.reason ? ' · ' + last.reason : '');
+        lastEditedEl.innerHTML = formatted + (last.reason ? '<br>' + last.reason : '');
+        lastEditedEl.style.color = '#000';
         lastEditedRow.classList.remove('hidden');
     } else {
         lastEditedRow.classList.add('hidden');
@@ -126,10 +127,6 @@ function renderGrowout() {
 
     const pctEl = document.getElementById('go-survival-pct');
     pctEl.style.color = donutColor;
-
-    const suggested = Math.ceil(live * 0.1);
-    const countInput = document.getElementById('gf-sample-count');
-    if (countInput && (countInput.value === '' || countInput.value === '0')) countInput.value = suggested;
 
     document.getElementById('go-days-culture').textContent = days + ' day' + (days !== 1 ? 's' : '');
 
@@ -330,9 +327,6 @@ function renderStepTracker() {
                 dot.classList.remove('done');
                 dot.classList.add('red');
             }
-        });
-        return;
-    }
         });
         return;
     }
@@ -675,8 +669,8 @@ document.addEventListener('DOMContentLoaded', () => {
         saveGrowout();
         // Pre-fill sampling panel with setup values
         document.getElementById('gf-sample-count').value = sampleCount || '';
-        document.getElementById('gf-sample-weight').value = totalWeight || '';
-        document.getElementById('gf-sample-length').value = totalLength || '';
+        document.getElementById('gf-sample-weight').value = '';
+        document.getElementById('gf-sample-length').value = '';
         setupOverlay.classList.remove('show');
         setupModal.classList.remove('show');
         renderGrowout();
@@ -699,6 +693,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const editInitialModal = document.getElementById('edit-initial-modal');
     const editWeightInput = document.getElementById('edit-total-weight');
     const editLengthInput = document.getElementById('edit-total-length');
+    const editCountInput = document.getElementById('edit-sample-count');
+    const editAvgWeightEl = document.getElementById('edit-avg-weight');
+    const editAvgLengthEl = document.getElementById('edit-avg-length');
+
+    editInitialModal.querySelectorAll('input[type="number"]').forEach(inp => {
+        inp.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
+        });
+        inp.addEventListener('wheel', (e) => e.preventDefault(), { passive: false });
+        inp.addEventListener('input', () => {
+            const min = parseFloat(inp.getAttribute('min')) || 0;
+            if (inp.value !== '' && parseFloat(inp.value) < min) inp.value = min;
+        });
+    });
+
+    function updateEditAverages() {
+        const count = parseFloat(editCountInput.value);
+        const weight = parseFloat(editWeightInput.value);
+        const length = parseFloat(editLengthInput.value);
+        if (count > 0 && weight > 0) {
+            editAvgWeightEl.textContent = (weight / count).toFixed(2) + ' g';
+            editAvgWeightEl.classList.remove('empty');
+        } else {
+            editAvgWeightEl.textContent = '-- g';
+            editAvgWeightEl.classList.add('empty');
+        }
+        if (count > 0 && length > 0) {
+            editAvgLengthEl.textContent = (length / count).toFixed(2) + ' cm';
+            editAvgLengthEl.classList.remove('empty');
+        } else {
+            editAvgLengthEl.textContent = '-- cm';
+            editAvgLengthEl.classList.add('empty');
+        }
+    }
 
     function getFirstSampling() {
         return growoutData.samplingHistory.length > 0 ? growoutData.samplingHistory[0] : null;
@@ -706,28 +734,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('go-edit-initial-btn').addEventListener('click', () => {
         if (!isSetupComplete()) return;
-        document.getElementById('edit-initial-current-display').textContent = growoutData.initialStock;
         document.getElementById('edit-initial-input').value = growoutData.initialStock;
         document.getElementById('edit-initial-reason').value = '';
-        document.getElementById('edit-initial-new-live').textContent = getLiveCount();
-        document.getElementById('edit-initial-mort-display').textContent = getTotalMortality();
         const first = getFirstSampling();
+        if (editCountInput) editCountInput.value = first && first.sampleSize ? first.sampleSize : '';
         if (editWeightInput) editWeightInput.value = first && first.totalWeight ? first.totalWeight : '';
         if (editLengthInput) editLengthInput.value = first && first.totalLength ? first.totalLength : '';
+        updateEditAverages();
         editInitialOverlay.classList.add('show');
         editInitialModal.classList.add('show');
         setTimeout(() => document.getElementById('edit-initial-input').focus(), 100);
     });
 
-    document.getElementById('edit-initial-input').addEventListener('input', () => {
-        const newStock = parseInt(document.getElementById('edit-initial-input').value);
-        const mortality = getTotalMortality();
-        if (newStock > 0) {
-            document.getElementById('edit-initial-new-live').textContent = Math.max(newStock - mortality, 0);
-        } else {
-            document.getElementById('edit-initial-new-live').textContent = getLiveCount();
-        }
-    });
+    if (editCountInput) editCountInput.addEventListener('input', updateEditAverages);
+    if (editWeightInput) editWeightInput.addEventListener('input', updateEditAverages);
+    if (editLengthInput) editLengthInput.addEventListener('input', updateEditAverages);
 
     document.getElementById('edit-initial-save').addEventListener('click', () => {
         const newStock = parseInt(document.getElementById('edit-initial-input').value);
@@ -745,15 +766,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const first = getFirstSampling();
         if (first) {
+            const newSampleCount = parseInt(editCountInput.value);
             const newWeight = parseFloat(editWeightInput.value);
             const newLength = parseFloat(editLengthInput.value);
-            if (newWeight > 0) {
+            if (newSampleCount > 0) {
+                first.sampleSize = newSampleCount;
+            }
+            if (newWeight > 0 && first.sampleSize > 0) {
                 first.totalWeight = newWeight;
                 first.abw = +(newWeight / first.sampleSize).toFixed(2);
                 first.biomass = +(newStock * first.abw).toFixed(1);
                 first.feedRation = +(first.biomass * GROWOUT_FEED_PCT).toFixed(1);
             }
-            if (newLength > 0) {
+            if (newLength > 0 && first.sampleSize > 0) {
                 first.totalLength = newLength;
                 first.avgLength = +(newLength / first.sampleSize).toFixed(2);
             }
