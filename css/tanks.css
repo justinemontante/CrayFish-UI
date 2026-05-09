@@ -44,6 +44,7 @@
     display: block; 
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     animation: tabFadeIn 0.25s ease;
 }
 @keyframes tabFadeIn {
@@ -341,8 +342,10 @@
     background: #fff;
     border: 1.5px solid rgba(31,165,165,0.12);
     border-radius: 20px;
-    padding: 16px 14px;
+    padding: 16px 16px;
     margin-bottom: 12px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 .gf-panel.hidden { display: none; }
 .gf-panel-header {
@@ -607,34 +610,54 @@
     flex-shrink: 0;
 }
 .gf-due-badge.hidden { display: none; }
+.gf-edit-btn {
+    font-size: 9px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+    background: rgba(31,165,165,0.1); color: var(--primary-teal); border: none;
+    text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;
+    flex-shrink: 0; font-family: 'Poppins', sans-serif;
+    display: flex; align-items: center; gap: 4px; transition: all 0.2s;
+}
+.gf-edit-btn.hidden { display: none; }
+.gf-edit-btn:active { transform: scale(0.95); }
 .gf-input-cards {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 12px;
+    gap: 10px;
+    margin: 0 4px 12px;
+    overflow: hidden;
 }
 .gf-input-card {
     background: rgba(11,60,73,0.02);
     border: 1.5px solid rgba(11,60,73,0.06);
     border-radius: 14px;
-    padding: 10px 8px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    align-items: stretch;
 }
 .gf-input-label {
-    font-size: 8px;
+    font-size: 7px;
     font-weight: 700;
     color: var(--dark-text);
     opacity: 0.55;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
+    flex-shrink: 0;
 }
-.gf-input-label i { font-size: 10px; color: var(--primary-teal); }
+.gf-input-label i { font-size: 8px; color: var(--primary-teal); }
+.gf-input-card .gf-input-label {
+    padding: 6px 6px 2px;
+    font-size: 6px;
+    justify-content: center;
+}
 .gf-input-card .gf-input {
-    padding: 6px;
-    font-size: 13px;
+    margin: 6px;
+    padding: 5px;
+    font-size: 10px;
+    font-weight: 600;
+    text-align: center;
+    width: auto;
 }
 .gf-input {
     width: 100%;

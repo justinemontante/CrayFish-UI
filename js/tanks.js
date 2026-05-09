@@ -2,6 +2,7 @@ const GROWOUT_CYCLE_DAYS = 7;
 const GROWOUT_FEED_PCT = 0.03;
 
 let gfFormVisible = false;
+let gfEditMode = false;
 
 let growoutData = {
     initialStock: 0,
@@ -227,6 +228,7 @@ function renderGrowthTab() {
     // ── 3. WEEKLY SAMPLING PANEL ──
     const samplingPanel = document.getElementById('gf-sampling-panel');
     const dueBadge = document.getElementById('gf-due-badge');
+    const editBtn = document.getElementById('gf-edit-btn');
     const gfWeightInput = document.getElementById('gf-sample-weight');
     const gfCountInput = document.getElementById('gf-sample-count');
     const gfLengthInput = document.getElementById('gf-sample-length');
@@ -236,13 +238,32 @@ function renderGrowthTab() {
     if (setupDone) {
         samplingPanel.classList.remove('hidden');
         dueBadge.classList.toggle('hidden', !canSample);
+
+        const isEditing = sampledToday && gfEditMode;
+        const inputsEnabled = canSample || isEditing;
+
         [gfWeightInput, gfCountInput, gfLengthInput].forEach(el => {
-            if (el) el.disabled = !canSample;
+            if (el) el.disabled = !inputsEnabled;
         });
+
+        if (sampledToday && !gfEditMode && history.length > 0) {
+            const last = history[history.length - 1];
+            if (gfWeightInput && gfWeightInput.value === '') gfWeightInput.value = last.totalWeight || '';
+            if (gfCountInput && gfCountInput.value === '') gfCountInput.value = last.sampleSize || '';
+            if (gfLengthInput && gfLengthInput.value === '') gfLengthInput.value = last.totalLength || '';
+        }
+
+        if (editBtn) {
+            editBtn.classList.toggle('hidden', !sampledToday || gfEditMode);
+        }
+
         if (gfComputeBtn) {
             const inputsValid = gfWeightInput && gfCountInput && gfLengthInput &&
                 parseFloat(gfWeightInput.value) > 0 && parseInt(gfCountInput.value) > 0 && parseFloat(gfLengthInput.value) > 0;
-            gfComputeBtn.disabled = !canSample || !inputsValid;
+            gfComputeBtn.disabled = !inputsEnabled || !inputsValid;
+            gfComputeBtn.innerHTML = gfEditMode
+                ? '<i class="bi bi-check2"></i> Update Results'
+                : '<i class="bi bi-calculator-fill"></i> Compute Results';
         }
     } else {
         samplingPanel.classList.add('hidden');
@@ -943,7 +964,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const gfComputeBtn = document.getElementById('gf-compute-btn');
 
     function checkGfSamplingInputs() {
-        if (getDaysUntilSampling() > 0) return;
+        const today = new Date().toISOString().split('T')[0];
+        if (getDaysUntilSampling() > 0 && growoutData.lastSamplingDate !== today) return;
         const w = parseFloat(gfWeightInput.value);
         const c = parseInt(gfCountInput.value);
         const l = parseFloat(gfLengthInput.value);
@@ -956,7 +978,8 @@ document.addEventListener('DOMContentLoaded', () => {
         gfLengthInput.addEventListener('input', checkGfSamplingInputs);
 
         gfComputeBtn.addEventListener('click', () => {
-            if (getDaysUntilSampling() > 0) return;
+            const today = new Date().toISOString().split('T')[0];
+            if (getDaysUntilSampling() > 0 && growoutData.lastSamplingDate !== today) return;
             const weight = parseFloat(gfWeightInput.value);
             const sampleCount = parseInt(gfCountInput.value);
             const totalLength = parseFloat(gfLengthInput.value);
@@ -968,15 +991,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const biomass = +(live * abw).toFixed(1);
             const feedRation = +(biomass * GROWOUT_FEED_PCT).toFixed(1);
 
-            const today = new Date().toISOString().split('T')[0];
-
-            growoutData.samplingHistory.push({
+            const entry = {
                 date: today, abw, biomass, feedRation, sampleSize: sampleCount,
                 totalWeight: weight, totalLength, avgLength,
                 liveCount: live, mortalityAt: getTotalMortality()
-            });
+            };
+
+            if (growoutData.lastSamplingDate === today && growoutData.samplingHistory.length > 0) {
+                growoutData.samplingHistory[growoutData.samplingHistory.length - 1] = entry;
+            } else {
+                growoutData.samplingHistory.push(entry);
+            }
 
             growoutData.lastSamplingDate = today;
+            gfEditMode = false;
             saveGrowout();
             gfFormVisible = false;
             renderGrowout();
@@ -985,10 +1013,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.renderFeederRecommendation();
             }
 
-            gfWeightInput.value = '';
-            gfCountInput.value = '';
-            gfLengthInput.value = '';
             gfComputeBtn.disabled = true;
+        });
+
+        document.getElementById('gf-edit-btn').addEventListener('click', () => {
+            gfEditMode = true;
+            renderGrowthTab();
+            setTimeout(() => gfWeightInput.focus(), 100);
         });
     }
 
