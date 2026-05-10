@@ -808,34 +808,57 @@ body {
     color: rgba(11, 60, 73, 0.5);
 }
 
-/* NEXT ACTION CARD */
-#dash-next-body {
+.dash-schedule-next {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.dash-schedule-remaining {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--primary-teal);
+    white-space: nowrap;
+}
+
+/* TANK STATUS — ACTION ITEMS */
+.tank-action-divider {
+    height: 6px;
+    background: rgba(11, 60, 73, 0.04);
+    margin: 10px -16px;
+    border-top: 1px solid rgba(11, 60, 73, 0.06);
+    border-bottom: 1px solid rgba(11, 60, 73, 0.06);
+}
+
+.tank-actions {
     display: flex;
     flex-direction: column;
     gap: 0;
 }
 
-.dash-action-item {
+.tank-action-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    padding: 8px 0;
+    padding: 7px 0;
+    gap: 8px;
 }
 
-.dash-action-left {
+.tank-action-left {
     display: flex;
     align-items: center;
     gap: 8px;
-    min-width: 0;
+    flex-shrink: 0;
 }
 
-.dash-action-left i {
-    font-size: 16px;
+.tank-action-left i {
+    font-size: 15px;
     color: var(--primary-teal);
     flex-shrink: 0;
 }
 
-.dash-action-label {
+.tank-action-label {
     font-size: 10px;
     font-weight: 600;
     color: rgba(0,0,0,0.4);
@@ -844,18 +867,16 @@ body {
     white-space: nowrap;
 }
 
-.dash-action-value {
+.tank-action-val {
     font-size: 12px;
     font-weight: 700;
     color: var(--dark-text);
     text-align: right;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding-left: 12px;
+    word-break: break-word;
+    line-height: 1.4;
 }
 
-.dash-action-bar {
+.tank-action-bar {
     height: 1px;
     background: rgba(11, 60, 73, 0.06);
     margin: 0;

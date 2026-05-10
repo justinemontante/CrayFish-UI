@@ -257,30 +257,6 @@ function updateDashTankStatus() {
     document.getElementById('dash-survival').textContent = survival.toFixed(1) + '%';
     document.getElementById('dash-initial').textContent = initial;
     document.getElementById('dash-mortality').textContent = totalMort;
-
-    // Status labels
-    const statusLive = document.querySelector('#dash-inventory .tank-stat:nth-child(1) .tank-stat-status');
-    const statusSurv = document.querySelector('#dash-inventory .tank-stat:nth-child(3) .tank-stat-status');
-    const statusMort = document.querySelector('#dash-inventory .tank-stat:nth-child(7) .tank-stat-status');
-
-    if (statusLive) {
-        if (survival >= 90) { statusLive.textContent = 'Healthy'; statusLive.className = 'tank-stat-status green'; }
-        else if (survival >= 75) { statusLive.textContent = 'At Risk'; statusLive.className = 'tank-stat-status warning'; }
-        else { statusLive.textContent = 'Critical'; statusLive.className = 'tank-stat-status critical'; }
-    }
-
-    if (statusSurv) {
-        if (survival >= 90) { statusSurv.textContent = 'Good'; statusSurv.className = 'tank-stat-status green'; }
-        else if (survival >= 75) { statusSurv.textContent = 'Warning'; statusSurv.className = 'tank-stat-status warning'; }
-        else { statusSurv.textContent = 'Critical'; statusSurv.className = 'tank-stat-status critical'; }
-    }
-
-    if (statusMort) {
-        const mortRate = initial > 0 ? (totalMort / initial * 100) : 0;
-        if (mortRate <= 10) { statusMort.textContent = 'Low'; statusMort.className = 'tank-stat-status green'; }
-        else if (mortRate <= 25) { statusMort.textContent = 'Moderate'; statusMort.className = 'tank-stat-status warning'; }
-        else { statusMort.textContent = 'High'; statusMort.className = 'tank-stat-status critical'; }
-    }
 }
 
 setTimeout(updateDashTankStatus, 100);
@@ -296,58 +272,35 @@ function updateDashNextAction() {
     const days = window.getDaysInCulture ? window.getDaysInCulture() : 0;
     document.getElementById('dash-days-culture').textContent = days > 0 ? days + ' day' + (days !== 1 ? 's' : '') : '--';
 
-    // Sampling due status
-    const daysUntil = window.getDaysUntilSampling ? window.getDaysUntilSampling() : null;
-    const samplingEl = document.getElementById('dash-sampling-due');
-    if (!hasStock) {
-        samplingEl.textContent = 'No stock set';
-    } else if (daysUntil === null || daysUntil === undefined) {
-        samplingEl.textContent = 'Set up first';
-    } else if (daysUntil === 0) {
-        samplingEl.textContent = 'Due today!';
-    } else {
-        samplingEl.textContent = daysUntil + ' day' + (daysUntil !== 1 ? 's' : '') + ' left';
-    }
-
-    // Initial stock detail
-    const initialDetail = document.getElementById('dash-initial-detail');
-    if (!hasStock) {
-        initialDetail.textContent = 'Not set';
-    } else {
-        let detail = data.initialStock + ' pcs';
-        const first = samplingHistory[0];
-        if (first) {
-            if (first.abw) detail += ' · ' + first.abw + 'g ABW';
-            if (first.avgLength) detail += ' · ' + first.avgLength + 'cm';
-        }
-        initialDetail.textContent = detail;
-    }
-
-    // Last sampling detail
+    // Last sampling — date only
     const lastDetail = document.getElementById('dash-last-sampling-detail');
-    const lastWrap = document.getElementById('dash-last-sampling-wrap');
     if (samplingHistory.length > 0) {
         const last = samplingHistory[samplingHistory.length - 1];
         const d = new Date(last.date + 'T00:00:00');
-        const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        let text = dateStr + ' · ' + last.abw + 'g ABW · ' + (last.liveCount ?? '?') + ' pop';
-        lastDetail.textContent = text;
-        lastWrap.style.display = '';
+        lastDetail.textContent = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     } else {
         lastDetail.textContent = 'No data';
-        lastWrap.style.display = '';
     }
 
-    // Next sampling date
+    // Next sampling — date + remaining days
     const nextEl = document.getElementById('dash-next-sampling-date');
+    const remainingEl = document.getElementById('dash-sampling-remaining');
     if (!hasStock) {
         nextEl.textContent = 'Set up first';
+        if (remainingEl) remainingEl.textContent = '';
     } else {
         const nextDate = window.getNextSamplingDate ? window.getNextSamplingDate() : null;
         if (nextDate && !isNaN(nextDate)) {
             nextEl.textContent = nextDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const daysUntil = window.getDaysUntilSampling ? window.getDaysUntilSampling() : null;
+            if (remainingEl) {
+                if (daysUntil === 0) remainingEl.textContent = 'Due today!';
+                else if (daysUntil > 0) remainingEl.textContent = daysUntil + ' day' + (daysUntil !== 1 ? 's' : '') + ' left';
+                else remainingEl.textContent = '';
+            }
         } else {
             nextEl.textContent = 'After first sampling';
+            if (remainingEl) remainingEl.textContent = '';
         }
     }
 }
