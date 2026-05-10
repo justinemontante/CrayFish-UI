@@ -883,99 +883,158 @@
     padding: 8px 0;
 }
 
+/* Based on line */
 .ai-rec-based {
     font-size: 11px;
     color: var(--dark-text);
     opacity: 0.5;
-    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(31, 165, 165, 0.1);
 }
 
+.ai-rec-based i {
+    font-size: 13px;
+    color: var(--primary-teal);
+    opacity: 0.7;
+}
+
+/* Inline stat boxes */
 .ai-rec-stats {
     display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 8px;
+    gap: 8px;
 }
 
 .ai-rec-stat {
-    font-size: 11px;
-    color: var(--dark-text);
-    opacity: 0.7;
-    background: rgba(255, 255, 255, 0.7);
-    padding: 4px 10px;
-    border-radius: 8px;
+    flex: 1;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(31, 165, 165, 0.12);
+    border-radius: 10px;
+    padding: 8px 6px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
-.ai-rec-stat strong {
+.ai-rec-stat-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--dark-text);
+    opacity: 0.5;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.ai-rec-stat-value {
+    font-size: 14px;
+    font-weight: 800;
     color: var(--primary-teal);
-    font-weight: 700;
 }
 
+/* Daily feed card */
 .ai-rec-daily {
-    font-size: 13px;
-    font-weight: 700;
+    background: rgba(31, 165, 165, 0.08);
+    border: 1px solid rgba(31, 165, 165, 0.15);
+    border-radius: 12px;
+    padding: 10px 14px;
+    text-align: center;
+}
+
+.ai-rec-daily-label {
+    font-size: 9px;
+    font-weight: 600;
     color: var(--dark-text);
+    opacity: 0.5;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     margin-bottom: 4px;
 }
 
-.ai-rec-suggestions {
+.ai-rec-daily-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dark-text);
+    line-height: 1.2;
+}
+
+.ai-rec-daily-pct {
+    font-size: 10px;
+    color: var(--dark-text);
+    opacity: 0.45;
+    margin-top: 2px;
+}
+
+/* Schedule header */
+.ai-rec-schedule-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dark-text);
+    padding: 8px 0 4px;
+    border-top: 1px solid rgba(31, 165, 165, 0.1);
+}
+
+.ai-rec-schedule-header i {
+    font-size: 14px;
+    color: var(--primary-teal);
+}
+
+/* Schedule items */
+.ai-rec-schedule-list {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
-.ai-rec-suggestion {
+.ai-rec-schedule-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
     font-size: 12px;
     color: var(--dark-text);
-    padding: 6px 10px;
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 10px;
 }
 
-.ai-rec-suggestion i {
-    font-size: 14px;
-    color: var(--primary-teal);
+.ai-rec-schedule-item.morning {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.15);
 }
 
-.ai-rec-time {
+.ai-rec-schedule-item.afternoon {
+    background: rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+.ai-rec-schedule-item i {
+    font-size: 16px;
+}
+
+.ai-rec-schedule-item.morning i {
+    color: #f59e0b;
+}
+
+.ai-rec-schedule-item.afternoon i {
+    color: #8b5cf6;
+}
+
+.ai-rec-schedule-item .ai-rec-time {
+    flex: 1;
     font-weight: 600;
-    min-width: 65px;
 }
 
-.ai-rec-grams {
-    font-weight: 700;
+.ai-rec-schedule-item .ai-rec-grams {
+    font-weight: 800;
     color: var(--primary-teal);
-}
-
-.ai-rec-apply-btn {
-    width: 100%;
-    padding: 10px;
-    background: linear-gradient(135deg, var(--dark-text), var(--primary-teal));
-    border: none;
+    background: rgba(31, 165, 165, 0.1);
+    padding: 2px 10px;
     border-radius: 12px;
-    color: #fff;
-    font-size: 12px;
-    font-weight: 700;
-    font-family: 'Poppins', sans-serif;
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.15s;
-    box-shadow: 0 4px 12px rgba(31, 165, 165, 0.3);
+    font-size: 11px;
 }
 
-.ai-rec-apply-btn:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-}
 
-.ai-rec-apply-btn:active {
-    transform: translateY(0);
-}
-
-.ai-rec-apply-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-}

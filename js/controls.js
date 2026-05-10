@@ -688,7 +688,6 @@ function calculateRecommendation() {
 // Render the recommendation UI
 function renderRecommendation() {
     const contentEl = document.getElementById('ai-rec-content');
-    const applyBtn = document.getElementById('ai-rec-apply-btn');
     if (!contentEl) return;
     
     const liveCount = window.getLiveCount ? window.getLiveCount() : 0;
@@ -698,96 +697,70 @@ function renderRecommendation() {
         contentEl.innerHTML = `<div class="ai-rec-no-data">
             <i class="bi bi-exclamation-circle" style="font-size:24px;opacity:0.5;margin-bottom:8px;display:block;"></i>
             <strong>No stock data</strong><br>
-            <span style="font-size:12px;opacity:0.6;">Set initial stock to get AI feeding recommendations.</span><br>
-            <button class="compute-btn" style="margin-top:12px;font-size:13px;padding:8px 16px;" onclick="document.getElementById('go-setup-btn').click()">Set Initial Stock</button>
+            <span style="font-size:12px;opacity:0.6;">Set initial stock to get AI feeding recommendations.</span>
         </div>`;
-        if (applyBtn) applyBtn.disabled = true;
         return;
     }
     
     const rec = calculateRecommendation();
     if (!rec) {
         contentEl.innerHTML = `<div class="ai-rec-no-data">No data available for recommendation.</div>`;
-        if (applyBtn) applyBtn.disabled = true;
         return;
     }
     
-    let html = '';
-    
     // Based on text
+    let basedText = '';
     if (rec.source === 'sampling') {
-        html += `<div class="ai-rec-based">Based on: Sampling (${rec.date})</div>`;
+        basedText = `Based on: Sampling (${rec.date})`;
     } else {
-        html += `<div class="ai-rec-based">Based on: Inventory (${rec.daysInCulture} days in culture)</div>`;
+        basedText = `Based on: Inventory (${rec.daysInCulture} days in culture)`;
     }
     
-    // Stats
-    html += `<div class="ai-rec-stats">
-        <span class="ai-rec-stat">ABW: <strong>${rec.abw}g</strong></span>
-        <span class="ai-rec-stat">Pop: <strong>${rec.population}</strong></span>
-        <span class="ai-rec-stat">Biomass: <strong>${rec.biomass}g</strong></span>
-    </div>`;
-    
-    // Daily feed
-    html += `<div class="ai-rec-daily">📊 Daily Feed: ${rec.feedRation}g (3% biomass)</div>`;
-    
-    // Suggestions
-    html += `<div class="ai-rec-suggestions">
-        <div class="ai-rec-suggestion"><i class="bi bi-clock"></i> <span class="ai-rec-time">${rec.timesPerDay}x daily</span></div>`;
-    
+    // Build schedule items
+    let scheduleItems = '';
     rec.suggestion.forEach(s => {
-        html += `<div class="ai-rec-suggestion">
-            <i class="bi bi-sunrise"></i>
-            <span class="ai-rec-time">${s.time}</span>
-            <span class="ai-rec-grams">${s.grams}g</span>
-        </div>`;
+        const isAM = s.time.includes('AM');
+        const icon = isAM ? 'bi-sunrise' : 'bi-sunset';
+        const periodClass = isAM ? 'morning' : 'afternoon';
+        scheduleItems += `
+            <div class="ai-rec-schedule-item ${periodClass}">
+                <i class="bi ${icon}"></i>
+                <span class="ai-rec-time">${s.time}</span>
+                <span class="ai-rec-grams">${s.grams}g</span>
+            </div>`;
     });
     
-    html += `</div>`;
+    let html = `
+        <div class="ai-rec-based">
+            <i class="bi bi-database"></i> ${basedText}
+        </div>
+        <div class="ai-rec-stats">
+            <div class="ai-rec-stat">
+                <span class="ai-rec-stat-label">ABW</span>
+                <span class="ai-rec-stat-value">${rec.abw}g</span>
+            </div>
+            <div class="ai-rec-stat">
+                <span class="ai-rec-stat-label">Population</span>
+                <span class="ai-rec-stat-value">${rec.population}</span>
+            </div>
+            <div class="ai-rec-stat">
+                <span class="ai-rec-stat-label">Biomass</span>
+                <span class="ai-rec-stat-value">${rec.biomass}g</span>
+            </div>
+        </div>
+        <div class="ai-rec-daily">
+            <div class="ai-rec-daily-label">Daily Feed</div>
+            <div class="ai-rec-daily-value">${rec.feedRation}g</div>
+            <div class="ai-rec-daily-pct">3% of biomass</div>
+        </div>
+        <div class="ai-rec-schedule-header">
+            <i class="bi bi-clock"></i> ${rec.timesPerDay}x daily
+        </div>
+        <div class="ai-rec-schedule-list">
+            ${scheduleItems}
+        </div>`;
     
     contentEl.innerHTML = html;
-    if (applyBtn) {
-        applyBtn.disabled = false;
-        applyBtn.style.display = 'block';
-    }
-}
-
-// Apply recommendation to schedules
-function applyRecommendation() {
-    const rec = calculateRecommendation();
-    if (!rec || !rec.suggestion) return;
-    
-    // Clear existing schedules
-    if (typeof schedules !== 'undefined') {
-        // Remove all existing schedules
-        schedules = [];
-        
-        // Add recommended schedules
-        rec.suggestion.forEach(s => {
-            const parsed = parseTimeTo24h(s.time);
-            schedules.push({
-                time: s.time,
-                display: s.time,
-                hour: parsed.hour,
-                minute: parsed.minute,
-                isPM: parsed.isPM,
-                grams: s.grams
-            });
-        });
-        
-        schedules.sort((a, b) => (a.hour * 60 + a.minute) - (b.hour * 60 + b.minute));
-        saveSchedules();
-        renderSchedules();
-        
-        // Log the action
-        addFeederLog(`AI Recommendation applied: ${rec.feedRation}g/day in ${rec.timesPerDay} feedings`, 'auto');
-    }
-}
-
-// Initialize
-const aiApplyBtn = document.getElementById('ai-rec-apply-btn');
-if (aiApplyBtn) {
-    aiApplyBtn.addEventListener('click', applyRecommendation);
 }
 
 // Render on load

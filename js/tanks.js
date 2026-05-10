@@ -821,6 +821,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Quick Actions → navigate to tank sub-tabs
+    document.querySelectorAll('.quick-action-card[data-go]').forEach(card => {
+        card.addEventListener('click', () => {
+            const targetTab = card.dataset.go;
+            const tabMap = { inventory: 'tab-inventory', sampling: 'tab-growth', trends: 'tab-trends' };
+            const tabId = tabMap[targetTab];
+            if (!tabId) return;
+
+            window.showNavSection('tanks');
+
+            document.querySelectorAll('.growout-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.growout-tab-content').forEach(c => c.classList.remove('active'));
+
+            const btn = document.querySelector(`.growout-tab-btn[data-tab="${tabId}"]`);
+            if (btn) btn.classList.add('active');
+            document.getElementById(tabId)?.classList.add('active');
+        });
+    });
+
     const fullAnalyticsBtn = document.getElementById('go-full-analytics-btn');
     if (fullAnalyticsBtn) {
         fullAnalyticsBtn.addEventListener('click', () => window.showNavSection('analytics'));
