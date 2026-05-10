@@ -261,7 +261,7 @@
 .growout-setup-btn {
     display: flex; align-items: center; justify-content: center; gap: 8px;
     padding: 12px 22px;
-    background: linear-gradient(135deg, var(--primary-teal), #52c283);
+    background: linear-gradient(135deg, var(--dark-text), var(--primary-teal));
     border: none; border-radius: 100px; color: #fff;
     font-size: 12px; font-weight: 700; font-family: 'Poppins', sans-serif;
     cursor: pointer; transition: all 0.2s;
@@ -685,7 +685,7 @@
 
 .gf-compute-btn {
     display: flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 12px; background: linear-gradient(135deg, #1FA5A5, #52c283); color: #fff; border: none;
+    padding: 12px; background: linear-gradient(135deg, var(--dark-text), var(--primary-teal)); color: #fff; border: none;
     border-radius: 14px; font-size: 12px; font-weight: 700; font-family: 'Poppins', sans-serif;
     cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(31,165,165,0.35);
     width: 100%;
@@ -712,6 +712,11 @@
     align-items: center;
     margin-bottom: 8px;
 }
+.gf-stage-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
 .gf-stage-label { font-size: 9px; font-weight: 600; color: var(--dark-text); opacity: 0.5; }
 .gf-stage-name { font-size: 11px; font-weight: 700; color: #1FA5A5; }
 .gf-stage-bar {
@@ -730,6 +735,69 @@
     text-align: center; flex: 1; transition: all 0.3s;
 }
 .gf-stage-markers span.active { opacity: 1; color: var(--primary-teal); font-weight: 700; }
+
+/* Growth stage info button */
+.gf-stage-info-btn {
+    background: none; border: none; padding: 2px; cursor: pointer;
+    color: var(--primary-teal); opacity: 0.4; font-size: 14px;
+    display: flex; align-items: center; transition: opacity 0.2s;
+}
+.gf-stage-info-btn:hover { opacity: 1; }
+.gf-stage-info-btn:active { transform: scale(0.9); }
+
+/* Growth stage reference modal */
+.gf-ref-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 999;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.gf-ref-overlay.show { opacity: 1; pointer-events: all; }
+.gf-ref-modal {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.9);
+    background: #fff; border-radius: 20px; padding: 16px 16px 20px;
+    width: calc(100% - 32px); max-width: 340px; max-height: 80vh; overflow-y: auto;
+    z-index: 1000; box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+    opacity: 0; pointer-events: none; transition: all 0.3s ease;
+    text-align: center;
+}
+.gf-ref-modal.show { opacity: 1; pointer-events: all; transform: translate(-50%,-50%) scale(1); }
+.gf-ref-table {
+    width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 9px;
+    font-family: 'Poppins', sans-serif;
+}
+.gf-ref-table th {
+    background: rgba(31,165,165,0.08); color: var(--dark-text); font-weight: 700;
+    padding: 6px 5px; text-align: left; font-size: 8px; text-transform: uppercase;
+    letter-spacing: 0.2px; opacity: 0.7;
+}
+.gf-ref-table td {
+    padding: 5px; border-bottom: 1px solid rgba(11,60,73,0.06);
+    color: var(--dark-text); font-weight: 500; text-align: left; font-size: 9px;
+}
+.gf-ref-table tr:last-child td { border-bottom: none; }
+
+/* Sampling history modal */
+.gf-hist-scroll {
+    overflow-x: auto;
+    margin: 10px -8px 0;
+    padding: 0 8px;
+}
+.gf-hist-table {
+    width: 100%; border-collapse: collapse; font-size: 9px;
+    font-family: 'Poppins', sans-serif; min-width: 360px;
+}
+.gf-hist-table th {
+    background: rgba(31,165,165,0.08); color: var(--dark-text); font-weight: 700;
+    padding: 7px 5px; text-align: center; font-size: 8px; text-transform: uppercase;
+    letter-spacing: 0.2px; opacity: 0.7;
+}
+.gf-hist-table td {
+    padding: 6px 5px; border-bottom: 1px solid rgba(11,60,73,0.06);
+    color: var(--dark-text); font-weight: 500; text-align: center; font-size: 9px;
+}
+.gf-hist-table tr:last-child td { border-bottom: none; padding-bottom: 16px; }
+.gf-hist-scroll { padding-bottom: 14px; }
+.gf-hist-table .hist-week-init { color: var(--primary-teal); font-weight: 700; }
+.gf-hist-table .hist-week { font-weight: 600; opacity: 0.6; }
 
 /* ── 4. Sampling History Panel ── */
 .gf-history-list {
@@ -1068,7 +1136,7 @@
 
 /* MODAL BUTTONS */
 .compute-btn {
-    width: 100%; padding: 12px; background: linear-gradient(135deg, var(--dark-text), #1a7a7a);
+    width: 100%; padding: 12px; background: linear-gradient(135deg, var(--dark-text), var(--primary-teal));
     border: none; border-radius: 14px; color: #fff; font-size: 13px; font-weight: 700;
     font-family: 'Poppins', sans-serif; cursor: pointer; transition: all 0.2s;
     box-shadow: 0 4px 12px rgba(11,60,73,0.15);

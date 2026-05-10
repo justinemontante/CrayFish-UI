@@ -1023,6 +1023,54 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Growth stage reference modal
+    const gfRefOverlay = document.getElementById('gf-ref-overlay');
+    const gfRefModal = document.getElementById('gf-ref-modal');
+    document.getElementById('gf-stage-info-btn').addEventListener('click', () => {
+        gfRefOverlay.classList.add('show');
+        gfRefModal.classList.add('show');
+    });
+    function closeGfRef() {
+        gfRefOverlay.classList.remove('show');
+        gfRefModal.classList.remove('show');
+    }
+    document.getElementById('gf-ref-close').addEventListener('click', closeGfRef);
+    gfRefOverlay.addEventListener('click', (e) => {
+        if (e.target === gfRefOverlay) closeGfRef();
+    });
+
+    // Sampling history modal
+    const gfHistOverlay = document.getElementById('gf-hist-overlay');
+    const gfHistModal = document.getElementById('gf-hist-modal');
+    const gfHistTbody = document.getElementById('gf-hist-tbody');
+    document.getElementById('gf-view-all-link').addEventListener('click', () => {
+        const history = growoutData.samplingHistory;
+        if (history.length === 0) return;
+        gfHistTbody.innerHTML = history.map((entry, idx) => {
+            const weekLabel = idx === 0 ? 'Initial' : `Week ${idx}`;
+            const weekClass = idx === 0 ? 'hist-week-init' : 'hist-week';
+            const mort = entry.mortalityAt != null ? entry.mortalityAt : (idx > 0 ? history[idx - 1].liveCount - entry.liveCount : '--');
+            return `<tr>
+                <td><span class="${weekClass}">${weekLabel}</span></td>
+                <td>${formatDate(entry.date)}</td>
+                <td><strong>${entry.abw}</strong> g</td>
+                <td>${entry.avgLength || '--'} cm</td>
+                <td>${entry.sampleSize}</td>
+                <td>${mort}</td>
+            </tr>`;
+        }).join('');
+        gfHistOverlay.classList.add('show');
+        gfHistModal.classList.add('show');
+    });
+    function closeGfHist() {
+        gfHistOverlay.classList.remove('show');
+        gfHistModal.classList.remove('show');
+    }
+    document.getElementById('gf-hist-close').addEventListener('click', closeGfHist);
+    gfHistOverlay.addEventListener('click', (e) => {
+        if (e.target === gfHistOverlay) closeGfHist();
+    });
+
     renderGrowout();
 });
 

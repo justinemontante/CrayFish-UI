@@ -1146,11 +1146,14 @@
                   <button class="gf-compute-btn" id="gf-compute-btn" disabled>
                     <i class="bi bi-calculator-fill"></i> Compute Results
                   </button>
-                  <div class="gf-growth-stage hidden" id="gf-form-growth-stage">
-                    <div class="gf-stage-bar-wrap">
-                      <span class="gf-stage-label">Growth Stage</span>
-                      <span class="gf-stage-name" id="gf-stage-name">--</span>
-                    </div>
+                    <div class="gf-growth-stage hidden" id="gf-form-growth-stage">
+                      <div class="gf-stage-bar-wrap">
+                        <span class="gf-stage-label">Growth Stage</span>
+                        <div class="gf-stage-right">
+                          <span class="gf-stage-name" id="gf-stage-name">--</span>
+                          <button class="gf-stage-info-btn" id="gf-stage-info-btn"><i class="bi bi-info-circle"></i></button>
+                        </div>
+                      </div>
                     <div class="gf-stage-bar">
                       <div class="gf-stage-fill" id="gf-stage-fill" style="width:0%"></div>
                     </div>
@@ -1906,6 +1909,47 @@
         </div>
         <div class="settings-sub-content" id="sub-panel-content"></div>
       </div>
+    </div>
+    <!-- GROWTH STAGE REFERENCE MODAL -->
+    <div class="gf-ref-overlay" id="gf-ref-overlay"></div>
+    <div class="gf-ref-modal" id="gf-ref-modal">
+      <div class="legend-handle"></div>
+      <p class="mortality-title">
+        <i class="bi bi-bar-chart-steps" style="color: var(--primary-teal); margin-right: 4px"></i>Growth Classification Reference
+      </p>
+      <p class="mortality-sub">Based on Average Body Length (ABL) and Average Body Weight (ABW)</p>
+      <table class="gf-ref-table">
+        <thead>
+          <tr><th>Stage</th><th>Avg Length</th><th>Avg Weight</th><th>Classification</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Juvenile</td><td>2 – 4 cm</td><td>1 – 5 g</td><td>Newly stocked young crayfish</td></tr>
+          <tr><td>Early Grow-out</td><td>4 – 6 cm</td><td>5 – 15 g</td><td>Active early growth</td></tr>
+          <tr><td>Mid Grow-out</td><td>6 – 8 cm</td><td>15 – 30 g</td><td>Moderate body development</td></tr>
+          <tr><td>Late Grow-out</td><td>8 – 10 cm</td><td>30 – 50 g</td><td>Near harvest stage</td></tr>
+          <tr><td>Market Size</td><td>10 – 12+ cm</td><td>50 g+</td><td>Ready for harvest</td></tr>
+        </tbody>
+      </table>
+      <button class="compute-btn" id="gf-ref-close" style="margin-top: 12px">Got it</button>
+    </div>
+
+    <!-- SAMPLING HISTORY MODAL -->
+    <div class="gf-ref-overlay" id="gf-hist-overlay"></div>
+    <div class="gf-ref-modal" id="gf-hist-modal">
+      <div class="legend-handle"></div>
+      <p class="mortality-title">
+        <i class="bi bi-clock-history" style="color: var(--primary-teal); margin-right: 4px"></i>Sampling History
+      </p>
+      <p class="mortality-sub">Complete record of all sampling entries</p>
+      <div class="gf-hist-scroll">
+        <table class="gf-hist-table" id="gf-hist-table">
+          <thead>
+            <tr><th>Week</th><th>Date</th><th>ABW</th><th>ABL</th><th>Samples</th><th>Mortality</th></tr>
+          </thead>
+          <tbody id="gf-hist-tbody"></tbody>
+        </table>
+      </div>
+      <button class="compute-btn" id="gf-hist-close" style="margin-top: 12px">Close</button>
     </div>
     <script src="app.js"></script>
     <script src="js/dashboard.js"></script>
