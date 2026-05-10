@@ -411,7 +411,7 @@
 .gf-ns-center { flex: 1; min-width: 0; }
 .gf-ns-countdown {
     display: block;
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 800;
     color: var(--dark-text);
     line-height: 1.3;
@@ -491,10 +491,24 @@
 .gf-step-dots {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     width: 100%;
-    max-width: 260px;
+    max-width: 280px;
 }
+.gf-step-item {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+.gf-step-item:last-child { flex: 0; }
+.gf-step-line {
+    flex: 1;
+    height: 2px;
+    background: rgba(11,60,73,0.08);
+    margin: 0 2px;
+    transition: background 0.3s;
+}
+.gf-step-item.completed .gf-step-line { background: #52c283; }
+.gf-step-item.done-line-red .gf-step-line { background: #E63946; }
 .gf-step-dot {
     width: 26px;
     height: 26px;
@@ -565,14 +579,14 @@
     color: var(--dark-text);
     text-transform: uppercase;
     letter-spacing: 0.3px;
-    opacity: 0.65;
+    opacity: 0.85;
 }
 .gf-mini-label i { font-size: 8px; }
 .gf-mini-date {
     font-size: 7px;
     font-weight: 500;
     color: var(--dark-text);
-    opacity: 0.45;
+    opacity: 0.65;
     text-align: center;
     padding: 3px 8px;
 }
@@ -587,10 +601,10 @@
     font-size: 7px;
     font-weight: 600;
     color: var(--dark-text);
-    opacity: 0.5;
+    opacity: 0.7;
 }
 .gf-mini-val {
-    font-size: 11px;
+    font-size: 9px;
     font-weight: 800;
     color: var(--dark-text);
 }

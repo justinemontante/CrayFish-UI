@@ -181,7 +181,7 @@ function renderGrowthTab() {
             dueDateEl.textContent = 'Complete first sampling to begin cycle';
         } else if (sampledToday) {
             const last = history[history.length - 1];
-            countdownEl.textContent = `${last.abw}g ABW · ${last.avgLength || '--'}cm · ${last.biomass}g biomass`;
+            countdownEl.textContent = `${last.abw}g ABW · ${last.avgLength || '--'}cm ABL · ${last.biomass}g biomass`;
             countdownEl.className = 'gf-ns-countdown';
             const nextDate = getNextSamplingDate();
             dueDateEl.textContent = 'Sampling done — next: ' + (nextDate ? nextDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '--');
@@ -321,6 +321,21 @@ function renderGrowthStage() {
     markers.forEach((m, i) => m.classList.toggle('active', i <= stage.index));
 }
 
+function syncStepItems() {
+    document.querySelectorAll('.gf-step-item').forEach(item => {
+        const dot = item.querySelector('.gf-step-dot');
+        const line = item.querySelector('.gf-step-line');
+        if (!dot) return;
+        item.classList.remove('completed', 'done-line-red');
+        if (dot.classList.contains('done') || dot.classList.contains('current')) {
+            item.classList.add('completed');
+        }
+        if (dot.classList.contains('red')) {
+            item.classList.add('done-line-red');
+        }
+    });
+}
+
 function renderStepTracker() {
     const track = document.getElementById('gf-step-track');
     const dotsContainer = document.getElementById('gf-step-dots');
@@ -349,6 +364,7 @@ function renderStepTracker() {
                 dot.classList.add('red');
             }
         });
+        syncStepItems();
         return;
     }
 
@@ -359,6 +375,7 @@ function renderStepTracker() {
             dot.classList.remove('done', 'current');
             dot.classList.add('red');
         });
+        syncStepItems();
         return;
     }
 
@@ -383,6 +400,7 @@ function renderStepTracker() {
             dot.classList.add('current');
         }
     });
+    syncStepItems();
 }
 
 let sparkAbwChart = null;
