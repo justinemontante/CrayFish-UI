@@ -809,28 +809,54 @@ body {
 }
 
 /* NEXT ACTION CARD */
+#dash-next-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
 .dash-action-item {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
     padding: 8px 0;
 }
 
-.dash-action-item i {
-    font-size: 18px;
+.dash-action-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.dash-action-left i {
+    font-size: 16px;
     color: var(--primary-teal);
+    flex-shrink: 0;
 }
 
 .dash-action-label {
-    font-size: 11px;
+    font-size: 10px;
+    font-weight: 600;
     color: rgba(0,0,0,0.4);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 
 .dash-action-value {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
     color: var(--dark-text);
-    display: block;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 12px;
+}
+
+.dash-action-bar {
+    height: 1px;
+    background: rgba(11, 60, 73, 0.06);
+    margin: 0;
 }

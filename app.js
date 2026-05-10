@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="settings-toggle-row">
                 <div class="settings-toggle-info">
                     <span class="settings-toggle-title">Sampling Reminders</span>
-                    <span class="settings-toggle-sub">Bi-weekly Grow-out Tank reminders</span>
+                    <span class="settings-toggle-sub">Weekly Grow-out Tank reminders</span>
                 </div>
                 <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
             </div>

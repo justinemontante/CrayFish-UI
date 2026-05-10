@@ -1,112 +1,35 @@
 // NOTIFICATIONS — Alert Log & Reminders
 
 const NOTIFS = [
-    // ── CRITICAL (4) ──
     {
-        id: 1, type: 'critical', icon: 'bi-thermometer-high',
-        title: 'High Temperature Alert',
-        message: 'Temperature reached 32.1°C in Grow-out Tank. Cooling system activated.',
-        timestamp: Date.now() - 5 * 60000, unread: true
-    },
-    {
-        id: 2, type: 'critical', icon: 'bi-droplet-fill',
+        id: 1, type: 'warning', icon: 'bi-exclamation-triangle-fill',
         title: 'Low Dissolved Oxygen',
-        message: 'DO dropped to 3.1 mg/L in Grow-out Tank. Aerator triggered automatically.',
+        message: 'DO at 4.2 mg/L in Grow-out Tank. Approaching warning threshold.',
         timestamp: Date.now() - 45 * 60000, unread: true
     },
     {
-        id: 3, type: 'critical', icon: 'bi-exclamation-triangle-fill',
-        title: 'pH Out of Range',
-        message: 'pH dropped to 6.5 in Grow-out Tank. Dosing pump initiated correction.',
-        timestamp: Date.now() - 2 * 3600000, unread: false
-    },
-    {
-        id: 4, type: 'critical', icon: 'bi-cloud-fog-fill',
+        id: 2, type: 'critical', icon: 'bi-cloud-fog-fill',
         title: 'High Turbidity Detected',
-        message: 'Turbidity reached 45 NTU in Grow-out Tank. Filtration cycle extended.',
-        timestamp: Date.now() - 5 * 3600000, unread: false
+        message: 'Turbidity at 60 NTU in Grow-out Tank. Filtration needed.',
+        timestamp: Date.now() - 2 * 3600000, unread: true
     },
-
-    // ── OPERATIONAL (8) ──
     {
-        id: 5, type: 'operational', icon: 'bi-check-circle-fill',
+        id: 3, type: 'operational', icon: 'bi-check-circle-fill',
         title: 'Morning Feeding Completed',
-        message: 'Auto feeder dispensed 44.1g at 8:00 AM in Grow-out Tank.',
-        timestamp: Date.now() - 30 * 60000, unread: true
+        message: 'Auto feeder dispensed 22.1g at 6:00 AM in Grow-out Tank.',
+        timestamp: Date.now() - 2 * 3600000, unread: true
     },
     {
-        id: 6, type: 'operational', icon: 'bi-funnel-fill',
-        title: 'Filtration Cycle Started',
-        message: 'Water pump activated. Expected duration: 6 hours.',
-        timestamp: Date.now() - 1 * 3600000, unread: true
-    },
-    {
-        id: 7, type: 'operational', icon: 'bi-water',
-        title: 'Water Change Completed',
-        message: '30% water change completed in Grow-out Tank successfully.',
-        timestamp: Date.now() - 3 * 3600000, unread: false
-    },
-    {
-        id: 8, type: 'operational', icon: 'bi-battery-charging',
-        title: 'Backup Battery OK',
-        message: 'UPS battery level at 98%. All systems running on mains power.',
-        timestamp: Date.now() - 6 * 3600000, unread: false
-    },
-    {
-        id: 9, type: 'operational', icon: 'bi-check2-circle',
-        title: 'Evening Feeding Completed',
-        message: 'Auto feeder dispensed 38.5g at 6:00 PM in Grow-out Tank.',
-        timestamp: Date.now() - 86400000 - 2 * 3600000, unread: false
-    },
-    {
-        id: 10, type: 'operational', icon: 'bi-arrow-repeat',
-        title: 'System Reboot',
-        message: 'Controller rebooted successfully after firmware update.',
-        timestamp: Date.now() - 86400000 - 8 * 3600000, unread: false
-    },
-    {
-        id: 11, type: 'operational', icon: 'bi-thermometer-half',
-        title: 'Temperature Stabilized',
-        message: 'Grow-out Tank temperature normalized to 26.5°C after heating event.',
-        timestamp: Date.now() - 86400000 * 2, unread: false
-    },
-    {
-        id: 12, type: 'operational', icon: 'bi-droplet-half',
-        title: 'DO Levels Normal',
-        message: 'Dissolved Oxygen stabilized at 7.2 mg/L across all tanks.',
-        timestamp: Date.now() - 86400000 * 3, unread: false
-    },
-
-    // ── REMINDERS (5) ──
-    {
-        id: 13, type: 'reminder', icon: 'bi-calendar-check-fill',
-        title: 'Bi-weekly Sampling Due',
-        message: 'Grow-out Tank is due for sampling. Weigh 10 random samples.',
+        id: 4, type: 'reminder', icon: 'bi-calendar-check-fill',
+        title: 'Weekly Sampling Due',
+        message: 'Grow-out Tank is due for sampling this week.',
         timestamp: Date.now() - 15 * 60000, unread: true
     },
     {
-        id: 14, type: 'reminder', icon: 'bi-stars',
-        title: 'Sampling Reminder',
-        message: 'Grow-out Tank is due for sampling. Weigh 10 random samples.',
-        timestamp: Date.now() - 1 * 3600000, unread: true
-    },
-    {
-        id: 15, type: 'reminder', icon: 'bi-calendar-event-fill',
-        title: 'Filter Media Replacement',
-        message: 'Filter cartridges due for replacement next week.',
-        timestamp: Date.now() - 2 * 3600000, unread: false
-    },
-    {
-        id: 16, type: 'reminder', icon: 'bi-clipboard2-check',
+        id: 5, type: 'reminder', icon: 'bi-clipboard2-check',
         title: 'Water Quality Log Due',
-        message: 'Daily water quality readings for today have not been recorded.',
-        timestamp: Date.now() - 86400000 - 4 * 3600000, unread: false
-    },
-    {
-        id: 17, type: 'reminder', icon: 'bi-journal-plus',
-        title: 'Weekly Report Pending',
-        message: 'Weekly growth report for Grow-out Tank has not been submitted.',
-        timestamp: Date.now() - 86400000 * 2, unread: false
+        message: 'Daily water quality readings have not been recorded today.',
+        timestamp: Date.now() - 3600000, unread: false
     }
 ];
 

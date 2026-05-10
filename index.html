@@ -540,7 +540,7 @@
                 </div>
                 <div class="quick-action-info">
                   <span class="quick-action-name">Aerator</span>
-                  <span class="quick-action-status" id="qs-aerator1">Auto</span>
+                  <span class="quick-action-status" id="qs-aerator1"></span>
                 </div>
               </div>
               <div class="quick-action-card" id="quick-pump">
@@ -549,7 +549,7 @@
                 </div>
                 <div class="quick-action-info">
                   <span class="quick-action-name">Pump</span>
-                  <span class="quick-action-status" id="qs-pump">Auto</span>
+                  <span class="quick-action-status" id="qs-pump"></span>
                 </div>
               </div>
               <div class="quick-action-card" id="quick-feed-now">
@@ -558,7 +558,7 @@
                 </div>
                 <div class="quick-action-info">
                   <span class="quick-action-name">Feed Now</span>
-                  <span class="quick-action-status" id="qs-feed">45g Recommendation</span>
+                  <span class="quick-action-status" id="qs-feed"></span>
                 </div>
               </div>
               <div class="quick-action-card" data-go="inventory">
@@ -682,24 +682,45 @@
                 <i class="bi bi-calendar-check"></i>
                 <span class="dash-card-title">Next Action</span>
               </div>
-              <div class="dash-card-body">
-                <div class="dash-action-item" id="dash-sampling-info">
-                  <i class="bi bi-clipboard-data"></i>
-                  <div>
+              <div class="dash-card-body" id="dash-next-body">
+                <div class="dash-action-item">
+                  <div class="dash-action-left">
+                    <i class="bi bi-clipboard-data"></i>
                     <span class="dash-action-label">Sampling</span>
-                    <span class="dash-action-value" id="dash-sampling-due"
-                      >Due today!</span
-                    >
                   </div>
+                  <span class="dash-action-value" id="dash-sampling-due">--</span>
                 </div>
-                <div class="dash-action-item" id="dash-days-info">
-                  <i class="bi bi-hourglass-split"></i>
-                  <div>
+                <div class="dash-action-bar"></div>
+                <div class="dash-action-item">
+                  <div class="dash-action-left">
+                    <i class="bi bi-hourglass-split"></i>
                     <span class="dash-action-label">Days in Culture</span>
-                    <span class="dash-action-value" id="dash-days-culture"
-                      >23 days</span
-                    >
                   </div>
+                  <span class="dash-action-value" id="dash-days-culture">--</span>
+                </div>
+                <div class="dash-action-bar"></div>
+                <div class="dash-action-item">
+                  <div class="dash-action-left">
+                    <i class="bi bi-box-seam"></i>
+                    <span class="dash-action-label">Initial Stock</span>
+                  </div>
+                  <span class="dash-action-value" id="dash-initial-detail">Not set</span>
+                </div>
+                <div class="dash-action-bar"></div>
+                <div class="dash-action-item">
+                  <div class="dash-action-left">
+                    <i class="bi bi-clock-history"></i>
+                    <span class="dash-action-label">Last Sampling</span>
+                  </div>
+                  <span class="dash-action-value" id="dash-last-sampling-detail">No data</span>
+                </div>
+                <div class="dash-action-bar"></div>
+                <div class="dash-action-item">
+                  <div class="dash-action-left">
+                    <i class="bi bi-calendar-event"></i>
+                    <span class="dash-action-label">Next Sampling</span>
+                  </div>
+                  <span class="dash-action-value" id="dash-next-sampling-date">Set up first</span>
                 </div>
               </div>
             </div>
@@ -1778,6 +1799,7 @@
             <div class="notif-tabs">
               <button class="notif-tab active" data-filter="all">All</button>
               <button class="notif-tab" data-filter="critical">Critical</button>
+              <button class="notif-tab" data-filter="warning">Warning</button>
               <button class="notif-tab" data-filter="operational">
                 Operational
               </button>

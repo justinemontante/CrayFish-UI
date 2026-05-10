@@ -1355,3 +1355,5 @@ window.growoutData = growoutData;
 window.getLiveCount = getLiveCount;
 window.getTotalMortality = getTotalMortality;
 window.getDaysInCulture = getDaysInCulture;
+window.getDaysUntilSampling = getDaysUntilSampling;
+window.getNextSamplingDate = getNextSamplingDate;
