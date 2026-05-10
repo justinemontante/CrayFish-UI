@@ -258,3 +258,46 @@ document.getElementById('quick-feed-now')?.addEventListener('click', () => {
 
 simulateSensors();
 setInterval(simulateSensors, 300000);
+
+// ─── TANK STATUS (live data) ────────────────────────────
+function updateDashTankStatus() {
+    const live = window.getLiveCount ? window.getLiveCount() : 0;
+    const totalMort = window.getTotalMortality ? window.getTotalMortality() : 0;
+    const initial = window.growoutData?.initialStock ?? 0;
+    const survival = initial > 0 ? (live / initial * 100) : 0;
+
+    document.getElementById('dash-live-count').textContent = live;
+    document.getElementById('dash-survival').textContent = survival.toFixed(1) + '%';
+    document.getElementById('dash-initial').textContent = initial;
+    document.getElementById('dash-mortality').textContent = totalMort;
+
+    // Status labels
+    const statusLive = document.querySelector('#dash-inventory .tank-stat:nth-child(1) .tank-stat-status');
+    const statusSurv = document.querySelector('#dash-inventory .tank-stat:nth-child(3) .tank-stat-status');
+    const statusMort = document.querySelector('#dash-inventory .tank-stat:nth-child(7) .tank-stat-status');
+
+    if (statusLive) {
+        if (survival >= 90) { statusLive.textContent = 'Healthy'; statusLive.className = 'tank-stat-status green'; }
+        else if (survival >= 75) { statusLive.textContent = 'At Risk'; statusLive.className = 'tank-stat-status warning'; }
+        else { statusLive.textContent = 'Critical'; statusLive.className = 'tank-stat-status critical'; }
+    }
+
+    if (statusSurv) {
+        if (survival >= 90) { statusSurv.textContent = 'Good'; statusSurv.className = 'tank-stat-status green'; }
+        else if (survival >= 75) { statusSurv.textContent = 'Warning'; statusSurv.className = 'tank-stat-status warning'; }
+        else { statusSurv.textContent = 'Critical'; statusSurv.className = 'tank-stat-status critical'; }
+    }
+
+    if (statusMort) {
+        const mortRate = initial > 0 ? (totalMort / initial * 100) : 0;
+        if (mortRate <= 10) { statusMort.textContent = 'Low'; statusMort.className = 'tank-stat-status green'; }
+        else if (mortRate <= 25) { statusMort.textContent = 'Moderate'; statusMort.className = 'tank-stat-status warning'; }
+        else { statusMort.textContent = 'High'; statusMort.className = 'tank-stat-status critical'; }
+    }
+}
+
+setTimeout(updateDashTankStatus, 100);
+setInterval(updateDashTankStatus, 5000);
+
+// Re-run on custom events
+document.addEventListener('growoutUpdated', updateDashTankStatus);

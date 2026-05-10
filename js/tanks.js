@@ -1275,6 +1275,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.renderFeederRecommendation) {
                 window.renderFeederRecommendation();
             }
+            document.dispatchEvent(new Event('growoutUpdated'));
 
             gfComputeBtn.disabled = true;
         });
