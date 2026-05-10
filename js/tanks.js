@@ -222,6 +222,78 @@ function renderGrowthTab() {
 
         document.getElementById('gf-growth-abw').textContent = (diffAbw >= 0 ? '+' : '') + diffAbw + ' g';
         document.getElementById('gf-growth-length').textContent = diffLength !== null ? (diffLength >= 0 ? '+' : '') + diffLength + ' cm' : '-- cm';
+
+        // ── Card click → modal ──
+        const miniCards = document.querySelectorAll('.gf-overview-cards .gf-mini-card');
+        const modalOverlay = document.getElementById('go-modal-overlay');
+        const modal = document.getElementById('go-modal');
+        const modalIcon = document.getElementById('go-modal-icon');
+        const modalTitle = document.getElementById('go-modal-title');
+        const modalBadge = document.getElementById('go-modal-badge');
+        const modalBody = document.getElementById('go-modal-body');
+        const closeBtns = [modalOverlay, document.getElementById('go-modal-close')];
+
+        function showGoModal(iconHtml, title, badge, rows) {
+            modalIcon.innerHTML = iconHtml;
+            modalTitle.textContent = title;
+            modalBadge.textContent = badge;
+            modalBody.innerHTML = rows.map(r =>
+                '<div class="go-modal-row"><span class="go-modal-row-label">' + r.label + '</span><span class="go-modal-row-val">' + r.val + '</span></div>'
+            ).join('');
+            modalOverlay.classList.add('show');
+            modal.classList.add('show');
+        }
+        function closeGoModal() {
+            modalOverlay.classList.remove('show');
+            modal.classList.remove('show');
+        }
+        closeBtns.forEach(el => el.addEventListener('click', closeGoModal));
+
+        miniCards.forEach((card, i) => {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', () => {
+                if (i === 0) {
+                    showGoModal(
+                        '<i class="bi bi-clock-history"></i>',
+                        'Initial Baseline',
+                        formatDate(first.date),
+                        [
+                            { label: 'Avg Body Weight', val: first.abw + ' g' },
+                            { label: 'Avg Body Length', val: (first.avgLength || '--') + ' cm' },
+                            { label: 'Biomass', val: first.biomass + ' g' },
+                            { label: 'Live Count', val: first.liveCount || '--' }
+                        ]
+                    );
+                } else if (i === 1) {
+                    showGoModal(
+                        '<i class="bi bi-clipboard-data"></i>',
+                        'Latest Sampling',
+                        formatDate(last.date),
+                        [
+                            { label: 'Avg Body Weight', val: last.abw + ' g' },
+                            { label: 'Avg Body Length', val: (last.avgLength || '--') + ' cm' },
+                            { label: 'Biomass', val: last.biomass + ' g' },
+                            { label: 'Live Count', val: last.liveCount || getLiveCount() }
+                        ]
+                    );
+                } else if (i === 2) {
+                    const abwChange = (diffAbw >= 0 ? '+' : '') + diffAbw + ' g';
+                    const lenChange = diffLength !== null ? (diffLength >= 0 ? '+' : '') + diffLength + ' cm' : '-- cm';
+                    showGoModal(
+                        '<i class="bi bi-arrow-up-circle"></i>',
+                        'Growth Progress',
+                        'From Initial to Latest',
+                        [
+                            { label: 'Weight Change', val: abwChange },
+                            { label: 'Length Change', val: lenChange },
+                            { label: 'Initial ABW', val: first.abw + ' g' },
+                            { label: 'Latest ABW', val: last.abw + ' g' },
+                            { label: 'Sampling Interval', val: history.length + ' sampling' + (history.length > 1 ? 's' : '') }
+                        ]
+                    );
+                }
+            });
+        });
     }
 
     // ── 3. WEEKLY SAMPLING PANEL ──
