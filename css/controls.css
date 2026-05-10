@@ -1037,4 +1037,44 @@
     font-size: 11px;
 }
 
+/* AI chat bubble */
+.ai-rec-message {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-bottom: 4px;
+}
+.ai-rec-message > i {
+    font-size: 20px;
+    color: var(--primary-teal);
+    flex-shrink: 0;
+    margin-top: 6px;
+}
+.ai-rec-bubble {
+    flex: 1;
+    background: rgba(31, 165, 165, 0.06);
+    border: 1px solid rgba(31, 165, 165, 0.12);
+    border-radius: 14px;
+    padding: 10px 14px;
+}
+.ai-rec-bubble p {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--dark-text);
+    margin: 0;
+}
+.ai-rec-bubble p strong {
+    color: var(--primary-teal);
+    font-weight: 700;
+}
+.ai-rec-source {
+    display: block;
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--dark-text);
+    opacity: 0.4;
+    margin-top: 6px;
+    letter-spacing: 0.2px;
+}
+
 

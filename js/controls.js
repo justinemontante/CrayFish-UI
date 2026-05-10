@@ -692,12 +692,13 @@ function renderRecommendation() {
     
     const liveCount = window.getLiveCount ? window.getLiveCount() : 0;
     
-    // If no stock set, show prompt
+    // If no stock set, show AI prompt
     if (liveCount === 0) {
-        contentEl.innerHTML = `<div class="ai-rec-no-data">
-            <i class="bi bi-exclamation-circle" style="font-size:24px;opacity:0.5;margin-bottom:8px;display:block;"></i>
-            <strong>No stock data</strong><br>
-            <span style="font-size:12px;opacity:0.6;">Set initial stock to get AI feeding recommendations.</span>
+        contentEl.innerHTML = `<div class="ai-rec-message">
+            <i class="bi bi-robot"></i>
+            <div class="ai-rec-bubble">
+                <p>Hi! It looks like you haven't set your initial stock yet. Once you set it in the <strong>Tank</strong> tab, I'll calculate feeding recommendations based on your crayfish population, growth stage, and biomass.</p>
+            </div>
         </div>`;
         return;
     }
@@ -708,14 +709,15 @@ function renderRecommendation() {
         return;
     }
     
-    // Based on text
-    let basedText = '';
+    // AI summary text
+    let aiSummary = '';
     if (rec.source === 'sampling') {
-        basedText = `Based on: Sampling (${rec.date})`;
+        aiSummary = `Based on your latest sampling on <strong>${rec.date}</strong>, your crayfish average <strong>${rec.abw}g</strong> each. With <strong>${rec.population}</strong> alive, the total biomass is estimated at <strong>${rec.biomass}g</strong>. To support optimal growth, I recommend a daily feed ration of <strong>${rec.feedRation}g</strong>, split into 2 feedings.`;
     } else {
-        basedText = `Based on: Inventory (${rec.daysInCulture} days in culture)`;
+        const days = rec.daysInCulture || window.getDaysInCulture ? window.getDaysInCulture() : 0;
+        aiSummary = `With <strong>${rec.population}</strong> crayfish currently in culture (est. <strong>${rec.abw}g</strong> each), the estimated biomass is <strong>${rec.biomass}g</strong>. I recommend feeding <strong>${rec.feedRation}g</strong> daily, split into 2 feedings for best results.`;
     }
-    
+
     // Build schedule items
     let scheduleItems = '';
     rec.suggestion.forEach(s => {
@@ -729,35 +731,15 @@ function renderRecommendation() {
                 <span class="ai-rec-grams">${s.grams}g</span>
             </div>`;
     });
-    
+
+    let basedText = rec.source === 'sampling' ? `Sampling (${rec.date})` : `Inventory (${rec.daysInCulture} days in culture)`;
+
     let html = `
-        <div class="ai-rec-based">
-            <i class="bi bi-database"></i> ${basedText}
-        </div>
-        <div class="ai-rec-stats">
-            <div class="ai-rec-stat">
-                <span class="ai-rec-stat-label">ABW</span>
-                <span class="ai-rec-stat-value">${rec.abw}g</span>
+        <div class="ai-rec-message">
+            <i class="bi bi-robot"></i>
+            <div class="ai-rec-bubble">
+                <p>${aiSummary}</p>
             </div>
-            <div class="ai-rec-stat">
-                <span class="ai-rec-stat-label">Population</span>
-                <span class="ai-rec-stat-value">${rec.population}</span>
-            </div>
-            <div class="ai-rec-stat">
-                <span class="ai-rec-stat-label">Biomass</span>
-                <span class="ai-rec-stat-value">${rec.biomass}g</span>
-            </div>
-        </div>
-        <div class="ai-rec-daily">
-            <div class="ai-rec-daily-label">Daily Feed</div>
-            <div class="ai-rec-daily-value">${rec.feedRation}g</div>
-            <div class="ai-rec-daily-pct">3% of biomass</div>
-        </div>
-        <div class="ai-rec-schedule-header">
-            <i class="bi bi-clock"></i> ${rec.timesPerDay}x daily
-        </div>
-        <div class="ai-rec-schedule-list">
-            ${scheduleItems}
         </div>`;
     
     contentEl.innerHTML = html;

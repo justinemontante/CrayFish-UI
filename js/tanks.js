@@ -154,6 +154,7 @@ function renderGrowout() {
     renderWarningBanner();
     renderGrowthTab();
     renderTrendsTab();
+    if (window.renderFeederRecommendation) window.renderFeederRecommendation();
 }
 
 function renderGrowthTab() {
