@@ -926,7 +926,7 @@
                         <span class="tank-survival-val" id="go-initial-stock"
                           >0</span
                         >
-                        <span class="tank-survival-label">Initial</span>
+                        <span class="tank-survival-label">Initial Count</span>
                       </div>
                       <div class="tank-survival-divider"></div>
                       <div class="tank-survival-stat">
@@ -950,12 +950,12 @@
                       <div class="tank-sampling-inner">
                         <div class="tank-survival-stat">
                           <span class="tank-survival-val" id="go-avg-weight-display" style="font-size:15px">-- g</span>
-                          <span class="tank-survival-label">Avg Weight</span>
+                          <span class="tank-survival-label">Initial Avg Body Weight</span>
                         </div>
                         <div class="tank-survival-divider"></div>
                         <div class="tank-survival-stat">
                           <span class="tank-survival-val" id="go-avg-length-display" style="font-size:15px">-- cm</span>
-                          <span class="tank-survival-label">Avg Length</span>
+                          <span class="tank-survival-label">Initial Avg Body Length</span>
                         </div>
                       </div>
                     </div>
@@ -1126,7 +1126,6 @@
                       <span class="gf-panel-title"><i class="bi bi-clipboard-data"></i> Weekly Sampling</span>
                       <span class="gf-panel-sub">Enter sample data to compute growth.</span>
                     </div>
-                    <span class="gf-due-badge" id="gf-due-badge">DUE NOW</span>
                     <button class="gf-edit-btn hidden" id="gf-edit-btn"><i class="bi bi-pencil"></i> Edit</button>
                   </div>
                   <div class="gf-input-cards">
@@ -1176,56 +1175,96 @@
 
               <!-- TAB 3: TRENDS -->
               <div class="growout-tab-content" id="tab-trends">
-                <!-- SPARKLINES -->
-                <div
-                  class="growout-sparkline-wrap hidden"
-                  id="go-sparkline-section"
-                >
-                  <div class="growout-spark-card">
-                    <span class="sparkline-title">Growth Trend</span>
-                    <canvas id="go-spark-abw" height="80"></canvas>
-                  </div>
-                  <div class="growout-spark-card">
-                    <span class="sparkline-title">Population</span>
-                    <canvas id="go-spark-pop" height="80"></canvas>
-                  </div>
-                </div>
 
-                <!-- SPARKLINE EMPTY STATE -->
-                <div class="growout-spark-empty hidden" id="go-spark-empty">
+                <!-- EMPTY STATE -->
+                <div class="gt-empty" id="gt-empty">
                   <div class="spark-empty-icon">
                     <i class="bi bi-bar-chart-line"></i>
                     <i class="bi bi-clock-fill"></i>
                   </div>
-                  <p class="spark-empty-text">
-                    Charts will unlock after your first sampling routine. Keep
-                    logging data!
-                  </p>
+                  <p class="spark-empty-text">Start your first sampling to unlock trends and insights.</p>
                 </div>
 
-                <!-- VIEW FULL ANALYTICS -->
-                <button
-                  class="growout-full-analytics-btn hidden"
-                  id="go-full-analytics-btn"
-                >
-                  <i class="bi bi-box-arrow-up-right"></i> View Full Analytics
-                </button>
+                <!-- TRENDS CONTENT -->
+                <div class="gt-content hidden" id="gt-content">
 
-                <!-- SYSTEM INSIGHTS -->
-                <p class="growout-section-title">
-                  <i class="bi bi-lightbulb-fill"></i> System Insights
-                </p>
-                <div class="growout-insights-list" id="go-insights-list"></div>
+                  <!-- 1. TOP SUMMARY CARDS -->
+                  <div class="gt-summary-row" id="gt-summary-row">
+                    <div class="gt-summary-card">
+                      <div class="gt-summary-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                      <div class="gt-summary-info">
+                        <span class="gt-summary-val" id="gt-stage-val">--</span>
+                        <span class="gt-summary-label">Stage</span>
+                      </div>
+                    </div>
+                    <div class="gt-summary-card">
+                      <div class="gt-summary-icon"><i class="bi bi-heart-pulse-fill"></i></div>
+                      <div class="gt-summary-info">
+                        <span class="gt-summary-val gt-green" id="gt-survival-val">--%</span>
+                        <span class="gt-summary-label">Survival</span>
+                      </div>
+                    </div>
+                    <div class="gt-summary-card">
+                      <div class="gt-summary-icon"><i class="bi bi-box-seam-fill"></i></div>
+                      <div class="gt-summary-info">
+                        <span class="gt-summary-val" id="gt-biomass-val">--</span>
+                        <span class="gt-summary-label">Biomass</span>
+                      </div>
+                    </div>
+                    <div class="gt-summary-card">
+                      <div class="gt-summary-icon"><i class="bi bi-people-fill"></i></div>
+                      <div class="gt-summary-info">
+                        <span class="gt-summary-val" id="gt-population-val">--</span>
+                        <span class="gt-summary-label">Alive</span>
+                      </div>
+                    </div>
+                  </div>
 
-                <!-- SAMPLING HISTORY -->
-                <div
-                  class="growout-history-section hidden"
-                  id="go-history-section"
-                >
-                  <p class="growout-section-title">
-                    <i class="bi bi-clock-history"></i> History
-                  </p>
-                  <div class="growout-history-list" id="go-history-list"></div>
+                  <!-- 2. GROWTH TREND CHART -->
+                  <div class="gt-chart-card">
+                    <div class="gt-chart-header">
+                      <span class="gt-chart-title">Growth Trend</span>
+                      <div class="gt-toggle-group">
+                        <button class="gt-toggle-btn active" data-trend="abw" id="gt-toggle-abw">ABW</button>
+                        <button class="gt-toggle-btn" data-trend="abl" id="gt-toggle-abl">ABL</button>
+                      </div>
+                    </div>
+                    <div class="gt-chart-wrap">
+                      <canvas id="gt-growth-chart"></canvas>
+                    </div>
+                    <div class="gt-chart-footer" id="gt-growth-footer"></div>
+                  </div>
+
+                  <!-- 3. BIOMASS TREND CHART -->
+                  <div class="gt-chart-card">
+                    <div class="gt-chart-header">
+                      <span class="gt-chart-title">Biomass Trend <button class="gt-info-btn" id="gt-biomass-info"><i class="bi bi-info-circle"></i></button></span>
+                    </div>
+                    <div class="gt-info-popover hidden" id="gt-biomass-popover">Biomass is computed by multiplying the current live count by the average body weight (ABW). It represents the total estimated weight of all living crayfish in the tank.</div>
+                    <div class="gt-chart-wrap">
+                      <canvas id="gt-biomass-chart"></canvas>
+                    </div>
+                  </div>
+
+                  <!-- 3.5 MORTALITY TREND CHART -->
+                  <div class="gt-chart-card">
+                    <div class="gt-chart-header">
+                      <span class="gt-chart-title">Mortality Trend</span>
+                    </div>
+                    <div class="gt-chart-wrap" style="height:140px">
+                      <canvas id="gt-mortality-chart"></canvas>
+                    </div>
+                    <div class="gt-mort-footer" id="gt-mortality-text">No mortality</div>
+                  </div>
+
+                  <!-- 5. WEEKLY INSIGHTS -->
+                  <div class="gt-insights-card">
+                    <div class="gt-chart-header">
+                      <span class="gt-chart-title"><i class="bi bi-lightbulb-fill"></i> Weekly Insights</span>
+                    </div>
+                    <div class="gt-insights-list" id="gt-insights-list"></div>
+                  </div>
+
                 </div>
               </div>
             </div>

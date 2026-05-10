@@ -3,6 +3,7 @@ const GROWOUT_FEED_PCT = 0.03;
 
 let gfFormVisible = false;
 let gfEditMode = false;
+let gtChartMode = 'abw';
 
 let growoutData = {
     initialStock: 0,
@@ -152,9 +153,7 @@ function renderGrowout() {
 
     renderWarningBanner();
     renderGrowthTab();
-    renderSparklines();
-    renderAIInsights();
-    renderGrowoutHistory();
+    renderTrendsTab();
 }
 
 function renderGrowthTab() {
@@ -186,7 +185,7 @@ function renderGrowthTab() {
             const nextDate = getNextSamplingDate();
             dueDateEl.textContent = 'Sampling done — next: ' + (nextDate ? nextDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '--');
         } else if (daysLeft <= 0) {
-            countdownEl.textContent = 'Due today!';
+            countdownEl.textContent = 'Sampling Day';
             const nextDate = getNextSamplingDate();
             dueDateEl.textContent = nextDate
                 ? 'Due: ' + nextDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -227,7 +226,6 @@ function renderGrowthTab() {
 
     // ── 3. WEEKLY SAMPLING PANEL ──
     const samplingPanel = document.getElementById('gf-sampling-panel');
-    const dueBadge = document.getElementById('gf-due-badge');
     const editBtn = document.getElementById('gf-edit-btn');
     const gfWeightInput = document.getElementById('gf-sample-weight');
     const gfCountInput = document.getElementById('gf-sample-count');
@@ -237,7 +235,6 @@ function renderGrowthTab() {
 
     if (setupDone) {
         samplingPanel.classList.remove('hidden');
-        dueBadge.classList.toggle('hidden', !canSample);
 
         const isEditing = sampledToday && gfEditMode;
         const inputsEnabled = canSample || isEditing;
@@ -585,6 +582,234 @@ function renderGrowoutHistory() {
     }).join('');
 }
 
+function renderTrendsTab() {
+    const empty = document.getElementById('gt-empty');
+    const content = document.getElementById('gt-content');
+    const history = growoutData.samplingHistory;
+    const setupDone = isSetupComplete();
+    const hasData = setupDone && history.length >= 1;
+
+    if (empty) empty.classList.toggle('hidden', hasData);
+    if (content) content.classList.toggle('hidden', !hasData);
+    if (!hasData) return;
+
+    const last = history[history.length - 1];
+    const first = history[0];
+    const stage = getGrowthStage(last.abw);
+    const survival = getSurvivalRate();
+    const live = getLiveCount();
+
+    // ── 1. SUMMARY CARDS ──
+    document.getElementById('gt-stage-val').textContent = stage.name;
+    document.getElementById('gt-survival-val').textContent = survival.toFixed(0) + '%';
+    document.getElementById('gt-biomass-val').textContent = last.biomass >= 1000 ? (last.biomass / 1000).toFixed(1) + 'kg' : last.biomass + 'g';
+    document.getElementById('gt-population-val').textContent = live;
+
+    // ── 2. GROWTH TREND CHART ──
+    const growthCanvas = document.getElementById('gt-growth-chart');
+    if (growthCanvas) {
+        const oldChart = Chart.getChart(growthCanvas);
+        if (oldChart) oldChart.destroy();
+
+        const labels = history.map((_, i) => i === 0 ? 'Initial' : 'Week ' + i);
+        const isAbw = document.getElementById('gt-toggle-abw').classList.contains('active');
+        const data = isAbw ? history.map(e => e.abw) : history.map(e => e.avgLength || null);
+        const unit = isAbw ? 'g' : 'cm';
+        const color = isAbw ? '#1FA5A5' : '#f59e0b';
+
+        new Chart(growthCanvas, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: isAbw ? 'ABW (g)' : 'ABL (cm)',
+                    data,
+                    borderColor: color,
+                    backgroundColor: color + '22',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointBackgroundColor: color,
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    borderWidth: 2.5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ctx.parsed.y + ' ' + unit,
+                            afterLabel: ctx => {
+                                const h = history[ctx.dataIndex];
+                                if (!h) return '';
+                                const s = getGrowthStage(h.abw);
+                                return 'Stage: ' + s.name;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 9, family: 'Poppins' }, color: 'rgba(11,60,73,0.4)' } },
+                    y: { beginAtZero: true, grid: { color: 'rgba(11,60,73,0.04)' }, ticks: { font: { size: 9, family: 'Poppins' }, color: 'rgba(11,60,73,0.4)', callback: v => v + unit } }
+                }
+            }
+        });
+
+        const footer = document.getElementById('gt-growth-footer');
+        if (history.length >= 2) {
+            const firstVal = isAbw ? first.abw : (first.avgLength || 0);
+            const lastVal = isAbw ? last.abw : (last.avgLength || 0);
+            const gain = (lastVal - firstVal).toFixed(2);
+            const weekly = (gain / (history.length - 1)).toFixed(2);
+            footer.innerHTML = history.length === 2
+                ? '<span>Total gain: <strong>+' + gain + unit + '</strong></span>'
+                : '<span>Total gain: <strong>+' + gain + unit + '</strong></span><span>Avg weekly: <strong>+' + weekly + unit + '</strong></span>';
+        } else {
+            footer.innerHTML = '<span>Keep sampling to track growth</span>';
+        }
+    }
+
+    // ── 3. BIOMASS TREND CHART ──
+    const biomassCanvas = document.getElementById('gt-biomass-chart');
+    if (biomassCanvas) {
+        const oldChart = Chart.getChart(biomassCanvas);
+        if (oldChart) oldChart.destroy();
+
+        const labels = history.map((_, i) => i === 0 ? 'Initial' : 'Week ' + i);
+        new Chart(biomassCanvas, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Biomass (g)',
+                    data: history.map(e => e.biomass),
+                    borderColor: '#52c283',
+                    backgroundColor: 'rgba(82,194,131,0.15)',
+                    fill: true, tension: 0.3,
+                    pointRadius: 3, pointBackgroundColor: '#52c283',
+                    pointBorderColor: '#fff', pointBorderWidth: 2, borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y + ' g' } } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 9, family: 'Poppins' }, color: 'rgba(11,60,73,0.4)' } },
+                    y: { beginAtZero: true, grid: { color: 'rgba(11,60,73,0.04)' }, ticks: { font: { size: 9, family: 'Poppins' }, color: 'rgba(11,60,73,0.4)' } }
+                }
+            }
+        });
+    }
+
+    // ── 3.5 MORTALITY TREND CHART ──
+    const mortCanvas = document.getElementById('gt-mortality-chart');
+    const mortText = document.getElementById('gt-mortality-text');
+    if (mortCanvas) {
+        const oldChart = Chart.getChart(mortCanvas);
+        if (oldChart) oldChart.destroy();
+
+        const labels = [];
+        const mortData = [];
+        const dateInfo = [];
+
+        const total = getTotalMortality();
+        if (history.length === 1) {
+            if (total > 0) {
+                labels.push('Week 1');
+                mortData.push(total);
+                dateInfo.push('Since ' + formatDate(history[0].date));
+            }
+        } else {
+            for (let i = 1; i < history.length; i++) {
+                const e = history[i];
+                const baseMort = e.mortalityAt || 0;
+                const isLast = i === history.length - 1;
+                const extra = isLast ? Math.max(0, total - (e.mortalityAt || 0)) : 0;
+                labels.push('Week ' + i);
+                mortData.push(baseMort + extra);
+                dateInfo.push('Up to ' + formatDate(e.date) + (extra > 0 ? ' (incl. ' + extra + ' post-sampling)' : ''));
+            }
+        }
+
+        if (mortData.length > 0) {
+            const barColor = mortData.map(v => v > 0 ? 'rgba(230,57,70,0.7)' : 'rgba(82,194,131,0.35)');
+            const borderColor = mortData.map(v => v > 0 ? '#E63946' : '#52c283');
+            new Chart(mortCanvas, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Mortality',
+                        data: mortData,
+                        backgroundColor: barColor,
+                        borderColor: borderColor,
+                        borderWidth: 1.5,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    layout: { padding: { left: 8, right: 8 } },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y + ' mort' + (ctx.parsed.y === 1 ? '' : 'alities'), afterLabel: ctx => dateInfo[ctx.dataIndex] || '' } } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 9, family: 'Poppins' }, color: 'rgba(11,60,73,0.4)', maxRotation: 0 } },
+                        y: { beginAtZero: true, grid: { color: 'rgba(11,60,73,0.04)' }, ticks: { font: { size: 9, family: 'Poppins' }, color: 'rgba(11,60,73,0.4)', precision: 0 } }
+                    }
+                }
+            });
+        }
+    }
+    if (mortText) mortText.textContent = getTotalMortality() > 0 ? getTotalMortality() + ' mortality records' : 'No mortality';
+
+    // ── 4. WEEKLY INSIGHTS ──
+    const insightsEl = document.getElementById('gt-insights-list');
+    if (history.length < 2) {
+        insightsEl.innerHTML = '<div class="gt-insight-empty">Complete your second sampling to see insights.</div>';
+        return;
+    }
+
+    const prev = history[history.length - 2];
+    const curr = history[history.length - 1];
+    const weekNum = history.length - 1;
+    const prevWeek = history.length - 2;
+    const list = [];
+
+    const abwCh = curr.abw - prev.abw;
+    const abwPct = prev.abw > 0 ? (abwCh / prev.abw * 100) : 0;
+    if (abwCh > 0) {
+        list.push({ type: 'good', icon: '\u{1F7E2}', text: 'Week ' + weekNum + ' vs Week ' + prevWeek + ': Growth +' + abwPct.toFixed(1) + '% (' + prev.abw + '\u2192' + curr.abw + 'g ABW)' });
+    } else if (abwCh < 0) {
+        list.push({ type: 'critical', icon: '\u{1F534}', text: 'Week ' + weekNum + ': ABW dropped ' + Math.abs(abwPct).toFixed(1) + '% from Week ' + prevWeek + ' (' + prev.abw + '\u2192' + curr.abw + 'g).' });
+    } else {
+        list.push({ type: 'info', icon: '\u{1F7E1}', text: 'Week ' + weekNum + ': ABW steady at ' + curr.abw + 'g.' });
+    }
+
+    const pMort = prev.mortalityAt != null ? prev.mortalityAt : 0;
+    const cMort = curr.mortalityAt != null ? curr.mortalityAt : (prev.liveCount - curr.liveCount);
+    const deaths = cMort - pMort;
+    if (deaths > 0) {
+        list.push({ type: 'critical', icon: '\u{1F534}', text: 'Week ' + weekNum + ': ' + deaths + ' new ' + (deaths === 1 ? 'mortality' : 'mortalities') + ' recorded.' });
+    } else {
+        list.push({ type: 'good', icon: '\u{1F7E2}', text: 'Week ' + weekNum + ': No mortality. All clear!' });
+    }
+
+    const bioCh = curr.biomass - prev.biomass;
+    const bioPct = prev.biomass > 0 ? (bioCh / prev.biomass * 100) : 0;
+    if (bioCh > 0) {
+        list.push({ type: 'good', icon: '\u{1F7E2}', text: 'Week ' + weekNum + ': Biomass +' + bioPct.toFixed(1) + '% (' + prev.biomass + '\u2192' + curr.biomass + 'g).' });
+    } else if (bioCh < 0) {
+        list.push({ type: 'warning', icon: '\u{1F7E1}', text: 'Week ' + weekNum + ': Biomass \u2212' + Math.abs(bioPct).toFixed(1) + '% (' + prev.biomass + '\u2192' + curr.biomass + 'g).' });
+    } else {
+        list.push({ type: 'info', icon: '\u{1F7E1}', text: 'Week ' + weekNum + ': Biomass unchanged at ' + curr.biomass + 'g.' });
+    }
+
+    insightsEl.innerHTML = list.map(i => '<div class="gt-insight ' + i.type + '"><span class="gt-insight-icon">' + i.icon + '</span><span class="gt-insight-text">' + i.text + '</span></div>').join('');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.growout-tab-btn').forEach(btn => {
@@ -596,9 +821,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    document.getElementById('go-full-analytics-btn').addEventListener('click', () => {
-        window.showNavSection('analytics');
-    });
+    const fullAnalyticsBtn = document.getElementById('go-full-analytics-btn');
+    if (fullAnalyticsBtn) {
+        fullAnalyticsBtn.addEventListener('click', () => window.showNavSection('analytics'));
+    }
 
     // Setup Modal
     const setupOverlay = document.getElementById('setup-overlay');
@@ -1087,6 +1313,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('gf-hist-close').addEventListener('click', closeGfHist);
     gfHistOverlay.addEventListener('click', (e) => {
         if (e.target === gfHistOverlay) closeGfHist();
+    });
+
+    // Trends tab ABW/ABL toggle
+    document.querySelectorAll('.gt-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.gt-toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderTrendsTab();
+        });
+    });
+
+    document.getElementById('gt-biomass-info').addEventListener('click', () => {
+        document.getElementById('gt-biomass-popover').classList.toggle('hidden');
     });
 
     renderGrowout();
