@@ -2,10 +2,6 @@
 
 // ─── FEEDER ACTIVITY LOG ─────────────────────────────────────
 const feederLogs = [
-    { action: 'Dispensed 44.1g feed (Scheduled)', type: 'auto', time: '8:00 AM', date: 'Today' },
-    { action: 'Manual feed triggered', type: 'manual', time: '7:45 AM', date: 'Today' },
-    { action: 'Feeding schedule added: 6:00 PM', type: 'schedule', time: '7:30 AM', date: 'Today' },
-    { action: 'Mode changed to Auto', type: 'mode', time: '7:00 AM', date: 'Today' },
     { action: 'Dispensed 44.1g feed (Scheduled)', type: 'auto', time: '6:00 AM', date: 'Today' }
 ];
 
@@ -21,17 +17,92 @@ function addFeederLog(action, type) {
     feederLogs.unshift({ action, type, time, date });
     if (feederLogs.length > 50) feederLogs.pop();
     renderFeederLog();
+    updateDashboardFeeding();
 }
+
+// Update Dashboard feeding card
+function updateDashboardFeeding() {
+    const lastFedEl = document.getElementById('dash-last-fed');
+    const nextFeedEl = document.getElementById('dash-next-feed');
+    const lastFedDateEl = document.getElementById('dash-last-fed-date');
+    const nextFeedTimeEl = document.getElementById('dash-next-feed-time');
+    const progressFill = document.getElementById('feed-progress-fill');
+    const progressText = document.getElementById('feed-progress-text');
+    if (!lastFedEl || !nextFeedEl) return;
+    
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    
+    // Get last feed time
+    const feedLogs = feederLogs.filter(l => l.type === 'auto' || l.type === 'manual');
+    if (feedLogs.length > 0) {
+        lastFedEl.textContent = feedLogs[0].time;
+        if (lastFedDateEl) lastFedDateEl.textContent = 'Today';
+    } else {
+        lastFedEl.textContent = '--';
+        if (lastFedDateEl) lastFedDateEl.textContent = '';
+    }
+    
+    // Count completed feedings today
+    const todayFeedings = feedLogs.filter(l => {
+        const logDate = new Date(l.timestamp || Date.now());
+        return logDate.toDateString() === now.toDateString();
+    });
+    
+    // Calculate next feeding time (check schedules)
+    let nextTime = null;
+    
+    document.querySelectorAll('.schedule-item').forEach(item => {
+        const timeStr = item.querySelector('.schedule-time-text')?.textContent;
+        if (!timeStr) return;
+        const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if (!match) return;
+        let h = parseInt(match[1]);
+        const m = parseInt(match[2]);
+        const ampm = match[3].toUpperCase();
+        if (ampm === 'PM' && h < 12) h += 12;
+        if (ampm === 'AM' && h === 12) h = 0;
+        const minutes = h * 60 + m;
+        
+        if (minutes > currentMinutes && (!nextTime || minutes < nextTime)) {
+            nextTime = minutes;
+        }
+    });
+    
+    if (nextTime) {
+        const h = Math.floor(nextTime / 60);
+        const m = nextTime % 60;
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const hour12 = h % 12 || 12;
+        nextFeedEl.textContent = `${hour12}:${String(m).padStart(2, '0')} ${ampm}`;
+        if (nextFeedTimeEl) nextFeedTimeEl.textContent = 'Today';
+    } else {
+        nextFeedEl.textContent = 'Tomorrow';
+        if (nextFeedTimeEl) nextFeedTimeEl.textContent = '6:00 PM';
+    }
+    
+    // Update progress
+    const totalFeedings = document.querySelectorAll('.schedule-item').length || 2;
+    const completed = Math.min(todayFeedings.length, totalFeedings);
+    const pct = totalFeedings > 0 ? (completed / totalFeedings) * 100 : 0;
+    if (progressFill) progressFill.style.width = `${pct}%`;
+    if (progressText) progressText.textContent = `${completed} of ${totalFeedings} feedings today completed`;
+}
+
+// Initial dashboard update
+setTimeout(updateDashboardFeeding, 1000);
 
 function renderFeederLog() {
     const list = document.getElementById('feeder-log-list');
     if (!list) return;
-    if (feederLogs.length === 0) {
+    // Only show 'auto' and 'manual' feed logs
+    const feedLogs = feederLogs.filter(l => l.type === 'auto' || l.type === 'manual');
+    if (feedLogs.length === 0) {
         list.innerHTML = `<p class="hw-detail-log-empty">No activity yet.</p>`;
         return;
     }
-    const dotClass = { auto: 'auto', manual: 'on', mode: 'off', schedule: 'auto' };
-    list.innerHTML = feederLogs.map(l => `
+    const dotClass = { auto: 'auto', manual: 'on' };
+    list.innerHTML = feedLogs.map(l => `
         <div class="hw-detail-log-item">
           <div class="hw-detail-log-dot ${dotClass[l.type] || 'auto'}"></div>
           <div class="hw-detail-log-info">
@@ -55,7 +126,6 @@ function updateFeederMode() {
 feederToggle.addEventListener('change', () => {
     const isAuto = feederToggle.checked;
     updateFeederMode();
-    addFeederLog(`Mode changed to ${isAuto ? 'Auto' : 'Manual'}`, 'mode');
 });
 updateFeederMode();
 
@@ -86,7 +156,7 @@ function parseTimeTo24h(timeStr) {
     let hour = parseInt(h);
     if (ampm === 'PM' && hour !== 12) hour += 12;
     if (ampm === 'AM' && hour === 12) hour = 0;
-    return { hour: parseInt(h), minute: parseInt(m), isPM: ampm === 'PM', display: `${String(hour).padStart(2,'0')}:${m}` };
+    return { hour: hour, minute: parseInt(m), isPM: ampm === 'PM', display: `${String(hour).padStart(2,'0')}:${m}` };
 }
 
 function getScheduleStatus(s) {
@@ -153,7 +223,6 @@ function renderSchedules() {
     morningContainer.querySelectorAll('.schedule-remove').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            addFeederLog(`Schedule removed: ${btn.dataset.time}`, 'schedule');
             schedules = schedules.filter(t => t.time !== btn.dataset.time);
             saveSchedules();
             renderSchedules();
@@ -170,7 +239,6 @@ function renderSchedules() {
     afternoonContainer.querySelectorAll('.schedule-remove').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            addFeederLog(`Schedule removed: ${btn.dataset.time}`, 'schedule');
             schedules = schedules.filter(t => t.time !== btn.dataset.time);
             saveSchedules();
             renderSchedules();
@@ -225,7 +293,6 @@ function addHandler() {
             grams: grams
         });
         schedules.sort((a, b) => (a.hour * 60 + a.minute) - (b.hour * 60 + b.minute));
-        addFeederLog(`Schedule added: ${formatted} (${grams}g)`, 'schedule');
         saveSchedules();
         renderSchedules();
     }
@@ -253,8 +320,6 @@ function updateSchedule() {
         grams: newGrams
     });
     schedules.sort((a, b) => (a.hour * 60 + a.minute) - (b.hour * 60 + b.minute));
-
-    addFeederLog(`Schedule updated: ${editTimeStr} → ${newFormatted} (${newGrams}g)`, 'schedule');
     saveSchedules();
 
     editMode = false;
@@ -266,39 +331,68 @@ function updateSchedule() {
 }
 
 let schedules = [
-    { time: '6:00 AM', display: '6:00 AM', hour: 6, minute: 0, isPM: false, grams: 15 },
-    { time: '8:00 AM', display: '8:00 AM', hour: 8, minute: 0, isPM: false, grams: 22 },
-    { time: '5:00 PM', display: '5:00 PM', hour: 17, minute: 0, isPM: true, grams: 22 }
+    { time: '6:00 AM', display: '6:00 AM', hour: 6, minute: 0, isPM: false, grams: 22 },
+    { time: '6:00 PM', display: '6:00 PM', hour: 18, minute: 0, isPM: true, grams: 22 }
 ];
 
-function loadSchedules() {
-    const saved = localStorage.getItem('crayfish_feeder_schedules');
-    if (saved) {
-        try {
-            schedules = JSON.parse(saved);
-        } catch (e) {}
-    }
-}
+function loadSchedules() {}
+function saveSchedules() {}
 
-function saveSchedules() {
-    localStorage.setItem('crayfish_feeder_schedules', JSON.stringify(schedules));
-}
-
-loadSchedules();
 renderSchedules();
 
 const addBtn = document.getElementById('schedule-add-btn');
 addBtn.addEventListener('click', addHandler);
 
+// Track last triggered time to prevent duplicates within the same minute
+let lastTriggeredTime = null;
+let lastCheckedMinute = null;
+let appReady = false; // Flag to prevent triggering on page load
+
+// Helper to get current hour and minute as integers (24-hour format)
+function getCurrentTime() {
+    const now = new Date();
+    return { hour: now.getHours(), minute: now.getMinutes() };
+}
+
+// Helper to parse schedule time to 24-hour format
+function parseScheduleTime(schedule) {
+    let hour = schedule.hour;
+    if (schedule.isPM && hour !== 12) hour += 12;
+    if (!schedule.isPM && hour === 12) hour = 0;
+    return { hour, minute: schedule.minute };
+}
+
+// Start checking after 2 seconds (allow app to fully load)
+setTimeout(() => {
+    appReady = true;
+}, 2000);
+
 // Simulate auto feed when schedule time matches current time
 setInterval(() => {
     if (!feederToggle.checked) return;
-    const now = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-    const match = schedules.find(s => s.display === now);
-    if (match) {
-        addFeederLog(`Auto Feed — Scheduled at ${now} (${match.grams}g)`, 'auto');
+    if (!appReady) return;
+    
+    const now = getCurrentTime();
+    const currentMinute = now.minute;
+    
+    // Reset trigger tracker at the start of each new minute
+    if (lastCheckedMinute !== currentMinute) {
+        lastCheckedMinute = currentMinute;
+        lastTriggeredTime = null;
     }
-}, 60000);
+    
+    // Compare numerically instead of string
+    const match = schedules.find(s => {
+        const sched = parseScheduleTime(s);
+        return sched.hour === now.hour && sched.minute === now.minute;
+    });
+    
+    if (match && lastTriggeredTime !== currentMinute) {
+        lastTriggeredTime = currentMinute;
+        const timeDisplay = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        addFeederLog(`Auto Feed — Scheduled at ${timeDisplay} (${match.grams}g)`, 'auto');
+    }
+}, 1000);
 
 // Refresh statuses every minute
 setInterval(() => {
@@ -307,10 +401,16 @@ setInterval(() => {
 
 // ─── HARDWARE ACTIVITY LOGS ───────────────────────────────────
 const hwActivityLogs = {
-    aerator: [
+    aerator1: [
         { mode: 'auto', action: 'Set to AUTO', time: '8:05 AM', date: 'Today' },
         { mode: 'on',   action: 'Switched ON',  time: '7:50 AM', date: 'Today' },
         { mode: 'off',  action: 'Switched OFF', time: '7:30 AM', date: 'Today' },
+        { mode: 'auto', action: 'Set to AUTO', time: '6:00 AM', date: 'Today' },
+    ],
+    aerator2: [
+        { mode: 'auto', action: 'Set to AUTO', time: '8:10 AM', date: 'Today' },
+        { mode: 'on',   action: 'Switched ON',  time: '7:45 AM', date: 'Today' },
+        { mode: 'off',  action: 'Switched OFF', time: '7:20 AM', date: 'Today' },
         { mode: 'auto', action: 'Set to AUTO', time: '6:00 AM', date: 'Today' },
     ],
     pump: [
@@ -334,7 +434,7 @@ const hwActivityLogs = {
         { mode: 'auto', action: 'Set to AUTO', time: '6:00 AM', date: 'Today' },
     ],
 };
-const hwLastActivity  = { aerator: '8:05 AM', pump: '8:10 AM', fan: '8:00 AM', heater: '8:00 AM' };
+const hwLastActivity  = { aerator1: '8:05 AM', aerator2: '8:10 AM', pump: '8:10 AM', fan: '8:00 AM', heater: '8:00 AM' };
 
 function addHwLog(device, mode) {
     const { time, date } = getTs();
@@ -346,10 +446,11 @@ function addHwLog(device, mode) {
 
 // ─── HARDWARE DEVICE INFO ────────────────────────────────────
 const hwDeviceInfo = {
-    aerator: { title: 'Aerator',     subtitle: 'Air Pump',           icon: 'bi-wind',         sensor: 'do',   sensorLabel: 'Dissolved O₂', unit: 'mg/L' },
-    pump:    { title: 'Water Pump',  subtitle: 'Filtration System',  icon: 'bi-droplet-half', sensor: 'turb', sensorLabel: 'Turbidity',     unit: 'NTU'  },
-    fan:     { title: 'Cooling Fan', subtitle: 'Temp Control',       icon: 'bi-fan',          sensor: 'temp', sensorLabel: 'Temperature',   unit: '°C'   },
-    heater:  { title: 'Heater',      subtitle: 'Temp Control',       icon: 'bi-fire',         sensor: 'temp', sensorLabel: 'Temperature',   unit: '°C'   },
+    aerator1: { title: 'Aerator 1', subtitle: 'Air Pump',           icon: 'bi-wind',         sensor: 'do',   sensorLabel: 'Dissolved O₂', unit: 'mg/L' },
+    aerator2: { title: 'Aerator 2', subtitle: 'Air Pump',           icon: 'bi-wind',         sensor: 'do',   sensorLabel: 'Dissolved O₂', unit: 'mg/L' },
+    pump:     { title: 'Water Pump',  subtitle: 'Filtration System',  icon: 'bi-droplet-half', sensor: 'turb', sensorLabel: 'Turbidity',     unit: 'NTU'  },
+    fan:      { title: 'Cooling Fan', subtitle: 'Temp Control',       icon: 'bi-fan',          sensor: 'temp', sensorLabel: 'Temperature',   unit: '°C'   },
+    heater:   { title: 'Heater',      subtitle: 'Temp Control',       icon: 'bi-fire',         sensor: 'temp', sensorLabel: 'Temperature',   unit: '°C'   },
 };
 
 // ─── HARDWARE 3-STATE MODE ────────────────────────────────────
@@ -519,3 +620,150 @@ feederLogOverlay.addEventListener('click', closeFeederLog);
 document.getElementById('feeder-log-close').addEventListener('click', closeFeederLog);
 
 renderFeederLog();
+
+// ═════════════════════════════════════════
+//   AI RECOMENDATION
+// ═════════════════════════════════════════
+
+// Calculate recommendation based on sampling data or inventory
+function calculateRecommendation() {
+    // Use exposed global functions from tanks.js
+    const data = window.growoutData || {
+        initialStock: 68,
+        stockingDate: null,
+        samplingHistory: []
+    };
+    
+    const hasSampling = data.samplingHistory && data.samplingHistory.length > 0;
+    const liveCount = window.getLiveCount ? window.getLiveCount() : (data.initialStock || 68);
+    const daysInCulture = window.getDaysInCulture ? window.getDaysInCulture() : 0;
+    
+    if (hasSampling) {
+        // Use latest sampling data
+        const latest = data.samplingHistory[data.samplingHistory.length - 1];
+        return {
+            source: 'sampling',
+            date: latest.date,
+            abw: latest.abw,
+            biomass: latest.biomass,
+            feedRation: latest.feedRation,
+            population: liveCount,
+            // Suggest 2 feedings per day
+            timesPerDay: 2,
+            suggestion: [
+                { time: '6:00 AM', grams: Math.round(latest.feedRation / 2) },
+                { time: '6:00 PM', grams: Math.round(latest.feedRation / 2) }
+            ]
+        };
+    } else {
+        // No sampling - calculate from inventory
+        const population = liveCount;
+        const days = daysInCulture;
+        
+        // Estimate ABW based on days in culture (simplified model)
+        let estimatedABW = 5; // Default 5g for young crayfish
+        if (days > 60) estimatedABW = 30;
+        else if (days > 30) estimatedABW = 15;
+        else if (days > 14) estimatedABW = 8;
+        
+        const biomass = +(population * estimatedABW).toFixed(1);
+        const feedRation = +(biomass * 0.03).toFixed(1); // 3% of biomass
+        
+        return {
+            source: 'inventory',
+            population: population,
+            daysInCulture: days,
+            abw: estimatedABW,
+            biomass: biomass,
+            feedRation: feedRation,
+            timesPerDay: 2,
+            suggestion: [
+                { time: '6:00 AM', grams: Math.round(feedRation / 2) },
+                { time: '6:00 PM', grams: Math.round(feedRation / 2) }
+            ]
+        };
+    }
+}
+
+// Render the recommendation UI
+function renderRecommendation() {
+    const contentEl = document.getElementById('ai-rec-content');
+    if (!contentEl) return;
+    
+    const liveCount = window.getLiveCount ? window.getLiveCount() : 0;
+    
+    // If no stock set, show AI prompt
+    if (liveCount === 0) {
+        contentEl.innerHTML = `<div class="ai-rec-message">
+            <i class="bi bi-robot"></i>
+            <div class="ai-rec-bubble">
+                <p>Hi! It looks like you haven't set your initial stock yet. Once you set it in the <strong>Tank</strong> tab, I'll calculate feeding recommendations based on your crayfish population, growth stage, and biomass.</p>
+            </div>
+        </div>`;
+        return;
+    }
+    
+    const rec = calculateRecommendation();
+    if (!rec) {
+        contentEl.innerHTML = `<div class="ai-rec-no-data">No data available for recommendation.</div>`;
+        return;
+    }
+    
+    // AI summary text
+    let aiSummary = '';
+    if (rec.source === 'sampling') {
+        aiSummary = `Based on your latest sampling on <strong>${rec.date}</strong>, your crayfish average <strong>${rec.abw}g</strong> each. With <strong>${rec.population}</strong> alive, the total biomass is estimated at <strong>${rec.biomass}g</strong>. To support optimal growth, I recommend a daily feed ration of <strong>${rec.feedRation}g</strong>, split into 2 feedings.`;
+    } else {
+        const days = rec.daysInCulture || window.getDaysInCulture ? window.getDaysInCulture() : 0;
+        aiSummary = `With <strong>${rec.population}</strong> crayfish currently in culture (est. <strong>${rec.abw}g</strong> each), the estimated biomass is <strong>${rec.biomass}g</strong>. I recommend feeding <strong>${rec.feedRation}g</strong> daily, split into 2 feedings for best results.`;
+    }
+
+    // Build schedule items
+    let scheduleItems = '';
+    rec.suggestion.forEach(s => {
+        const isAM = s.time.includes('AM');
+        const icon = isAM ? 'bi-sunrise' : 'bi-sunset';
+        const periodClass = isAM ? 'morning' : 'afternoon';
+        scheduleItems += `
+            <div class="ai-rec-schedule-item ${periodClass}">
+                <i class="bi ${icon}"></i>
+                <span class="ai-rec-time">${s.time}</span>
+                <span class="ai-rec-grams">${s.grams}g</span>
+            </div>`;
+    });
+
+    let basedText = rec.source === 'sampling' ? `Sampling (${rec.date})` : `Inventory (${rec.daysInCulture} days in culture)`;
+
+    let html = `
+        <div class="ai-rec-message">
+            <i class="bi bi-robot"></i>
+            <div class="ai-rec-bubble">
+                <p>${aiSummary}</p>
+            </div>
+        </div>`;
+    
+    contentEl.innerHTML = html;
+}
+
+// Render on load
+setTimeout(() => {
+    renderRecommendation();
+}, 500);
+
+// Expose render function for tanks.js to call after sampling
+window.renderFeederRecommendation = renderRecommendation;
+
+// Dashboard Feed Now button
+const dashFeedNow = document.getElementById('dash-feed-now');
+if (dashFeedNow) {
+    dashFeedNow.addEventListener('click', () => {
+        dashFeedNow.innerHTML = '<i class="bi bi-check-lg"></i> Dispensing...';
+        dashFeedNow.style.opacity = '0.7';
+        addFeederLog('Manual Feed — Feed Now (Dashboard)', 'manual');
+        setTimeout(() => {
+            dashFeedNow.innerHTML = '<i class="bi bi-play-fill"></i> Feed Now';
+            dashFeedNow.style.opacity = '1';
+        }, 2000);
+    });
+}
+

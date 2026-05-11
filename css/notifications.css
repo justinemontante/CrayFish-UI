@@ -98,6 +98,7 @@
 }
 
 .notif-item.critical { border-color: rgba(230, 57, 70, 0.25); background: rgba(230, 57, 70, 0.03); }
+.notif-item.warning  { border-color: rgba(245, 158, 11, 0.25); background: rgba(245, 158, 11, 0.03); }
 .notif-item.removing { opacity: 0; transform: translateX(30px); }
 
 /* ICON */
@@ -112,6 +113,7 @@
 }
 
 .notif-icon.critical  { background: rgba(230, 57, 70, 0.1); color: #E63946; }
+.notif-icon.warning   { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
 .notif-icon.operational { background: rgba(31, 165, 165, 0.1); color: var(--primary-teal); }
 .notif-icon.reminder  { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
 

@@ -7,9 +7,9 @@ const SENSORS = window.SENSORS = {
         dotEl: document.getElementById('dot-temp'),
         cardEl: document.getElementById('gauge-temp'),
         getState(v) {
-            if (v >= 24 && v <= 30) return { label: 'Normal', state: 'optimal' };
-            if ((v >= 21 && v < 24) || (v > 30 && v <= 32)) return { label: 'Too Hot / Too Cold', state: 'warning' };
-            return { label: 'Danger', state: 'critical' };
+            if (v >= 24 && v <= 30) return { label: 'NORMAL', state: 'optimal' };
+            if ((v >= 20 && v < 24) || (v > 30 && v <= 33)) return { label: 'WARNING', state: 'warning' };
+            return { label: 'CRITICAL', state: 'critical' };
         }
     },
     ph: {
@@ -18,9 +18,9 @@ const SENSORS = window.SENSORS = {
         dotEl: document.getElementById('dot-ph'),
         cardEl: document.getElementById('gauge-ph'),
         getState(v) {
-            if (v >= 7.0 && v <= 8.5) return { label: 'Normal', state: 'optimal' };
-            if ((v >= 6.5 && v < 7.0) || (v > 8.5 && v <= 9.5)) return { label: 'Off Range', state: 'warning' };
-            return { label: 'Danger', state: 'critical' };
+            if (v >= 7.0 && v <= 8.5) return { label: 'NORMAL', state: 'optimal' };
+            if ((v >= 6.5 && v < 7.0) || (v > 8.5 && v <= 9.0)) return { label: 'WARNING', state: 'warning' };
+            return { label: 'CRITICAL', state: 'critical' };
         }
     },
     do: {
@@ -29,9 +29,9 @@ const SENSORS = window.SENSORS = {
         dotEl: document.getElementById('dot-do'),
         cardEl: document.getElementById('gauge-do'),
         getState(v) {
-            if (v > 5.0) return { label: 'Normal', state: 'optimal' };
-            if (v >= 3.1) return { label: 'Low', state: 'warning' };
-            return { label: 'Critical', state: 'critical' };
+            if (v >= 5.0) return { label: 'NORMAL', state: 'optimal' };
+            if (v >= 3.0) return { label: 'LOW', state: 'warning' };
+            return { label: 'CRITICAL', state: 'critical' };
         }
     },
     turb: {
@@ -40,9 +40,20 @@ const SENSORS = window.SENSORS = {
         dotEl: document.getElementById('dot-turb'),
         cardEl: document.getElementById('gauge-turb'),
         getState(v) {
-            if (v <= 25) return { label: 'Clear', state: 'optimal' };
-            if (v <= 50) return { label: 'Cloudy', state: 'warning' };
-            return { label: 'Dirty', state: 'critical' };
+            if (v <= 25) return { label: 'NORMAL', state: 'optimal' };
+            if (v <= 50) return { label: 'CLOUDY', state: 'warning' };
+            return { label: 'DIRTY', state: 'critical' };
+        }
+    },
+    waterLevel: {
+        valEl: document.getElementById('val-water-level'),
+        badgeEl: document.getElementById('status-water-level'),
+        dotEl: document.getElementById('dot-water-level'),
+        cardEl: document.getElementById('gauge-water-level'),
+        getState(v) {
+            if (v >= 80 && v <= 120) return { label: 'NORMAL', state: 'optimal' };
+            if ((v >= 60 && v < 80) || (v > 120 && v <= 140)) return { label: 'WARNING', state: 'warning' };
+            return { label: 'CRITICAL', state: 'critical' };
         }
     }
 };
@@ -56,18 +67,6 @@ function updateGauge(key, value) {
     s.badgeEl.childNodes[1]?.remove();
     s.badgeEl.appendChild(document.createTextNode(label));
     s.cardEl.className = `gauge-card ${state}`;
-
-    // Auto-push critical notifications
-    if ((state === 'critical' || state === 'warning') && window.pushNotification) {
-        const NOTIF_MAP = {
-            temp: { icon: 'bi-thermometer-high', title: 'High Temperature Alert', msg: `Temperature is at ${value}°C — Lethal range detected.`, type: 'critical' },
-            ph:   { icon: 'bi-exclamation-triangle-fill', title: 'pH Critical Alert', msg: `pH level is at ${value} — Chemical danger detected.`, type: 'critical' },
-            do:   { icon: 'bi-droplet-fill', title: 'Low DO Alert', msg: `Dissolved Oxygen dropped to ${value} mg/L — Aerator triggered.`, type: 'warning' },
-            turb: { icon: 'bi-eye-slash-fill', title: 'Turbidity Alert', msg: `Turbidity is at ${value} NTU — Fouled water detected.`, type: 'warning' }
-        };
-        const n = NOTIF_MAP[key];
-        if (n) window.pushNotification(n.type, n.icon, n.title, n.msg);
-    }
 }
 
 function simulateSensors() {
@@ -75,39 +74,48 @@ function simulateSensors() {
     updateGauge('ph',   (7.8).toFixed(1));
     updateGauge('do',   (4.2).toFixed(1));
     updateGauge('turb', 60);
+    updateGauge('waterLevel', (100).toFixed(1));
 }
 
 const LEGENDS = {
     temp: {
-        title: 'Temperature Status Legend',
+        title: 'TEMPERATURE (°C)',
         items: [
-            { state: 'optimal', label: 'Normal', range: '24.0°C – 30.0°C', desc: 'Optimal range for crayfish growth and molting.' },
-            { state: 'warning', label: 'Too Hot / Too Cold', range: '21.0°C – 23.9°C or 30.1°C – 32.0°C', desc: 'May slow metabolism and cause stress to crayfish.' },
-            { state: 'critical', label: 'Danger', range: 'Below 20.0°C or Above 32.0°C', desc: 'Can cause death. Alert notification will be sent.' }
+            { state: 'optimal', label: 'NORMAL', range: '24–30°C', desc: 'Optimal range for crayfish growth and molting.' },
+            { state: 'warning', label: 'WARNING', range: '20–23°C or 31–33°C', desc: 'May slow metabolism and cause stress to crayfish.' },
+            { state: 'critical', label: 'CRITICAL', range: 'below 20°C or above 33°C', desc: 'Can cause death. Alert notification will be sent.' }
         ]
     },
     ph: {
-        title: 'pH Level Status Legend',
+        title: 'pH LEVEL',
         items: [
-            { state: 'optimal', label: 'Normal', range: '7.0 – 8.5', desc: 'Ideal acidity for healthy molting and shell formation.' },
-            { state: 'warning', label: 'Off Range', range: '6.5 – 6.9 or 8.6 – 9.5', desc: 'May irritate gills and weaken immune system.' },
-            { state: 'critical', label: 'Danger', range: 'Below 6.5 or Above 9.5', desc: 'Highly toxic. Can cause rapid death of crayfish.' }
+            { state: 'optimal', label: 'NORMAL', range: '7.0–8.5', desc: 'Ideal acidity for healthy molting and shell formation.' },
+            { state: 'warning', label: 'WARNING', range: '6.5–6.9 or 8.6–9.0', desc: 'May irritate gills and weaken immune system.' },
+            { state: 'critical', label: 'CRITICAL', range: 'below 6.5 or above 9.0', desc: 'Highly toxic. Can cause rapid death of crayfish.' }
         ]
     },
     do: {
-        title: 'Dissolved O₂ Status Legend',
+        title: 'DISSOLVED OXYGEN (mg/L)',
         items: [
-            { state: 'optimal', label: 'Normal', range: 'Above 5.0 mg/L', desc: 'Sufficient oxygen for active and healthy crayfish.' },
-            { state: 'warning', label: 'Low', range: '3.1 – 4.9 mg/L', desc: 'Crayfish may become lethargic and lose appetite.' },
-            { state: 'critical', label: 'Critical', range: 'Below 3.0 mg/L', desc: 'Dangerously low. Triggers aerator pump automatically.' }
+            { state: 'optimal', label: 'NORMAL', range: '5.0+ mg/L', desc: 'Sufficient oxygen for active and healthy crayfish.' },
+            { state: 'warning', label: 'LOW', range: '3.0–4.9 mg/L', desc: 'Crayfish may become inactive and lose appetite.' },
+            { state: 'critical', label: 'CRITICAL', range: 'below 3.0 mg/L', desc: 'Dangerously low. Triggers aerator pump automatically.' }
         ]
     },
     turb: {
-        title: 'Turbidity Status Legend',
+        title: 'TURBIDITY (NTU)',
         items: [
-            { state: 'optimal', label: 'Clear', range: '0 – 25 NTU', desc: 'Clean water with good visibility and low bacteria risk.' },
-            { state: 'warning', label: 'Cloudy', range: '26 – 50 NTU', desc: 'Suspended particles may clog gills over time.' },
-            { state: 'critical', label: 'Dirty', range: 'Above 60 NTU', desc: 'Severely dirty water. Triggers filtration alert immediately.' }
+            { state: 'optimal', label: 'NORMAL', range: '0–25 NTU', desc: 'Clean water with good visibility and low bacteria risk.' },
+            { state: 'warning', label: 'CLOUDY', range: '26–50 NTU', desc: 'Suspended particles may clog gills over time.' },
+            { state: 'critical', label: 'DIRTY', range: 'above 50 NTU', desc: 'Severely dirty water. Triggers filtration alert immediately.' }
+        ]
+    },
+    waterLevel: {
+        title: 'WATER LEVEL (cm)',
+        items: [
+            { state: 'optimal', label: 'NORMAL', range: '80–120 cm', desc: 'Ideal water level for crayfish growth and oxygen exchange.' },
+            { state: 'warning', label: 'WARNING', range: '60–79 cm or 121–140 cm', desc: 'May affect water quality and circulation.' },
+            { state: 'critical', label: 'CRITICAL', range: 'below 60 cm or above 140 cm', desc: 'Extreme water level. Can stress or kill crayfish.' }
         ]
     }
 };
@@ -146,7 +154,8 @@ const GAUGE_META = {
     temp: { title: 'Temperature', unit: '°C', img: 'resources/images/temperature.png', ideal: 'Ideal: 24.0 – 30.0°C' },
     ph:   { title: 'pH Level',    unit: 'pH',   img: 'resources/images/pH.png',          ideal: 'Ideal: 7.0 – 8.5' },
     do:   { title: 'Dissolved O₂', unit: 'mg/L', img: 'resources/images/DO.png',       ideal: 'Ideal: >5.0 mg/L' },
-    turb: { title: 'Turbidity',   unit: 'NTU',  img: 'resources/images/Turbidity.png',  ideal: 'Ideal: 0 – 25 NTU' }
+    turb: { title: 'Turbidity',   unit: 'NTU',  img: 'resources/images/Turbidity.png',  ideal: 'Ideal: 0 – 25 NTU' },
+    waterLevel: { title: 'Water Level', unit: 'cm', img: 'resources/images/Turbidity.png', ideal: 'Ideal: 80 – 120 cm' }
 };
 
 const gaugeModalOverlay = document.getElementById('gauge-modal-overlay');
@@ -217,7 +226,7 @@ Object.keys(SENSORS).forEach(key => {
 document.getElementById('quick-aerator')?.addEventListener('click', () => {
     window.showNavSection('controls');
     setTimeout(() => {
-        const card = document.getElementById('hw-aerator');
+        const card = document.getElementById('hw-aerator1');
         if (card) card.click();
     }, 100);
 });
@@ -236,3 +245,69 @@ document.getElementById('quick-feed-now')?.addEventListener('click', () => {
 
 simulateSensors();
 setInterval(simulateSensors, 300000);
+
+// ─── TANK STATUS (live data) ────────────────────────────
+function updateDashTankStatus() {
+    const live = window.getLiveCount ? window.getLiveCount() : 0;
+    const totalMort = window.getTotalMortality ? window.getTotalMortality() : 0;
+    const initial = window.growoutData?.initialStock ?? 0;
+    const survival = initial > 0 ? (live / initial * 100) : 0;
+
+    document.getElementById('dash-live-count').textContent = live;
+    document.getElementById('dash-survival').textContent = survival.toFixed(1) + '%';
+    document.getElementById('dash-initial').textContent = initial;
+    document.getElementById('dash-mortality').textContent = totalMort;
+}
+
+setTimeout(updateDashTankStatus, 100);
+setInterval(updateDashTankStatus, 5000);
+
+// ─── NEXT ACTION CARD ──────────────────────────────────
+function updateDashNextAction() {
+    const data = window.growoutData || {};
+    const samplingHistory = data.samplingHistory || [];
+    const hasStock = data.initialStock > 0;
+
+    // Days in culture
+    const days = window.getDaysInCulture ? window.getDaysInCulture() : 0;
+    document.getElementById('dash-days-culture').textContent = days > 0 ? days + ' day' + (days !== 1 ? 's' : '') : '--';
+
+    // Last sampling — date only
+    const lastDetail = document.getElementById('dash-last-sampling-detail');
+    if (samplingHistory.length > 0) {
+        const last = samplingHistory[samplingHistory.length - 1];
+        const d = new Date(last.date + 'T00:00:00');
+        lastDetail.textContent = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    } else {
+        lastDetail.textContent = 'No data';
+    }
+
+    // Next sampling — date + remaining days
+    const nextEl = document.getElementById('dash-next-sampling-date');
+    const remainingEl = document.getElementById('dash-sampling-remaining');
+    if (!hasStock) {
+        nextEl.textContent = 'Set up first';
+        if (remainingEl) remainingEl.textContent = '';
+    } else {
+        const nextDate = window.getNextSamplingDate ? window.getNextSamplingDate() : null;
+        if (nextDate && !isNaN(nextDate)) {
+            nextEl.textContent = nextDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const daysUntil = window.getDaysUntilSampling ? window.getDaysUntilSampling() : null;
+            if (remainingEl) {
+                if (daysUntil === 0) remainingEl.textContent = 'Due today!';
+                else if (daysUntil > 0) remainingEl.textContent = daysUntil + ' day' + (daysUntil !== 1 ? 's' : '') + ' left';
+                else remainingEl.textContent = '';
+            }
+        } else {
+            nextEl.textContent = 'After first sampling';
+            if (remainingEl) remainingEl.textContent = '';
+        }
+    }
+}
+
+setTimeout(updateDashNextAction, 100);
+setInterval(updateDashNextAction, 5000);
+
+// Re-run on custom events
+document.addEventListener('growoutUpdated', updateDashTankStatus);
+document.addEventListener('growoutUpdated', updateDashNextAction);

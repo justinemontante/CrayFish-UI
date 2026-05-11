@@ -838,3 +838,243 @@
     padding: 16px 0;
     margin: 0;
 }
+
+/* ════════════════
+   AI RECOMENDATION
+   ════════════════ */
+.ai-recommendation {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(31, 165, 165, 0.06);
+    border: 1.5px solid rgba(31, 165, 165, 0.15);
+    border-radius: 16px;
+}
+
+.ai-rec-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.ai-rec-header i {
+    font-size: 18px;
+    color: var(--primary-teal);
+}
+
+.ai-rec-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dark-text);
+}
+
+.ai-rec-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.ai-rec-no-data {
+    font-size: 12px;
+    color: var(--dark-text);
+    opacity: 0.6;
+    text-align: center;
+    padding: 8px 0;
+}
+
+/* Based on line */
+.ai-rec-based {
+    font-size: 11px;
+    color: var(--dark-text);
+    opacity: 0.5;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(31, 165, 165, 0.1);
+}
+
+.ai-rec-based i {
+    font-size: 13px;
+    color: var(--primary-teal);
+    opacity: 0.7;
+}
+
+/* Inline stat boxes */
+.ai-rec-stats {
+    display: flex;
+    gap: 8px;
+}
+
+.ai-rec-stat {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(31, 165, 165, 0.12);
+    border-radius: 10px;
+    padding: 8px 6px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ai-rec-stat-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--dark-text);
+    opacity: 0.5;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.ai-rec-stat-value {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--primary-teal);
+}
+
+/* Daily feed card */
+.ai-rec-daily {
+    background: rgba(31, 165, 165, 0.08);
+    border: 1px solid rgba(31, 165, 165, 0.15);
+    border-radius: 12px;
+    padding: 10px 14px;
+    text-align: center;
+}
+
+.ai-rec-daily-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--dark-text);
+    opacity: 0.5;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.ai-rec-daily-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dark-text);
+    line-height: 1.2;
+}
+
+.ai-rec-daily-pct {
+    font-size: 10px;
+    color: var(--dark-text);
+    opacity: 0.45;
+    margin-top: 2px;
+}
+
+/* Schedule header */
+.ai-rec-schedule-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--dark-text);
+    padding: 8px 0 4px;
+    border-top: 1px solid rgba(31, 165, 165, 0.1);
+}
+
+.ai-rec-schedule-header i {
+    font-size: 14px;
+    color: var(--primary-teal);
+}
+
+/* Schedule items */
+.ai-rec-schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ai-rec-schedule-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--dark-text);
+}
+
+.ai-rec-schedule-item.morning {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.15);
+}
+
+.ai-rec-schedule-item.afternoon {
+    background: rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+.ai-rec-schedule-item i {
+    font-size: 16px;
+}
+
+.ai-rec-schedule-item.morning i {
+    color: #f59e0b;
+}
+
+.ai-rec-schedule-item.afternoon i {
+    color: #8b5cf6;
+}
+
+.ai-rec-schedule-item .ai-rec-time {
+    flex: 1;
+    font-weight: 600;
+}
+
+.ai-rec-schedule-item .ai-rec-grams {
+    font-weight: 800;
+    color: var(--primary-teal);
+    background: rgba(31, 165, 165, 0.1);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+}
+
+/* AI chat bubble */
+.ai-rec-message {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-bottom: 4px;
+}
+.ai-rec-message > i {
+    font-size: 20px;
+    color: var(--primary-teal);
+    flex-shrink: 0;
+    margin-top: 6px;
+}
+.ai-rec-bubble {
+    flex: 1;
+    background: rgba(31, 165, 165, 0.06);
+    border: 1px solid rgba(31, 165, 165, 0.12);
+    border-radius: 14px;
+    padding: 10px 14px;
+}
+.ai-rec-bubble p {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--dark-text);
+    margin: 0;
+}
+.ai-rec-bubble p strong {
+    color: var(--primary-teal);
+    font-weight: 700;
+}
+.ai-rec-source {
+    display: block;
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--dark-text);
+    opacity: 0.4;
+    margin-top: 6px;
+    letter-spacing: 0.2px;
+}
+
+

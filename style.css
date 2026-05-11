@@ -19,7 +19,7 @@ body {
     font-family: 'Poppins', 'Segoe UI', Roboto, sans-serif;
 }
 
-/* PHONE FRAME */
+/* PHONE FRAME - DESKTOP (default) */
 .iphone-frame {
     width: 90vw;
     max-width: 380px;
@@ -38,7 +38,7 @@ body {
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
 }
 
-/* Dynamic Island */
+/* Dynamic Island - only show on desktop */
 .dynamic-island {
     width: 14px;
     height: 14px;
@@ -51,7 +51,33 @@ body {
     z-index: 10;
 }
 
-/* SPLASH SCREEN */
+/* ========================================
+   MOBILE: Full screen, no frame
+   ======================================== */
+@media (max-width: 768px) {
+    body {
+        display: block;
+        background: #0B3C49;
+    }
+    
+    .iphone-frame {
+        width: 100%;
+        height: 100vh;
+        max-width: none;
+        aspect-ratio: auto;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+    }
+    
+    .dynamic-island {
+        display: none;
+    }
+}
+
+/* ========================================
+   SPLASH SCREEN
+   ======================================== */
 .splash-screen {
     height: 100%;
     display: flex;
@@ -66,7 +92,9 @@ body {
     display: none;
 }
 
-/* LOGIN SCREEN */
+/* ========================================
+   LOGIN SCREEN
+   ======================================== */
 .login-screen {
     height: 100%;
     display: flex;
@@ -323,7 +351,9 @@ body {
     opacity: 0.7;
 }
 
-/* SIGNUP SCREEN */
+/* ========================================
+   SIGNUP SCREEN
+   ======================================== */
 .signup-screen {
     height: 100%;
     display: flex;
@@ -336,7 +366,9 @@ body {
     display: none;
 }
 
-/* VERIFY SCREEN */
+/* ========================================
+   VERIFY SCREEN
+   ======================================== */
 .verify-screen {
     height: 100%;
     display: flex;
@@ -419,7 +451,9 @@ body {
     opacity: 0.7;
 }
 
-/* LOGO */
+/* ========================================
+   LOGO & BRAND
+   ======================================== */
 .logo-container {
     width: 70%;
     max-width: 280px;
@@ -492,13 +526,358 @@ body {
 }
 
 @keyframes loadingAnim {
-    0% {
-        width: 0%;
-    }
-    50% {
-        width: 70%;
-    }
-    100% {
-        width: 100%;
-    }
+    0% { width: 0%; }
+    50% { width: 70%; }
+    100% { width: 100%; }
+}
+
+/* DASHBOARD ENHANCEMENT CARDS */
+.dash-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    margin: 12px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.06);
+}
+
+.dash-card-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    color: var(--dark-text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.dash-card-header i {
+    font-size: 16px;
+    color: var(--primary-teal);
+}
+
+.dash-card-body {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.dash-stat {
+    text-align: center;
+}
+
+.dash-stat-value {
+    display: block;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--dark-text);
+    line-height: 1.2;
+}
+
+.dash-stat-label {
+    font-size: 10px;
+    color: rgba(0,0,0,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* TANK STATUS CARD */
+.tank-card {
+    overflow: hidden;
+}
+
+.tank-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.tank-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tank-header-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1.5px solid var(--primary-teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: rgba(31, 165, 165, 0.06);
+}
+
+.tank-header-icon i {
+    font-size: 14px;
+    color: var(--primary-teal);
+}
+
+.tank-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dark-text);
+}
+
+
+.tank-stats {
+    display: flex;
+    align-items: stretch;
+}
+
+.tank-stat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.tank-stat-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid rgba(31, 165, 165, 0.15);
+    box-shadow: 0 2px 6px rgba(11, 60, 73, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+
+.tank-stat-icon i {
+    font-size: 14px;
+    color: var(--primary-teal);
+}
+
+.tank-stat-value {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--dark-text);
+    line-height: 1.1;
+}
+
+.tank-stat-label {
+    font-size: 7px;
+    font-weight: 700;
+    color: var(--primary-teal);
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.tank-stat-status {
+    font-size: 8px;
+    font-weight: 600;
+    color: rgba(11, 60, 73, 0.4);
+    margin-top: 1px;
+}
+
+.tank-stat-status.green {
+    color: #2d9e5f;
+}
+
+.tank-stat-divider {
+    width: 1px;
+    background: rgba(11, 60, 73, 0.08);
+    margin: 4px 0;
+    flex-shrink: 0;
+}
+
+/* FEEDING SCHEDULE CARD */
+.feed-header-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1.5px solid var(--primary-teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: rgba(31, 165, 165, 0.06);
+}
+
+.feed-header-icon i {
+    font-size: 14px;
+    color: var(--primary-teal);
+}
+
+.feed-body {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    padding: 6px 0 10px;
+}
+
+.feed-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.feed-icon-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(31, 165, 165, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+
+.feed-icon-wrap i {
+    font-size: 16px;
+    color: var(--primary-teal);
+}
+
+.feed-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--primary-teal);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.feed-value {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--dark-text);
+    line-height: 1.2;
+}
+
+.feed-sub {
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(11, 60, 73, 0.45);
+}
+
+.feed-divider {
+    width: 1px;
+    background: rgba(11, 60, 73, 0.1);
+    margin: 4px 0;
+    flex-shrink: 0;
+}
+
+.feed-progress-wrap {
+    padding-top: 10px;
+    border-top: 1px solid rgba(11, 60, 73, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.feed-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(11, 60, 73, 0.08);
+    border-radius: 3px;
+    position: relative;
+    overflow: visible;
+}
+
+.feed-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-teal), #40d0d0);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.feed-progress-dot {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid var(--primary-teal);
+    box-shadow: 0 1px 4px rgba(31, 165, 165, 0.3);
+}
+
+.feed-progress-text {
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(11, 60, 73, 0.5);
+}
+
+.dash-schedule-next {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.dash-schedule-remaining {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--primary-teal);
+    white-space: nowrap;
+}
+
+/* TANK STATUS — ACTION ITEMS */
+.tank-action-divider {
+    height: 6px;
+    background: rgba(11, 60, 73, 0.04);
+    margin: 10px -16px;
+    border-top: 1px solid rgba(11, 60, 73, 0.06);
+    border-bottom: 1px solid rgba(11, 60, 73, 0.06);
+}
+
+.tank-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.tank-action-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 7px 0;
+    gap: 8px;
+}
+
+.tank-action-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.tank-action-left i {
+    font-size: 15px;
+    color: var(--primary-teal);
+    flex-shrink: 0;
+}
+
+.tank-action-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(0,0,0,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.tank-action-val {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dark-text);
+    text-align: right;
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+.tank-action-bar {
+    height: 1px;
+    background: rgba(11, 60, 73, 0.06);
+    margin: 0;
 }

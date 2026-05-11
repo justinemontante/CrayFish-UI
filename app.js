@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="settings-toggle-row">
                 <div class="settings-toggle-info">
                     <span class="settings-toggle-title">Sampling Reminders</span>
-                    <span class="settings-toggle-sub">Bi-weekly Grow-out Tank reminders</span>
+                    <span class="settings-toggle-sub">Weekly Grow-out Tank reminders</span>
                 </div>
                 <label class="toggle-switch"><input type="checkbox" checked /><span class="toggle-slider"></span></label>
             </div>
@@ -361,7 +361,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Sound & Vibration
-    document.getElementById('menu-sound').addEventListener('click', () => {
+    const menuSound = document.getElementById('menu-sound');
+    if (menuSound) menuSound.addEventListener('click', () => {
         openSubPanel('Sound & Vibration', `
             <p class="settings-section-label">Audio</p>
             <div class="settings-toggle-row">
@@ -390,7 +391,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Help & Manual
-    document.getElementById('menu-help').addEventListener('click', () => {
+    const menuHelp = document.getElementById('menu-help');
+    if (menuHelp) menuHelp.addEventListener('click', () => {
         openSubPanel('Help & Manual', `
             <div class="settings-help-item">
                 <i class="bi bi-book-fill"></i>
@@ -420,7 +422,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // About
-    document.getElementById('menu-about').addEventListener('click', () => {
+    const menuAbout = document.getElementById('menu-about');
+    if (menuAbout) menuAbout.addEventListener('click', () => {
         openSubPanel('About CrayCare', `
             <div class="settings-about-card">
                 <img src="resources/images/logo.png" class="settings-about-logo" />
@@ -463,9 +466,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (logoutBtn) logoutBtn.addEventListener('click', openLogoutModal);
-    logoutOverlay.addEventListener('click', closeLogoutModal);
-    document.getElementById('logout-cancel').addEventListener('click', closeLogoutModal);
-    document.getElementById('logout-confirm').addEventListener('click', () => {
+    if (logoutOverlay) logoutOverlay.addEventListener('click', closeLogoutModal);
+    const logoutCancel = document.getElementById('logout-cancel');
+    if (logoutCancel) logoutCancel.addEventListener('click', closeLogoutModal);
+    const logoutConfirm = document.getElementById('logout-confirm');
+    if (logoutConfirm) logoutConfirm.addEventListener('click', () => {
         closeLogoutModal();
         closeSettings();
         mainApp.classList.add('hidden');

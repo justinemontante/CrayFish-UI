@@ -40,11 +40,10 @@ body {
 
 /* Dynamic Island */
 .dynamic-island {
-    width: 28%;
-    max-width: 110px;
-    height: 30px;
+    width: 14px;
+    height: 14px;
     background: #000;
-    border-radius: 20px;
+    border-radius: 50%;
     position: absolute;
     top: 2%;
     left: 50%;
@@ -568,8 +567,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 8px 20px;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
+    background: linear-gradient(135deg, #f8ffff 0%, #f2fdfd 30%, #e8fafa 70%, #daf4f5 100%);
 }
 
 .profile-avatar {
@@ -608,6 +606,10 @@ body {
 }
 
 .nav-section {
+    display: block;
+    min-height: 100%;
+}
+.nav-section.hidden {
     display: none;
 }
 
